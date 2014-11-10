@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.intellij:annotations:12.0'
+    compile 'com.omricat:guava-preconditions:18.0'
+
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
+
+
+    testCompile 'junit:junit:4.0'
+    testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
+}
