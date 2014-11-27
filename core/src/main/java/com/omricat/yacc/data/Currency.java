@@ -19,6 +19,7 @@ package com.omricat.yacc.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *         given relative to USD (i.e. value(USD)==1.0) and must be
  *         non-negative.
  */
+@JsonSerialize(using = CurrencySerializer.class)
 public class Currency {
 
     final BigDecimal value;

@@ -89,4 +89,6 @@ public class Currencies {
         result = 31 * result + (int) (lastUpdatedTimestamp ^ (lastUpdatedTimestamp >>> 32));
         return result;
     }
+
+    public final static Currencies EMPTY = new Currencies(new Currency[] {}, 0);
 }
