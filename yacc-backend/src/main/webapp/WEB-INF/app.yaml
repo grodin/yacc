@@ -1,0 +1,7 @@
+application: yacc-backend
+version: 0-1-test
+runtime: java
+#api_version: 1
+threadsafe: true
+static_files: #
+    - include: /test/**.json
