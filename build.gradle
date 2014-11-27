@@ -12,6 +12,14 @@ buildscript {
     }
 }
 
+
+    ext.versionMajor = 0
+    ext.versionMinor = 1
+    ext.versionPatch = 0
+    ext.versionBuild = 0 // bump for dogfood builds, public betas, etc.
+
+
+
 allprojects {
     repositories {
         jcenter()

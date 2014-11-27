@@ -41,10 +41,15 @@ android {
         applicationId "com.omricat.yacc"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 100000 + versionMinor * 10000 +
+                versionPatch * 1000 + versionBuild
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
     }
     buildTypes {
+        debug {
+            versionNameSuffix "-${versionBuild}DEBUG"
+        }
+
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
