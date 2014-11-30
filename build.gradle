@@ -13,16 +13,18 @@ buildscript {
 }
 
 
-    ext.versionMajor = 0
-    ext.versionMinor = 1
-    ext.versionPatch = 0
-    ext.versionBuild = 0 // bump for dogfood builds, public betas, etc.
+ext {
+    versionMajor = 0
+    versionMinor = 0
+    versionPatch = 1
+    versionBuild = 0 // bump for dogfood builds, public betas, etc.
+}
 
 
+subprojects {
 
-allprojects {
     repositories {
         jcenter()
-        mavenLocal()
     }
+
 }
