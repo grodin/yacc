@@ -1,5 +1,6 @@
 package com.omricat.yacc.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -44,16 +46,21 @@ public class CurrencyTest {
 
 
     @Test
-    public void testJsonDeserialisation() {
+    public void testJsonDeserialisation() throws IOException {
         String json = "{\"value\":\"3.6732\",\"code\":\"AED\"}";
         ObjectMapper objMapper = new ObjectMapper();
         Currency curr1 = null;
-        try {
-            curr1 = objMapper.readValue(json, Currency.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        curr1 = objMapper.readValue(json, Currency.class);
         Currency curr2 = new Currency("3.6732", "AED");
         assertTrue(curr2.equals(curr1));
+    }
+
+    @Test
+    public void testJsonSerialisation() throws JsonProcessingException {
+        Currency curr = new Currency("3.6732", "AED");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String convertedJson = objectMapper.writeValueAsString(curr);
+        final String expected = "{\"value\":\"3.6732\",\"code\":\"AED\"}";
+        assertEquals(expected,convertedJson);
     }
 }
