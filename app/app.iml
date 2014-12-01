@@ -82,29 +82,46 @@
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="okhttp-urlconnection-2.0.0" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.0" level="project" />
-    <orderEntry type="library" exported="" name="annotations-12.0" level="project" />
-    <orderEntry type="library" exported="" name="recyclerview-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-appengine-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-0.23.0" level="project" />
     <orderEntry type="library" exported="" name="dagger-1.2.2" level="project" />
-    <orderEntry type="library" exported="" name="jackson-core-2.4.3" level="project" />
     <orderEntry type="library" exported="" name="jackson-databind-2.4.3" level="project" />
+    <orderEntry type="library" exported="" name="jackson-core-2.4.3" level="project" />
     <orderEntry type="library" exported="" name="okio-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="servlet-api-2.5" level="project" />
+    <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.17" level="project" />
     <orderEntry type="library" exported="" name="retrofit-1.8.0" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="rxjava-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="guava-18.0" level="project" />
+    <orderEntry type="library" exported="" name="appengine-gcs-client-0.4.3" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-appengine-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="jackson-annotations-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="guava-preconditions-18.0" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-jackson2-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="converter-jackson-1.8.0" level="project" />
+    <orderEntry type="library" exported="" name="transaction-api-1.1" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-2.0.0" level="project" />
+    <orderEntry type="library" exported="" name="joda-time-2.3" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="annotations-12.0" level="project" />
+    <orderEntry type="library" exported="" name="recyclerview-v7-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="disklrucache-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="jsr305-3.0.0" level="project" />
-    <orderEntry type="library" exported="" name="guava-preconditions-18.0" level="project" />
-    <orderEntry type="library" exported="" name="jackson-annotations-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-appengine-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-servlet-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="jdo2-api-2.3-eb" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-jdo-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="google-api-services-storage-v1-rev15-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="butterknife-6.0.0" level="project" />
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
-    <orderEntry type="library" exported="" name="converter-jackson-1.8.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-servlet-1.19.0" level="project" />
     <orderEntry type="module" module-name="yacc-backend" exported="" />
     <orderEntry type="module" module-name="core" exported="" />
   </component>

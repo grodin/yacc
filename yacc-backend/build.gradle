@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.8'
+        classpath "com.google.appengine:gradle-appengine-plugin:${gaePluginVer}"
     }
 }
 
@@ -29,8 +29,8 @@ dependencies {
 
     compile 'com.google.appengine.tools:appengine-gcs-client:0.4.3'
 
-    compile 'com.squareup.retrofit:retrofit:1.8.0'
-    compile 'com.squareup.retrofit:converter-jackson:1.8.0'
+    compile "com.squareup.retrofit:retrofit:${retrofitVer}"
+    compile "com.squareup.retrofit:converter-jackson:${retrofitVer}"
 
     testCompile 'junit:junit:4.0'
 
