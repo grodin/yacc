@@ -10,4 +10,4 @@ handlers:
     - url: /get-latest-currencies
       login: admin
       servlet: com.omricat.yacc.backend.servlets.DownloadServlet
-      name: cronjob
+      name: cronjob downloader for latest currencies

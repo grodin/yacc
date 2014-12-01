@@ -27,16 +27,18 @@ dependencies {
 
     compile 'javax.servlet:servlet-api:2.5'
 
-    compile 'com.bazaarvoice.jolt:jolt-core:0.0.14'
-    compile 'com.bazaarvoice.jolt:json-utils:0.0.14'
-
     compile 'com.google.appengine.tools:appengine-gcs-client:0.4.3'
 
     compile 'com.squareup.retrofit:retrofit:1.8.0'
     compile 'com.squareup.retrofit:converter-jackson:1.8.0'
 
-    compile 'io.reactivex:rxjava:1.0.1'
+    testCompile 'junit:junit:4.0'
 
+    testCompile "com.google.appengine:appengine-testing:${gaePluginVer}"
+    testCompile "com.google.appengine:appengine-api-stubs:${gaePluginVer}"
+    testCompile "com.google.appengine:appengine-api-labs:${gaePluginVer}"
+
+    testCompile "com.squareup.retrofit:retrofit-mock:${retrofitVer}"
 }
 
 appengine {
