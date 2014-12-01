@@ -99,23 +99,23 @@ public class Currency {
 
     /**
      * Constructs an instance of a currency, using the given parameters. The
-     * value parameter must be non-negative, and the three string parameters
-     * must be non-null. Value will be converted to a {@link java.math
-     * .BigDecimal}.
+     * value parameter must be a string representation of a non-negative
+     * decimal, and the code parameter must be non-null. Value will be converted
+     * to a {@link java.math .BigDecimal}.
      * <p/>
      * It is strongly suggested that the code and name parameters should be
      * non-empty and actually match the intended use. The code parameter is
      * <i>not</i> checked for validity.
      *
-     * @param value       the value of the currency, relative to USD. Must be
-     *                    non-negative
-     * @param code        the standard three letter code for this currency (e.g.
-     *                    USD, GBP, EUR, etc.) Cannot be null
+     * @param value the value of the currency, relative to USD. Must be
+     *              non-negative
+     * @param code  the standard three letter code for this currency (e.g. USD,
+     *              GBP, EUR, etc.) Cannot be null
      */
     @JsonCreator // This constructor will be used by Jackson for deserialisation
     public Currency(@JsonProperty("value") final String value,
-            @JsonProperty("code") final String code) {
-        this(new BigDecimal(value), code, "","");
+                    @JsonProperty("code") final String code) {
+        this(new BigDecimal(value), code, "", "");
     }
 
     /**

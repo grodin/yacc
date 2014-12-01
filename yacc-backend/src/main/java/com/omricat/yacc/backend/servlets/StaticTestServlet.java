@@ -22,7 +22,7 @@
    /master/HelloWorld
 */
 
-package com.omricat.yacc.backend;
+package com.omricat.yacc.backend.servlets;
 
 import java.io.IOException;
 

@@ -5,3 +5,9 @@ runtime: java
 threadsafe: true
 static_files: #
     - include: /test/**.json
+
+handlers:
+    - url: /get-latest-currencies
+      login: admin
+      servlet: com.omricat.yacc.backend.servlets.DownloadServlet
+      name: cronjob
