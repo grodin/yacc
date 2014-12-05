@@ -1,20 +1,24 @@
 <!-- Generated from app.yaml. Do not edit. -->
-<web-app version='2.5' xmlns='http://java.sun.com/xml/ns/javaee' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd'>
-  <servlet>
-    <servlet-name>cronjob</servlet-name>
-    <servlet-class>com.omricat.yacc.backend.servlets.DownloadServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>cronjob</servlet-name>
-    <url-pattern>/get-latest-currencies</url-pattern>
-  </servlet-mapping>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>aname</web-resource-name>
-      <url-pattern>/get-latest-currencies</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>admin</role-name>
-    </auth-constraint>
-  </security-constraint>
+<web-app version='2.5' xmlns='http://java.sun.com/xml/ns/javaee'
+         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+         xsi:schemaLocation='http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd'>
+    <servlet>
+        <servlet-name>cronjob</servlet-name>
+        <servlet-class>
+            com.omricat.yacc.backend.servlets.DownloadLatestCurrenciesServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>cronjob</servlet-name>
+        <url-pattern>/get-latest-currencies</url-pattern>
+    </servlet-mapping>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>aname</web-resource-name>
+            <url-pattern>/get-latest-currencies</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
 </web-app>

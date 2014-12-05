@@ -33,40 +33,26 @@ import java.nio.channels.Channels;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 class CurrenciesProcessor {
 
-    private final Logger log;
-
-    private final GcsService gcsService;
-
     private final ObjectMapper mapper;
 
     private final CurrencyService service;
 
-    CurrenciesProcessor(@NotNull final GcsService gcsService,
-                        @NotNull final CurrencyService service,
-                        @NotNull final ObjectMapper mapper,
-                        @NotNull final Logger log) {
-        this.gcsService = checkNotNull(gcsService);
+    CurrenciesProcessor(@NotNull final CurrencyService service,
+                        @NotNull final ObjectMapper mapper) {
         this.service = checkNotNull(service);
         this.mapper = checkNotNull(mapper);
-        this.log = checkNotNull(log);
 
-    }
-
-    void log(final Level level, final Throwable e) {
-        log.log(level, "Exception: ", e);
     }
 
     Currencies download() throws IOException {
         final Map<String, String> map = service.getLatestCurrencies()
                 .get(0); // Should only be one element in the array
-        final long timeStamp = Long.valueOf(map.remove("DateTime"));
+        final long timeStamp = Long.parseLong(map.remove("DateTime"));
         final List<Currency> currencyList = new LinkedList<>();
 
         for (Map.Entry<String, String> entry : map.entrySet()) {

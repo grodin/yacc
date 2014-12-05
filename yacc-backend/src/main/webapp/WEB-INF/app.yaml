@@ -9,5 +9,5 @@ static_files: #
 handlers:
     - url: /get-latest-currencies
       login: admin
-      servlet: com.omricat.yacc.backend.servlets.DownloadServlet
+      servlet: com.omricat.yacc.backend.servlets.DownloadLatestCurrenciesServlet
       name: cronjob downloader for latest currencies

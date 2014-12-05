@@ -20,9 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalFileServiceTestConfig;
+import com.google.appengine.tools.development.testing
+        .LocalBlobstoreServiceTestConfig;
+import com.google.appengine.tools.development.testing
+        .LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing
+        .LocalFileServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.omricat.yacc.backend.api.CurrencyService;
@@ -50,20 +53,18 @@ import static junit.framework.Assert.assertTrue;
 
 public class CurrenciesProcessorTest {
 
-    private final Config config = new
-            Config();
-    private CurrencyService mockCurrencyService;
-
     private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
             new LocalTaskQueueTestConfig(), new LocalFileServiceTestConfig(),
-            new LocalBlobstoreServiceTestConfig(), new LocalDatastoreServiceTestConfig());
+            new LocalBlobstoreServiceTestConfig(),
+            new LocalDatastoreServiceTestConfig());
 
     private ObjectMapper mapper = new ObjectMapper();
-    private GcsFilename gcsFilename = new GcsFilename(config.bucket,
-            config.filename);
+    private GcsFilename gcsFilename = new GcsFilename(Config.bucket,
+            Config.filename);
 
-    private final Logger log = Logger.getLogger(DownloadServlet.class
-            .getName());
+    private final Logger log = Logger.getLogger
+            (DownloadLatestCurrenciesServlet.class
+                    .getName());
 
     private CurrenciesProcessor currenciesProcessorUnderTest;
     private MockRestAdapter mockRestAdapter;
@@ -72,15 +73,17 @@ public class CurrenciesProcessorTest {
     public void setup() throws IOException {
         helper.setUp();
 
-        GcsService gcsService = GcsServiceFactory.createGcsService();
+        final GcsService gcsService = GcsServiceFactory.createGcsService();
 
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(config.endpoint).build();
+        final RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint
+                (Config.endpoint).build();
         mockRestAdapter = MockRestAdapter.from(restAdapter);
-        mockCurrencyService = mockRestAdapter.create(CurrencyService.class,
-                new MockCurrencyService());
+        final CurrencyService mockCurrencyService = mockRestAdapter.create
+                (CurrencyService.class,
+                        new MockCurrencyService());
 
-        currenciesProcessorUnderTest = new CurrenciesProcessor(gcsService,
-                mockCurrencyService,mapper,log);
+        currenciesProcessorUnderTest = new CurrenciesProcessor(
+                mockCurrencyService, mapper);
     }
 
     @After
@@ -110,29 +113,29 @@ public class CurrenciesProcessorTest {
             e.printStackTrace();
         }
         Set<Currency> currSet = new HashSet<>();
-        currSet.add(new Currency("1","USD"));
-        currSet.add(new Currency("1.5","GBP"));
+        currSet.add(new Currency("1", "USD"));
+        currSet.add(new Currency("1.5", "GBP"));
         assertTrue(currs.getCurrencies().containsAll(currSet));
     }
 
 
     private static class MockCurrencyService implements CurrencyService {
 
-        private final Map<String,String> currencyMap;
+        private final Map<String, String> currencyMap;
 
         MockCurrencyService() {
             currencyMap = new HashMap<>();
-            currencyMap.put("DateTime","1417390802");
-            currencyMap.put("USD","1\r");
-            currencyMap.put("GBP","1.5\r");
-            currencyMap.put("EUR","0.893\r");
+            currencyMap.put("DateTime", "1417390802");
+            currencyMap.put("USD", "1\r");
+            currencyMap.put("GBP", "1.5\r");
+            currencyMap.put("EUR", "0.893\r");
 
         }
 
 
         @Override
         public List<Map<String, String>> getLatestCurrencies() {
-            final ArrayList<Map<String,String>> list = new ArrayList<>();
+            final ArrayList<Map<String, String>> list = new ArrayList<>();
             list.add(0, currencyMap);
             return list;
         }

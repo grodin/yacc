@@ -18,7 +18,7 @@ package com.omricat.yacc.backend.servlets;
 
 class Config {
 
-    final String endpoint = "http://www.getexchangerates.com";
-    final String filename = "currencies-latest.json";
-    final String bucket = "yacc-backend.appspot.com";
+    final static String endpoint = "http://www.getexchangerates.com";
+    final static String filename = "currencies-latest.json";
+    final static String bucket = "yacc-backend.appspot.com";
 }
