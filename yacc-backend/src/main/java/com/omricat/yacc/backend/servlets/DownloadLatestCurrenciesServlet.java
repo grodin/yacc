@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -58,8 +57,7 @@ public class DownloadLatestCurrenciesServlet extends HttpServlet {
     private final transient ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void init(final ServletConfig config) throws ServletException {
-        super.init(config);
+    public void init() throws ServletException {
         mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
 
         final RestAdapter restAdapter = new RestAdapter.Builder()
@@ -78,7 +76,7 @@ public class DownloadLatestCurrenciesServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest req,
                          final HttpServletResponse resp) throws
             ServletException, IOException {
-        if (true || req.getHeader("X-AppEngine-Cron") != null) {
+        if (req.getHeader("X-AppEngine-Cron") != null) {
             Currencies currencies = currenciesProcessor.download();
             try {
                 currenciesProcessor.writeToStore(currencies, gcsFilename,

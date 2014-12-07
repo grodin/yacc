@@ -44,11 +44,15 @@ dependencies {
 
 appengine {
 
+    // allow debugging the local dev server
+    jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000']
+
+
     daemon = false
     httpAddress = '0.0.0.0'
     downloadSdk = false
     appcfg {
-        oauth2 = false
+        oauth2 = true
 
         app {
             id = 'yacc-backend'

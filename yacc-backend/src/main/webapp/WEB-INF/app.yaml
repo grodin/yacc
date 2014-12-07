@@ -1,5 +1,5 @@
 application: yacc-backend
-version: 0-1-test
+version: 0-1
 runtime: java
 #api_version: 1
 threadsafe: true
@@ -7,7 +7,11 @@ static_files: #
     - include: /test/**.json
 
 handlers:
-    - url: /get-latest-currencies
+    - url: /update-cron
       login: admin
       servlet: com.omricat.yacc.backend.servlets.DownloadLatestCurrenciesServlet
       name: cronjob downloader for latest currencies
+
+    - url: /latest
+      servlet : com.omricat.yacc.backend.servlets.LatestServlet
+      name: returns the most recent data from the data store
