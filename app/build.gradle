@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 dependencies {
     compile project(':core')
     compile project(':yacc-backend')
-    compile 'com.android.support:support-v4:21.0.0'
-    compile 'com.android.support:appcompat-v7:21.0.0'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
-    compile 'com.android.support:cardview-v7:21.0.0'
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile 'com.android.support:cardview-v7:21.0.3'
 
     // Intellij annotations (NotNull, Nullable)
     compile 'com.intellij:annotations:12.0'
