@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test of Currency class.
@@ -47,20 +47,45 @@ public class CurrencyTest {
 
     @Test
     public void testJsonDeserialisation() throws IOException {
-        String json = "{\"value\":\"3.6732\",\"code\":\"AED\"}";
+        String json = "{\"value\":\"3.6732\",\"code\":\"EUR\"," +
+                "\"name\":\"Euro\"}";
         ObjectMapper objMapper = new ObjectMapper();
-        Currency curr1 = null;
-        curr1 = objMapper.readValue(json, Currency.class);
-        Currency curr2 = new Currency("3.6732", "AED");
-        assertTrue(curr2.equals(curr1));
+        Currency currFromJSON = null;
+        currFromJSON = objMapper.readValue(json, Currency.class);
+        Currency curr = new Currency("3.6732", "EUR", "Euro");
+        assertThat(curr).isEqualTo(currFromJSON);
     }
 
     @Test
     public void testJsonSerialisation() throws JsonProcessingException {
-        Currency curr = new Currency("3.6732", "AED");
+        Currency curr = new Currency("3.6732", "EUR", "Euro");
         ObjectMapper objectMapper = new ObjectMapper();
         String convertedJson = objectMapper.writeValueAsString(curr);
-        final String expected = "{\"value\":\"3.6732\",\"code\":\"AED\"}";
-        assertEquals(expected,convertedJson);
+        final String expected = "{\"code\":\"EUR\",\"value\":\"3.6732\"," +
+                "\"name\":\"Euro\"}";
+        assertThat(convertedJson).isEqualTo(expected);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructor1stParamNull() throws Exception {
+        new Currency(null,"EUR","Euro");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructor2ndParamNull() throws Exception {
+        new Currency("1.0",null,"Euro");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructor3rdParamNull() throws Exception {
+        new Currency("1.0","EUR",null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructor4thParamNull() throws Exception {
+        new Currency("1.0","EUR","Euro",null);
+    }
+
+
+
 }

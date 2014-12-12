@@ -40,6 +40,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @JsonSerialize(using = CurrencySerializer.class)
 public class Currency {
 
+    public static final String VALUE = "value";
+    public static final String CODE = "code";
+    public static final String NAME = "name";
     final BigDecimal value;
     final String code;
     final String name;
@@ -91,7 +94,7 @@ public class Currency {
      * @param description an optional short description of the currency (e.g.
      *                    "The currency used in the USA"). Cannot be null
      */
-    public Currency(final String value, @NotNull final String code,
+    public Currency(@NotNull final String value, @NotNull final String code,
                     @NotNull final String name,
                     @NotNull final String description) {
         this(new BigDecimal(value), code, name, description);
@@ -110,12 +113,14 @@ public class Currency {
      * @param value the value of the currency, relative to USD. Must be
      *              non-negative
      * @param code  the standard three letter code for this currency (e.g. USD,
-     *              GBP, EUR, etc.) Cannot be null
+     * @param name  the name of this currency. Cannot be null
      */
     @JsonCreator // This constructor will be used by Jackson for deserialisation
-    public Currency(@JsonProperty("value") final String value,
-                    @JsonProperty("code") final String code) {
-        this(new BigDecimal(value), code, "", "");
+    public Currency(@NotNull @JsonProperty( VALUE ) final String value,
+                    @NotNull @JsonProperty( CODE ) final String code,
+                    @NotNull @JsonProperty( NAME ) final String
+                            name) {
+        this(new BigDecimal(value), code, name, "");
     }
 
     /**
@@ -206,4 +211,6 @@ public class Currency {
         result = 31 * result + description.hashCode();
         return result;
     }
+
+
 }
