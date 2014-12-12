@@ -38,7 +38,8 @@ dependencies {
     testCompile "com.google.appengine:appengine-api-stubs:${gaePluginVer}"
     testCompile "com.google.appengine:appengine-api-labs:${gaePluginVer}"
 
-    testCompile "com.squareup.retrofit:retrofit-mock:${rootProject.ext.retrofitVer}"
+    testCompile "com.squareup.retrofit:retrofit-mock:" +
+            "${rootProject.ext.retrofitVersion}"
 }
 
 appengine {
