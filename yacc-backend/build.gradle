@@ -16,37 +16,35 @@ apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'appengine'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
 
 dependencies {
-    // Intellij annotations (NotNull, Nullable)
     compile project(':core')
-    compile 'com.intellij:annotations:12.0'
-    // my library providing the preconditions checks from Guava
-    compile 'com.omricat.guava-preconditions:guava-preconditions:18.0'
 
     compile 'javax.servlet:servlet-api:2.5'
 
     compile 'com.google.appengine.tools:appengine-gcs-client:0.4.3'
 
-    compile "com.squareup.retrofit:retrofit:${retrofitVer}"
-    compile "com.squareup.retrofit:converter-jackson:${retrofitVer}"
+    // Intellij annotations (NotNull, Nullable)
+    compile "${rootProject.ext.intellijAnnotations}"
+    // my library providing the preconditions checks from Guava
+    compile "${rootProject.ext.guavaPreconditions}"
 
-    testCompile 'junit:junit:4.0'
+    compile "${rootProject.ext.retrofit}"
+    compile "${rootProject.ext.retrofitJackson}"
+
+    testCompile "${rootProject.ext.junit}"
 
     testCompile "com.google.appengine:appengine-testing:${gaePluginVer}"
     testCompile "com.google.appengine:appengine-api-stubs:${gaePluginVer}"
     testCompile "com.google.appengine:appengine-api-labs:${gaePluginVer}"
 
-    testCompile "com.squareup.retrofit:retrofit-mock:${retrofitVer}"
+    testCompile "com.squareup.retrofit:retrofit-mock:${rootProject.ext.retrofitVer}"
 }
 
 appengine {
 
     // allow debugging the local dev server
     jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000']
-
 
     daemon = false
     httpAddress = '0.0.0.0'
@@ -56,6 +54,7 @@ appengine {
 
         app {
             id = 'yacc-backend'
+            version = "${rootProject.ext.versionName}"
         }
 
         update {

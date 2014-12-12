@@ -3,46 +3,46 @@ apply plugin: 'com.android.application'
 dependencies {
     compile project(':core')
     compile project(':yacc-backend')
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.android.support:recyclerview-v7:21.0.3'
-    compile 'com.android.support:cardview-v7:21.0.3'
+
+    def supportVersion = '21.0.3'
+
+    compile "com.android.support:support-v4:$supportVersion"
+    compile "com.android.support:appcompat-v7:$supportVersion"
+    compile "com.android.support:recyclerview-v7:$supportVersion"
+    compile "com.android.support:cardview-v7:$supportVersion"
 
     // Intellij annotations (NotNull, Nullable)
-    compile 'com.intellij:annotations:12.0'
+    compile "${rootProject.ext.intellijAnnotations}"
 
     // my library providing the preconditions checks from Guava
-    compile 'com.omricat.guava-preconditions:guava-preconditions:18.0'
+    compile "${rootProject.ext.guavaPreconditions}"
 
-    compile 'com.squareup.dagger:dagger:1.2.2'
+    compile "${rootProject.ext.retrofit}"
+    compile "${rootProject.ext.retrofitJackson}"
 
-    compile "com.squareup.retrofit:retrofit:${retrofitVer}"
-    compile "com.squareup.retrofit:converter-jackson:${retrofitVer}"
-
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
+    compile "${rootProject.ext.jackson}"
 
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
 
-    compile 'io.reactivex:rxjava:1.0.1'
+    compile "${rootProject.ext.rxJava}"
     compile 'io.reactivex:rxandroid:0.23.0'
 
     compile 'com.jakewharton:butterknife:6.0.0'
-    compile 'com.jakewharton:disklrucache:2.0.2'
 }
 
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.0.1"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         applicationId "com.omricat.yacc"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode versionMajor * 100000 + versionMinor * 10000 +
-                versionPatch * 1000 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionCode rootProject.ext.versionCode
+        versionName "${rootProject.ext.versionMajor}.${rootProject.ext.versionMinor}." +
+                "${rootProject.ext.versionPatch}"
     }
     buildTypes {
         debug {
@@ -55,8 +55,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility rootProject.ext.sourceCompatibility
+        targetCompatibility rootProject.ext.targetCompatibility
     }
 
     packagingOptions {

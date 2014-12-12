@@ -1,16 +1,20 @@
 apply plugin: 'java'
 
+version rootProject.ext.versionCode
+
 dependencies {
 
     // Intellij annotations (NotNull, Nullable)
-    compile 'com.intellij:annotations:12.0'
+    compile "${rootProject.ext.intellijAnnotations}"
 
     // my library providing the preconditions checks from Guava
-    compile 'com.omricat.guava-preconditions:guava-preconditions:18.0'
+    compile "${rootProject.ext.guavaPreconditions}"
 
 
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
+    compile "${rootProject.ext.jackson}"
 
-    testCompile 'junit:junit:4.0'
+    testCompile "${rootProject.ext.junit}"
     testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
+    testCompile "${rootProject.ext.assertJ}"
+
 }

@@ -15,9 +15,38 @@ buildscript {
 
 ext {
     versionMajor = 0
-    versionMinor = 0
+    versionMinor = 1
     versionPatch = 1
     versionBuild = 0 // bump for dogfood builds, public betas, etc.
+
+    versionCode = versionMajor * 100000 + versionMinor * 10000 +
+            versionPatch * 1000 + versionBuild
+
+    versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
+
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+
+
+    androidRuntime = 'com.google.android:android:4.1.1.4'
+    androidSupportV4 = 'com.google.android:support-v4:r7'
+
+    intellijAnnotations = 'com.intellij:annotations:12.0'
+    guavaPreconditions = 'com.omricat.guava-preconditions:guava-preconditions:18.0'
+
+    rxJava = 'io.reactivex:rxjava:1.0.1'
+
+    retrofitVersion = '1.8.0'
+
+    retrofit = "com.squareup.retrofit:retrofit:$retrofitVersion"
+    retrofitJackson = "com.squareup.retrofit:converter-jackson:$retrofitVersion"
+
+    jackson = 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
+
+    junit = 'junit:junit:4.11'
+    assertJ = 'org.assertj:assertj-core:1.7.0'
+
+
 }
 
 
