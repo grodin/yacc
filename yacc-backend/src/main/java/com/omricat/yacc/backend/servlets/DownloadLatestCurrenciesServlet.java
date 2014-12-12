@@ -16,60 +16,21 @@
 
 package com.omricat.yacc.backend.servlets;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.cloudstorage.RetryParams;
-import com.omricat.yacc.backend.api.CurrencyService;
-import com.omricat.yacc.data.Currencies;
-
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import retrofit.RestAdapter;
-import retrofit.appengine.UrlFetchClient;
-import retrofit.converter.JacksonConverter;
-
 public class DownloadLatestCurrenciesServlet extends HttpServlet {
 
-    private final transient Logger log = Logger.getLogger
-            (DownloadLatestCurrenciesServlet.class
-            .getName());
-
-    private transient CurrenciesProcessor currenciesProcessor;
-    private final transient GcsFilename gcsFilename = new GcsFilename(Config
-            .bucket,
-            Config.filename);
-    private final transient GcsService gcsService = GcsServiceFactory
-            .createGcsService(new RetryParams.Builder()
-                    .initialRetryDelayMillis(10)
-                    .retryMaxAttempts(10)
-                    .totalRetryPeriodMillis(15000)
-                    .build());
-    private final transient ObjectMapper mapper = new ObjectMapper();
+    private final UpdateLatestCurrenciesHelper helper =
+            UpdateLatestCurrenciesHelper.newInstance();
 
     @Override
     public void init() throws ServletException {
-        mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
-
-        final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(Config.endpoint)
-                .setClient(new UrlFetchClient())
-                .setConverter(new JacksonConverter(mapper))
-                .build();
-        final CurrencyService service = restAdapter.create(CurrencyService
-                .class);
-
-        currenciesProcessor = new CurrenciesProcessor(service,
-                mapper);
+        helper.init();
     }
 
     @Override
@@ -77,17 +38,12 @@ public class DownloadLatestCurrenciesServlet extends HttpServlet {
                          final HttpServletResponse resp) throws
             ServletException, IOException {
         if (req.getHeader("X-AppEngine-Cron") != null) {
-            Currencies currencies = currenciesProcessor.download();
-            try {
-                currenciesProcessor.writeToStore(currencies, gcsFilename,
-                        gcsService);
-                resp.setContentType("application/json");
-                mapper.writeValue(resp.getWriter(), currencies);
-            } catch (IOException e) {
-                log.log(Level.WARNING, "Caught exception", e);
-                throw e;
-            }
-
+            // This header is only set if we've been called
+            //  as a cron job by AppEngine
+            helper.downloadCurrencies(resp);
+        } else {
+            // 403 Unauthorized response
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
