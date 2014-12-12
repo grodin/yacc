@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DownloadLatestCurrenciesServlet extends HttpServlet {
 
-    private final UpdateLatestCurrenciesHelper helper =
+    private transient final UpdateLatestCurrenciesHelper helper =
             UpdateLatestCurrenciesHelper.newInstance();
 
     @Override
@@ -40,7 +40,8 @@ public class DownloadLatestCurrenciesServlet extends HttpServlet {
         if (req.getHeader("X-AppEngine-Cron") != null) {
             // This header is only set if we've been called
             //  as a cron job by AppEngine
-            helper.downloadCurrencies(resp);
+            resp.setContentType("application/json");
+            helper.downloadCurrencies(resp.getOutputStream());
         } else {
             // 403 Unauthorized response
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

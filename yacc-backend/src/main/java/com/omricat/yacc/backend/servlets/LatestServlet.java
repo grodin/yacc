@@ -21,13 +21,14 @@ import com.google.appengine.tools.cloudstorage.GcsInputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.omricat.yacc.backend.util.IOUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.channels.Channels;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,10 +47,6 @@ public class LatestServlet extends HttpServlet {
     private final GcsFilename fileName = new GcsFilename(Config.bucket,
             Config.filename);
 
-    @Override
-    public void init() throws ServletException {
-
-    }
 
     @Override
     protected void doGet(final HttpServletRequest req,
@@ -58,25 +55,16 @@ public class LatestServlet extends HttpServlet {
         resp.setContentType("application/json");
         GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel
                 (fileName, 0, BUFFER_SIZE);
-        copy(Channels.newInputStream(readChannel), resp.getOutputStream());
-    }
-
-    /**
-     * Transfer the data from the inputStream to the outputStream. Then close
-     * both streams.
-     */
-    private void copy(InputStream input, OutputStream output) throws
-            IOException {
+        final ServletOutputStream outputStream = resp.getOutputStream();
         try {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytesRead = input.read(buffer);
-            while (bytesRead != -1) {
-                output.write(buffer, 0, bytesRead);
-                bytesRead = input.read(buffer);
-            }
-        } finally {
-            input.close();
-            output.close();
+            IOUtils.copy(Channels.newInputStream(readChannel), outputStream,
+                    BUFFER_SIZE);
+        } catch (FileNotFoundException e) {
+            final UpdateLatestCurrenciesHelper helper =
+                    UpdateLatestCurrenciesHelper.newInstance();
+            helper.init();
+            helper.downloadCurrencies(outputStream);
         }
     }
+
 }
