@@ -29,7 +29,7 @@ import com.google.appengine.tools.development.testing
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.omricat.yacc.backend.api.CurrencyService;
-import com.omricat.yacc.data.Currencies;
+import com.omricat.yacc.data.CurrencySet;
 import com.omricat.yacc.data.Currency;
 
 import org.junit.After;
@@ -59,8 +59,8 @@ public class CurrenciesProcessorTest {
             new LocalDatastoreServiceTestConfig());
 
     private ObjectMapper mapper = new ObjectMapper();
-    private GcsFilename gcsFilename = new GcsFilename(Config.bucket,
-            Config.filename);
+    private GcsFilename gcsFilename = new GcsFilename(Config.BUCKET,
+            Config.LATEST_CURRENCY_FILENAME);
 
     private final Logger log = Logger.getLogger
             (DownloadLatestCurrenciesServlet.class
@@ -76,7 +76,7 @@ public class CurrenciesProcessorTest {
         final GcsService gcsService = GcsServiceFactory.createGcsService();
 
         final RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint
-                (Config.endpoint).build();
+                (Config.CURRENCY_DATA_ENDPOINT).build();
         mockRestAdapter = MockRestAdapter.from(restAdapter);
         final CurrencyService mockCurrencyService = mockRestAdapter.create
                 (CurrencyService.class,
@@ -95,7 +95,7 @@ public class CurrenciesProcessorTest {
 
     @Test
     public void testTimestamp() {
-        Currencies currs = null;
+        CurrencySet currs = null;
         try {
             currs = currenciesProcessorUnderTest.download();
         } catch (IOException e) {
@@ -106,15 +106,15 @@ public class CurrenciesProcessorTest {
 
     @Test
     public void testCurrencyData() {
-        Currencies currs = null;
+        CurrencySet currs = null;
         try {
             currs = currenciesProcessorUnderTest.download();
         } catch (IOException e) {
             e.printStackTrace();
         }
         Set<Currency> currSet = new HashSet<>();
-        currSet.add(new Currency("1", "USD"));
-        currSet.add(new Currency("1.5", "GBP"));
+        currSet.add(new Currency("1", "USD", null));
+        currSet.add(new Currency("1.5", "GBP", null));
         assertTrue(currs.getCurrencies().containsAll(currSet));
     }
 

@@ -30,8 +30,10 @@ public class CurrencySerializer extends JsonSerializer<Currency> {
                           final SerializerProvider provider) throws
             IOException, JsonProcessingException {
         jgen.writeStartObject();
-        jgen.writeStringField("value", value.getValueInUSD().toPlainString());
-        jgen.writeStringField("code", value.getCode());
+        jgen.writeStringField(Currency.CODE, value.getCode());
+        jgen.writeStringField(Currency.VALUE,
+                value.getValueInUSD().toPlainString());
+        jgen.writeStringField(Currency.NAME, value.getName());
         jgen.writeEndObject();
     }
 }

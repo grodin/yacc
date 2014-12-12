@@ -34,13 +34,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Immutable class to hold a collection of {@link com.omricat.yacc.data
  * .Currency} objects and a timestamp indicating when the currencies were last
  * updated.
+ * <p/>
+ * <strong>Note:</strong> despite the name, this class <strong>does
+ * not</strong> implement {@link java.util.Set}.
+ *
  */
-public class Currencies {
+public class CurrencySet {
 
-    private final Set<Currency> currencies;
+    public static final String TIMESTAMP = "timestamp";
+    public static final String CURRENCIES = "currencies";
 
     // lastUpdatedTimestamp is a unix epoch timestamp
+    @JsonProperty( TIMESTAMP )
     private final long lastUpdatedTimestamp;
+
+    @JsonProperty( CURRENCIES )
+    private final Set<Currency> currencies;
 
     /**
      * Instantiates a currencies list object.
@@ -51,10 +60,10 @@ public class Currencies {
      *                             Must be non-negative.
      */
     @JsonCreator
-    public Currencies(@JsonProperty( "currencies" ) @NotNull final Currency[]
-                              currencies,
-                      @JsonProperty( "timestamp" ) @NotNull final long
-                              lastUpdatedTimestamp) {
+    public CurrencySet(@JsonProperty( CURRENCIES ) @NotNull final Currency[]
+                               currencies,
+                       @JsonProperty( TIMESTAMP ) final long
+                               lastUpdatedTimestamp) {
         checkArgument(lastUpdatedTimestamp >= 0);
         this.currencies = Collections.unmodifiableSet(new HashSet<>(
                 Arrays.asList(checkNotNull(currencies))));
@@ -72,9 +81,9 @@ public class Currencies {
     @Override
     public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof Currencies)) return false;
+        if (!(o instanceof CurrencySet)) return false;
 
-        Currencies that = (Currencies) o;
+        CurrencySet that = (CurrencySet) o;
 
         if (lastUpdatedTimestamp != that.lastUpdatedTimestamp) return false;
         if (!currencies.equals(that.currencies))
@@ -90,5 +99,5 @@ public class Currencies {
         return result;
     }
 
-    public final static Currencies EMPTY = new Currencies(new Currency[] {}, 0);
+    public final static CurrencySet EMPTY = new CurrencySet(new Currency[] {}, 0);
 }
