@@ -1,4 +1,4 @@
 cron:
   - description: download latest currency values
-    url: /update-cron
+    url: /update-currency-data
     schedule: every 5 minutes
