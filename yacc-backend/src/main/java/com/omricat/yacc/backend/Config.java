@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.backend.servlets;
+package com.omricat.yacc.backend;
 
-class Config {
+public class Config {
 
-    final static String endpoint = "http://www.getexchangerates.com";
-    final static String filename = "currencies-latest.json";
-    final static String bucket = "yacc-backend.appspot.com";
+    public final static String CURRENCY_DATA_ENDPOINT = "http://www" +
+            ".getexchangerates.com";
+    public final static String LATEST_CURRENCY_FILENAME = "currencies-latest" +
+            ".json";
+    public final static String BUCKET = "yacc-backend.appspot.com";
+    public static final String CURRENCY_NAMES = "currency-names.json";
 }

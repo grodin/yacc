@@ -16,16 +16,12 @@
 
 package com.omricat.yacc.backend.servlets;
 
-import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsInputChannel;
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.omricat.yacc.backend.datastore.CurrenciesStore;
 import com.omricat.yacc.backend.util.IOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.channels.Channels;
+import java.io.InputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -37,31 +33,26 @@ public class LatestServlet extends HttpServlet {
 
     private static final int BUFFER_SIZE = 2 * 1024 * 1024;
 
-    private final GcsService gcsService = GcsServiceFactory.createGcsService
-            (new RetryParams.Builder()
-                    .initialRetryDelayMillis(10)
-                    .retryMaxAttempts(10)
-                    .totalRetryPeriodMillis(15000)
-                    .build());
-
-    private final GcsFilename fileName = new GcsFilename(Config.bucket,
-            Config.filename);
-
-
     @Override
     protected void doGet(final HttpServletRequest req,
-                         final HttpServletResponse resp) throws
-            ServletException, IOException {
+                         final HttpServletResponse resp)
+            throws ServletException, IOException {
+
         resp.setContentType("application/json");
-        GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel
-                (fileName, 0, BUFFER_SIZE);
+
+        final InputStream inputStream = CurrenciesStore.getInstance()
+                .getInputStream();
+
         final ServletOutputStream outputStream = resp.getOutputStream();
+
         try {
-            IOUtils.copy(Channels.newInputStream(readChannel), outputStream,
+            IOUtils.copy(inputStream, outputStream,
                     BUFFER_SIZE);
         } catch (FileNotFoundException e) {
+
             final UpdateLatestCurrenciesHelper helper =
                     UpdateLatestCurrenciesHelper.newInstance();
+
             helper.init();
             helper.downloadCurrencies(outputStream);
         }

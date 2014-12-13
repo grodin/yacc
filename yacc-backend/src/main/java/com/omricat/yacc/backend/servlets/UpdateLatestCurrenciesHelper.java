@@ -19,11 +19,9 @@ package com.omricat.yacc.backend.servlets;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
-import com.omricat.yacc.data.Currencies;
+import com.omricat.yacc.data.CurrencySet;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,18 +40,12 @@ class UpdateLatestCurrenciesHelper {
                     .getName());
     CurrenciesProcessor currenciesProcessor;
     final GcsFilename gcsFilename;
-    final GcsService gcsService = GcsServiceFactory
-            .createGcsService(new RetryParams.Builder()
-                    .initialRetryDelayMillis(10)
-                    .retryMaxAttempts(10)
-                    .totalRetryPeriodMillis(15000)
-                    .build());
     final ObjectMapper mapper = new ObjectMapper();
 
     private UpdateLatestCurrenciesHelper() {
         this.gcsFilename = new GcsFilename(Config
-                .bucket,
-                Config.filename);
+                .BUCKET,
+                Config.LATEST_CURRENCY_FILENAME);
     }
 
     public static UpdateLatestCurrenciesHelper newInstance() {
@@ -64,7 +56,7 @@ class UpdateLatestCurrenciesHelper {
         mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
 
         final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(Config.endpoint)
+                .setEndpoint(Config.CURRENCY_DATA_ENDPOINT)
                 .setClient(new UrlFetchClient())
                 .setConverter(new JacksonConverter(mapper))
                 .build();
@@ -76,11 +68,10 @@ class UpdateLatestCurrenciesHelper {
     }
 
     void downloadCurrencies(final OutputStream outStream) throws IOException {
-        Currencies currencies = currenciesProcessor.download();
+        CurrencySet currencySet = currenciesProcessor.download();
         try {
-            currenciesProcessor.writeToStore(currencies, gcsFilename,
-                    gcsService);
-            mapper.writeValue(outStream, currencies);
+            currenciesProcessor.writeToStore(currencySet);
+            mapper.writeValue(outStream, currencySet);
         } catch (IOException e) {
             log.log(Level.WARNING, "Caught exception", e);
             throw e;

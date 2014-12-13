@@ -17,19 +17,15 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.tools.cloudstorage.GcsFileOptions;
-import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
-import com.google.appengine.tools.cloudstorage.GcsService;
 import com.omricat.yacc.backend.api.CurrencyService;
-import com.omricat.yacc.data.Currencies;
+import com.omricat.yacc.backend.datastore.CurrenciesStore;
 import com.omricat.yacc.data.Currency;
+import com.omricat.yacc.data.CurrencySet;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.channels.Channels;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +45,7 @@ class CurrenciesProcessor {
 
     }
 
-    Currencies download() throws IOException {
+    @NotNull CurrencySet download() throws IOException {
         final Map<String, String> map = service.getLatestCurrencies()
                 .get(0); // Should only be one element in the array
         final long timeStamp = Long.parseLong(map.remove("DateTime"));
@@ -61,10 +57,10 @@ class CurrenciesProcessor {
                  */
             String currencyValue = entry.getValue().replace("\r", "");
             currencyList.add(new Currency(currencyValue,
-                    entry.getKey()));
+                    entry.getKey(), null));
         }
 
-        return new Currencies(currencyList
+        return new CurrencySet(currencyList
                 .toArray(new Currency[currencyList.size()]), timeStamp);
 
     }
@@ -72,21 +68,13 @@ class CurrenciesProcessor {
     // Note close is not called  in a finally block because files aren't
     // written until they are closed. So if an exception is thrown,
     // the file will remain as it was before this method was called
-    public void writeToStore(@NotNull final Currencies currencies,
-                             @NotNull final GcsFilename filename,
-                             @NotNull final GcsService gcsService)
+    public void writeToStore(@NotNull final CurrencySet currencySet)
             throws IOException {
 
-        final GcsFileOptions fileOptions = new GcsFileOptions.Builder()
-                .mimeType("application/json")
-                .build();
-
-        final GcsOutputChannel outputChannel = gcsService.createOrReplace
-                (filename, fileOptions);
-        final OutputStream stream = Channels.newOutputStream
-                (outputChannel);
-        mapper.writeValue(stream, currencies);
-        outputChannel.close();
+        final OutputStream stream = CurrenciesStore.getInstance()
+                .getOutputStream();
+        mapper.writeValue(stream, currencySet);
+        stream.close();
 
     }
 }

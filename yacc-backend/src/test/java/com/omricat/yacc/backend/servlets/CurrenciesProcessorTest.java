@@ -28,6 +28,7 @@ import com.google.appengine.tools.development.testing
         .LocalFileServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
+import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.data.CurrencySet;
 import com.omricat.yacc.data.Currency;
