@@ -17,6 +17,7 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.NamesStore;
 
@@ -40,7 +41,7 @@ public class CurrencyNamesServlet extends HttpServlet {
 
     @Override public void init() throws ServletException {
         final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://openexchangerates.org")
+                .setEndpoint(Config.CURRENCY_NAMES_ENDPOINT)
                 .setClient(new UrlFetchClient())
                 .setConverter(new JacksonConverter(mapper))
                 .build();

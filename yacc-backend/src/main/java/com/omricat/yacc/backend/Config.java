@@ -18,10 +18,13 @@ package com.omricat.yacc.backend;
 
 public class Config {
 
-    public final static String CURRENCY_DATA_ENDPOINT = "http://www" +
-            ".getexchangerates.com";
-    public final static String LATEST_CURRENCY_FILENAME = "currencies-latest" +
-            ".json";
-    public final static String BUCKET = "yacc-backend.appspot.com";
+    public static final String CURRENCY_DATA_ENDPOINT =
+            "http://www.getexchangerates.com";
+    public static final String LATEST_CURRENCY_FILENAME =
+            "currencies-latest.json";
+    public static final String BUCKET = "yacc-backend.appspot.com";
     public static final String CURRENCY_NAMES = "currency-names.json";
+    public static final String CURRENCY_NAMES_ENDPOINT = "http://openexchangerates.org";
+
+    public static final String OPENEXCHANGERATES_ORG_APP_ID = "29659946fdb9498e82d0da4be65c4d15";
 }

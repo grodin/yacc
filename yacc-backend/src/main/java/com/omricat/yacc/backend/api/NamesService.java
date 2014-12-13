@@ -16,13 +16,15 @@
 
 package com.omricat.yacc.backend.api;
 
+import com.omricat.yacc.backend.Config;
+
 import java.util.Map;
 
 import retrofit.http.GET;
 
 public interface NamesService {
 
-    @GET("/api/currencies.json?app_id=29659946fdb9498e82d0da4be65c4d15")
+    @GET( "/api/currencies.json?app_id=" + Config.OPENEXCHANGERATES_ORG_APP_ID )
     Map<String,String> getCurrencyNames();
 
 }
