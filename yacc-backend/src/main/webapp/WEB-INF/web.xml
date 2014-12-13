@@ -1,24 +1,36 @@
 <!-- Generated from app.yaml. Do not edit. -->
-<web-app version='2.5' xmlns='http://java.sun.com/xml/ns/javaee'
-         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-         xsi:schemaLocation='http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd'>
-    <servlet>
-        <servlet-name>cronjob</servlet-name>
-        <servlet-class>
-            com.omricat.yacc.backend.servlets.DownloadLatestCurrenciesServlet
-        </servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>cronjob</servlet-name>
-        <url-pattern>/get-latest-currencies</url-pattern>
-    </servlet-mapping>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>aname</web-resource-name>
-            <url-pattern>/get-latest-currencies</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
+<web-app version='2.5' xmlns='http://java.sun.com/xml/ns/javaee' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd'>
+  <servlet>
+    <servlet-name>cronjob downloader for latest currencies</servlet-name>
+    <servlet-class>com.omricat.yacc.backend.servlets.DownloadLatestCurrenciesServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>returns the most recent data from the data store</servlet-name>
+    <servlet-class>com.omricat.yacc.backend.servlets.LatestServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>downloads, stores and returns names of currencies</servlet-name>
+    <servlet-class>com.omricat.yacc.backend.servlets.CurrencyNamesServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cronjob downloader for latest currencies</servlet-name>
+    <url-pattern>/update-currency-data</url-pattern>
+  </servlet-mapping>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>aname</web-resource-name>
+      <url-pattern>/update-currency-data</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <servlet-mapping>
+    <servlet-name>returns the most recent data from the data store</servlet-name>
+    <url-pattern>/latest</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>downloads, stores and returns names of currencies</servlet-name>
+    <url-pattern>/update-names</url-pattern>
+  </servlet-mapping>
 </web-app>
