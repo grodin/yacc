@@ -60,11 +60,12 @@ class UpdateLatestCurrenciesHelper {
                 .setClient(new UrlFetchClient())
                 .setConverter(new JacksonConverter(mapper))
                 .build();
-        final CurrencyService service = restAdapter.create(CurrencyService
-                .class);
 
-        currenciesProcessor = new CurrenciesProcessor(service,
-                mapper);
+        final CurrencyService service =
+                restAdapter.create(CurrencyService.class);
+
+        currenciesProcessor =
+                new CurrenciesProcessor(service, mapper);
     }
 
     void downloadCurrencies(final OutputStream outStream) throws IOException {

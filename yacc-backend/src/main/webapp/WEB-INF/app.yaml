@@ -15,3 +15,7 @@ handlers:
     - url: /latest
       servlet : com.omricat.yacc.backend.servlets.LatestServlet
       name: returns the most recent data from the data store
+
+    - url: /update-names
+      servlet: com.omricat.yacc.backend.servlets.CurrencyNamesServlet
+      name: downloads, stores and returns names of currencies

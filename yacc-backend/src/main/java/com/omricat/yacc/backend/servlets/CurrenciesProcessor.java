@@ -17,14 +17,17 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.MapType;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.datastore.CurrenciesStore;
+import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.data.Currency;
 import com.omricat.yacc.data.CurrencySet;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,10 +41,15 @@ class CurrenciesProcessor {
 
     private final CurrencyService service;
 
+    private final MapType mapType;
+
     CurrenciesProcessor(@NotNull final CurrencyService service,
                         @NotNull final ObjectMapper mapper) {
         this.service = checkNotNull(service);
         this.mapper = checkNotNull(mapper);
+
+        mapType = mapper.getTypeFactory().constructMapType(Map.class,
+                String.class,String.class);
 
     }
 
@@ -51,13 +59,20 @@ class CurrenciesProcessor {
         final long timeStamp = Long.parseLong(map.remove("DateTime"));
         final List<Currency> currencyList = new LinkedList<>();
 
+        final InputStream inStream = NamesStore.getInstance().getInputStream();
+        final Map<String,String> names = mapper.readValue(inStream,mapType);
+
         for (Map.Entry<String, String> entry : map.entrySet()) {
                 /* The currency service gives currency values which end
                     with "\r" so we remove it from each
                  */
             String currencyValue = entry.getValue().replace("\r", "");
+            String name = names.get(entry.getKey());
+            if (name == null) {
+                name = "";
+            }
             currencyList.add(new Currency(currencyValue,
-                    entry.getKey(), null));
+                    entry.getKey(), name));
         }
 
         return new CurrencySet(currencyList
