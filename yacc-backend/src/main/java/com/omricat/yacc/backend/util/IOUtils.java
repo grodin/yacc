@@ -17,25 +17,33 @@
 package com.omricat.yacc.backend.util;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 public class IOUtils {
 
-    public static void copy(InputStream input, OutputStream output, final int
-            bufferSize) throws
-            IOException {
-        try {
-            byte[] buffer = new byte[bufferSize];
-            int bytesRead = input.read(buffer);
-            while (bytesRead != -1) {
-                output.write(buffer, 0, bytesRead);
-                bytesRead = input.read(buffer);
-            }
-        } finally {
-            input.close();
-            output.close();
+    public static final int DEFAULT_BUFFER_SIZE = 4 * 1024;
+    public static int EOF = -1;
+
+    public static int copy(Reader input, Writer output) throws IOException {
+        return copy(input,output,DEFAULT_BUFFER_SIZE);
+    }
+
+    public static int copy(Reader input, Writer output,
+                           int bufferSize) throws IOException {
+        return copy(input, output, new char[bufferSize]);
+    }
+
+    public static int copy(Reader input, Writer output, char[] buffer)
+            throws IOException {
+        int count = 0;
+        int n = 0;
+        while (EOF != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+            count += n;
         }
+
+        return count;
     }
 
 }

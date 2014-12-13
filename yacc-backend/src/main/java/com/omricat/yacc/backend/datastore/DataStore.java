@@ -28,8 +28,8 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.channels.Channels;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -49,6 +49,7 @@ class DataStore {
             .Builder()
             .mimeType("application/json")
             .build();
+    public static final String UTF_8 = "utf-8";
 
     protected final GcsFilename gcsFilename;
     protected final GcsService gcsService;
@@ -80,39 +81,41 @@ class DataStore {
     }
 
     /**
-     * Returns an {@link java.io.InputStream} representing the Currencies
-     * store.
+     * Returns a {@link Reader} which reads from the {@link GcsFilename}
+     * passed in the constructor.
      */
-    @NotNull public InputStream getInputStream() {
+    @NotNull public Reader getReader() {
         final GcsInputChannel readChannel = gcsService
-                .openPrefetchingReadChannel
-                        (gcsFilename, 0, bufferSize);
-        return Channels.newInputStream(readChannel);
+                .openPrefetchingReadChannel(gcsFilename, 0, bufferSize);
+        return Channels.newReader(readChannel, UTF_8);
     }
 
     /**
-     * Returns an {@link OutputStream} representing the Currencies store.
+     * Returns a {@link Writer} representing the
+     * {@link GcsFilename} used to construct the instance.
      *
      * @param fileOptions instance of {@link GcsFileOptions} to use when opening
      *                    the stream, not null.
      * @throws IOException
      */
-    @NotNull public OutputStream getOutputStream(@NotNull final GcsFileOptions
-                                                  fileOptions)
+    @NotNull public Writer getWriter(@NotNull final GcsFileOptions
+                                             fileOptions)
             throws IOException {
         final GcsOutputChannel outputChannel = gcsService.createOrReplace
                 (gcsFilename, checkNotNull(fileOptions));
-        return Channels.newOutputStream
-                (outputChannel);
+        return Channels.newWriter(outputChannel, UTF_8);
     }
 
     /**
-     * Convenience method which returns an {@link OutputStream} representing the
-     * Currencies store, using {@link #DEFAULT_FILE_OPTIONS}.
+     * Convenience method which returns a {@link Writer} representing the
+     * {@link GcsFilename} used to construct the instance, using {@link
+     * #DEFAULT_FILE_OPTIONS}.
      *
      * @throws IOException
      */
-    @NotNull public OutputStream getOutputStream() throws IOException {
-        return getOutputStream(DEFAULT_FILE_OPTIONS);
+    @NotNull public Writer getWriter() throws IOException {
+        return getWriter(DEFAULT_FILE_OPTIONS);
     }
+
+
 }

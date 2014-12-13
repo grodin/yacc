@@ -26,9 +26,10 @@ import com.omricat.yacc.data.CurrencySet;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ class CurrenciesProcessor {
         this.mapper = checkNotNull(mapper);
 
         mapType = mapper.getTypeFactory().constructMapType(Map.class,
-                String.class,String.class);
+                String.class, String.class);
 
     }
 
@@ -59,13 +60,16 @@ class CurrenciesProcessor {
         final long timeStamp = Long.parseLong(map.remove("DateTime"));
         final List<Currency> currencyList = new LinkedList<>();
 
-        final InputStream inStream = NamesStore.getInstance().getInputStream();
-        final Map<String,String> names = mapper.readValue(inStream,mapType);
+        Map<String, String> names;
+        try (Reader in = NamesStore.getInstance().getReader()) {
+            names = mapper.readValue(in, mapType);
+        } catch (FileNotFoundException e) {
+            names = NamesHelper.getInstance(mapper).getAndStoreCurrencyNames();
+        }
 
         for (Map.Entry<String, String> entry : map.entrySet()) {
-                /* The currency service gives currency values which end
-                    with "\r" so we remove it from each
-                 */
+            // The currency service gives currency values which end
+            //   with "\r" so we remove it from each
             String currencyValue = entry.getValue().replace("\r", "");
             String name = names.get(entry.getKey());
             if (name == null) {
@@ -86,8 +90,8 @@ class CurrenciesProcessor {
     public void writeToStore(@NotNull final CurrencySet currencySet)
             throws IOException {
 
-        final OutputStream stream = CurrenciesStore.getInstance()
-                .getOutputStream();
+        final Writer stream = CurrenciesStore.getInstance()
+                .getWriter();
         mapper.writeValue(stream, currencySet);
         stream.close();
 

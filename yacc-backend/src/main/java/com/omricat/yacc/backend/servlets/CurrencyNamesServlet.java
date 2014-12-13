@@ -17,12 +17,9 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omricat.yacc.backend.Config;
-import com.omricat.yacc.backend.api.NamesService;
-import com.omricat.yacc.backend.datastore.NamesStore;
+import com.omricat.yacc.backend.util.HttpUtils;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -30,39 +27,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import retrofit.RestAdapter;
-import retrofit.appengine.UrlFetchClient;
-import retrofit.converter.JacksonConverter;
-
 public class CurrencyNamesServlet extends HttpServlet {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-    private NamesService service;
+    private NamesHelper namesHelper;
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Override public void init() throws ServletException {
-        final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(Config.CURRENCY_NAMES_ENDPOINT)
-                .setClient(new UrlFetchClient())
-                .setConverter(new JacksonConverter(mapper))
-                .build();
 
-        service = restAdapter.create(NamesService.class);
-
+        namesHelper = NamesHelper.getInstance(mapper);
     }
 
     @Override
     protected void doGet(final HttpServletRequest req,
                          final HttpServletResponse resp)
             throws ServletException, IOException {
-        Map<String,String> names = service.getCurrencyNames();
-        try (OutputStream outputStream = NamesStore.getInstance()
-                .getOutputStream()) {
-            mapper.writeValue(outputStream, names);
-        }
+        Map<String, String> names = namesHelper.getAndStoreCurrencyNames();
 
-        resp.setContentType("application/json");
+        HttpUtils.setJsonUTF8ContentType(resp);
 
-        mapper.writeValue(resp.getWriter(),names);
+        mapper.writeValue(resp.getWriter(), names);
 
     }
+
 }

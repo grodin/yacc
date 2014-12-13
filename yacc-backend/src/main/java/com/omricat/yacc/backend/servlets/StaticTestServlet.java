@@ -24,6 +24,8 @@
 
 package com.omricat.yacc.backend.servlets;
 
+import com.omricat.yacc.backend.util.HttpUtils;
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServlet;
@@ -144,7 +146,7 @@ public class StaticTestServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        resp.setContentType("application/json");
+        HttpUtils.setJsonUTF8ContentType(resp);
         resp.getWriter().print(RESPONSE);
     }
 

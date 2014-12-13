@@ -24,7 +24,7 @@ import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.data.CurrencySet;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,11 +68,11 @@ class UpdateLatestCurrenciesHelper {
                 new CurrenciesProcessor(service, mapper);
     }
 
-    void downloadCurrencies(final OutputStream outStream) throws IOException {
+    void downloadCurrencies(final Writer out) throws IOException {
         CurrencySet currencySet = currenciesProcessor.download();
         try {
             currenciesProcessor.writeToStore(currencySet);
-            mapper.writeValue(outStream, currencySet);
+            mapper.writeValue(out, currencySet);
         } catch (IOException e) {
             log.log(Level.WARNING, "Caught exception", e);
             throw e;

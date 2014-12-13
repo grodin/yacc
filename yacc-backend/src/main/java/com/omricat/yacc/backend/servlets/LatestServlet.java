@@ -17,37 +17,32 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.omricat.yacc.backend.datastore.CurrenciesStore;
+import com.omricat.yacc.backend.util.HttpUtils;
 import com.omricat.yacc.backend.util.IOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class LatestServlet extends HttpServlet {
 
-    private static final int BUFFER_SIZE = 2 * 1024 * 1024;
-
     @Override
     protected void doGet(final HttpServletRequest req,
                          final HttpServletResponse resp)
             throws ServletException, IOException {
 
-        resp.setContentType("application/json");
+        HttpUtils.setJsonUTF8ContentType(resp);
 
-        final InputStream inputStream = CurrenciesStore.getInstance()
-                .getInputStream();
+        final Writer outputStream = resp.getWriter();
 
-        final ServletOutputStream outputStream = resp.getOutputStream();
-
-        try {
-            IOUtils.copy(inputStream, outputStream,
-                    BUFFER_SIZE);
+        try (Reader inputStream = CurrenciesStore.getInstance().getReader()) {
+            IOUtils.copy(inputStream, outputStream);
         } catch (FileNotFoundException e) {
 
             final UpdateLatestCurrenciesHelper helper =
@@ -55,7 +50,10 @@ public class LatestServlet extends HttpServlet {
 
             helper.init();
             helper.downloadCurrencies(outputStream);
+        } finally {
+            outputStream.close();
         }
     }
+
 
 }

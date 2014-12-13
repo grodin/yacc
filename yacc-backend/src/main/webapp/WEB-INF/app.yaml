@@ -19,3 +19,10 @@ handlers:
     - url: /update-names
       servlet: com.omricat.yacc.backend.servlets.CurrencyNamesServlet
       name: downloads, stores and returns names of currencies
+
+system_properties:
+    file.encoding: UTF-8
+    DEFAULT_ENCODING: UTF-8
+
+inbound_services:
+- warmup

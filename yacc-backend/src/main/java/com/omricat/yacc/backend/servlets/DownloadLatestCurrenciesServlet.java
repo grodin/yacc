@@ -16,6 +16,8 @@
 
 package com.omricat.yacc.backend.servlets;
 
+import com.omricat.yacc.backend.util.HttpUtils;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -40,8 +42,8 @@ public class DownloadLatestCurrenciesServlet extends HttpServlet {
         if (req.getHeader("X-AppEngine-Cron") != null) {
             // This header is only set if we've been called
             //  as a cron job by AppEngine
-            resp.setContentType("application/json");
-            helper.downloadCurrencies(resp.getOutputStream());
+            HttpUtils.setJsonUTF8ContentType(resp);
+            helper.downloadCurrencies(resp.getWriter());
         } else {
             // 403 Unauthorized response
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
