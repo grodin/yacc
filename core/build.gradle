@@ -1,6 +1,9 @@
 apply plugin: 'java'
 
-version rootProject.ext.versionCode
+
+sourceCompatibility = rootProject.ext.sourceCompatibility
+targetCompatibility = rootProject.ext.targetCompatibility
+version = rootProject.ext.versionCode
 
 dependencies {
 
