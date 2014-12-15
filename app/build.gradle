@@ -46,6 +46,7 @@ android {
     }
     buildTypes {
         debug {
+
             versionNameSuffix "-${versionBuild}DEBUG"
         }
 

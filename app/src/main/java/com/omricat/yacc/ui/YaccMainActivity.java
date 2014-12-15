@@ -19,22 +19,14 @@ package com.omricat.yacc.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.omricat.yacc.NavigationDrawerFragment;
 import com.omricat.yacc.R;
 
 
 public class YaccMainActivity extends Activity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the
-     * navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+        {
 
     /**
      * Used to store the last screen title. For use in {@link
@@ -47,14 +39,9 @@ public class YaccMainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_currencies);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(R.id.container,
@@ -62,29 +49,6 @@ public class YaccMainActivity extends Activity
         }
     }
 
-    @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-//        FragmentManager fragmentManager = getFragmentManager();
-//        fragmentManager.beginTransaction()
-//                .replace(R.id.container, PlaceholderFragment.newInstance
-// (position + 1))
-//                .commit();
-    }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
-    }
 
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
@@ -96,15 +60,9 @@ public class YaccMainActivity extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.currencies, menu);
             restoreActionBar();
             return true;
-        }
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
