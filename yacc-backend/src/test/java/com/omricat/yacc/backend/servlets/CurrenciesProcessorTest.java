@@ -20,24 +20,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.development.testing
-        .LocalBlobstoreServiceTestConfig;
-import com.google.appengine.tools.development.testing
-        .LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing
-        .LocalFileServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalFileServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
-import com.omricat.yacc.data.CurrencySet;
+import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.data.Currency;
+import com.omricat.yacc.data.CurrencySet;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,7 +69,7 @@ public class CurrenciesProcessorTest {
                     .getName());
 
     private CurrenciesProcessor currenciesProcessorUnderTest;
-    private MockRestAdapter mockRestAdapter;
+
 
     @Before
     public void setup() throws IOException {
@@ -78,13 +79,15 @@ public class CurrenciesProcessorTest {
 
         final RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint
                 (Config.CURRENCY_DATA_ENDPOINT).build();
-        mockRestAdapter = MockRestAdapter.from(restAdapter);
+        final MockRestAdapter mockRestAdapter = MockRestAdapter.from
+                (restAdapter);
         final CurrencyService mockCurrencyService = mockRestAdapter.create
                 (CurrencyService.class,
                         new MockCurrencyService());
+        final NamesStore mockNamesStore = MockNamesStore.getInstance();
 
         currenciesProcessorUnderTest = new CurrenciesProcessor(
-                mockCurrencyService, mapper);
+                mockCurrencyService, mapper, mockNamesStore);
     }
 
     @After
@@ -106,19 +109,31 @@ public class CurrenciesProcessorTest {
     }
 
     @Test
-    public void testCurrencyData() {
-        CurrencySet currs = null;
-        try {
-            currs = currenciesProcessorUnderTest.download();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void testCurrencyData() throws Exception {
+        CurrencySet currs = currenciesProcessorUnderTest.download();
         Set<Currency> currSet = new HashSet<>();
-        currSet.add(new Currency("1", "USD", null));
-        currSet.add(new Currency("1.5", "GBP", null));
+        currSet.add(new Currency("1", "USD", "US Dollars"));
+        currSet.add(new Currency("1.5", "GBP", "UK Pounds"));
         assertTrue(currs.getCurrencies().containsAll(currSet));
     }
 
+
+    private static class MockNamesStore extends NamesStore {
+
+        private MockNamesStore() {
+            super();
+        }
+
+        @NotNull public static MockNamesStore getInstance() {
+            return new MockNamesStore();
+        }
+
+        @NotNull @Override public Reader getReader() {
+            return new StringReader("{\"USD\":\"US " +
+                    "Dollars\"," +
+                    "\"EUR\":\"Euros\",\"GBP\":\"UK Pounds\"}");
+        }
+    }
 
     private static class MockCurrencyService implements CurrencyService {
 

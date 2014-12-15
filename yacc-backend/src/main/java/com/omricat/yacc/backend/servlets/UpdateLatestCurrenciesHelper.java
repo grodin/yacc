@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
+import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.data.CurrencySet;
 
 import java.io.IOException;
@@ -64,8 +65,8 @@ class UpdateLatestCurrenciesHelper {
         final CurrencyService service =
                 restAdapter.create(CurrencyService.class);
 
-        currenciesProcessor =
-                new CurrenciesProcessor(service, mapper);
+        currenciesProcessor = new CurrenciesProcessor(service, mapper,
+                NamesStore.getInstance());
     }
 
     void downloadCurrencies(final Writer out) throws IOException {

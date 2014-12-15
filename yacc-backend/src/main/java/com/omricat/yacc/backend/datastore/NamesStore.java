@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class NamesStore extends DataStore {
 
-    private NamesStore() {
+    protected NamesStore() {
         super(new GcsFilename(Config.BUCKET, Config.CURRENCY_NAMES),
                 DEFAULT_GCS_SERVICE,DEFAULT_BUFFER_SIZE);
     }

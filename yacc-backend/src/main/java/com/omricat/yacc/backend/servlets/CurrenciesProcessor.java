@@ -44,8 +44,12 @@ class CurrenciesProcessor {
 
     private final MapType mapType;
 
+    private final NamesStore namesStore;
+
     CurrenciesProcessor(@NotNull final CurrencyService service,
-                        @NotNull final ObjectMapper mapper) {
+                        @NotNull final ObjectMapper mapper,
+                        @NotNull final NamesStore namesStore) {
+        this.namesStore = checkNotNull(namesStore);
         this.service = checkNotNull(service);
         this.mapper = checkNotNull(mapper);
 
@@ -61,7 +65,7 @@ class CurrenciesProcessor {
         final List<Currency> currencyList = new LinkedList<>();
 
         Map<String, String> names;
-        try (Reader in = NamesStore.getInstance().getReader()) {
+        try (Reader in = namesStore.getReader()) {
             names = mapper.readValue(in, mapType);
         } catch (FileNotFoundException e) {
             names = NamesHelper.getInstance(mapper).getAndStoreCurrencyNames();
