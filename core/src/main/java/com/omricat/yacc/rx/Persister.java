@@ -16,24 +16,34 @@
 
 package com.omricat.yacc.rx;
 
+import com.google.common.base.Optional;
+
+import org.jetbrains.annotations.NotNull;
+
 import rx.Observable;
 
 /**
- * Created by jsc on 15/12/14.
+ *
+ * @author Joseph Cooper
  */
-public interface Persister<K> {
+public interface Persister<K, V> {
 
     /**
-     * Return an observable which will return the object requested in {@code
-     * onNext()} and then call {@code onCompleted()},
-     * or if the object was not found, will call {@code onCompeleted()}
-     * immediately.
+     * Return an {@link Observable} wrapping an {@link Optional}, which will
+     * contain the value corresponding to the parameter {@code key}, if it
+     * exists. Otherwise, the wrapped {@code Optional} will be empty.
      *
-     * @param key
-     * @param <T>
-     * @return
+     * @param key the key to use to lookup the value
+     * @return an {@code Observable<Optional>} containing the value if it
+     * exists
      */
-    <T> Observable<T> get(K key);
-    <T> Observable<T> put(K key);
+    @NotNull Observable<Optional<V>> get(@NotNull K key);
+
+    /**
+     * @param key
+     * @param data
+     * @return an {@code Observable }
+     */
+    @NotNull Observable<V> put(@NotNull K key, @NotNull V data);
 
 }
