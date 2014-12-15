@@ -14,7 +14,6 @@ dependencies {
     // Intellij annotations (NotNull, Nullable)
     compile "${rootProject.ext.intellijAnnotations}"
 
-    // my library providing the preconditions checks from Guava
     compile "${rootProject.ext.guavaPreconditions}"
 
     compile "${rootProject.ext.retrofit}"

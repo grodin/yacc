@@ -59,25 +59,24 @@
     <orderEntry type="library" exported="" name="servlet-api-2.5" level="project" />
     <orderEntry type="library" exported="" name="appengine-gcs-client-0.4.3" level="project" />
     <orderEntry type="library" exported="" name="annotations-12.0" level="project" />
-    <orderEntry type="library" exported="" name="guava-preconditions-18.0" level="project" />
+    <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="retrofit-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="converter-jackson-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="jackson-databind-2.4.3" level="project" />
     <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.17" level="project" />
-    <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="joda-time-2.3" level="project" />
     <orderEntry type="library" exported="" name="google-api-services-storage-v1-rev15-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-appengine-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-appengine-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-jackson2-1.19.0" level="project" />
-    <orderEntry type="library" exported="" name="jsr305-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" name="jackson-annotations-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-2.4.3" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="google-oauth-client-appengine-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-servlet-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="jsr305-1.3.9" level="project" />
     <orderEntry type="library" exported="" name="httpclient-4.0.1" level="project" />
     <orderEntry type="library" exported="" name="google-oauth-client-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="google-oauth-client-servlet-1.19.0" level="project" />
@@ -92,7 +91,9 @@
     <orderEntry type="library" exported="" scope="TEST" name="appengine-api-stubs-1.9.15" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="appengine-api-labs-1.9.15" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="retrofit-mock-1.8.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="mockito-core-1.10.15" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="objenesis-2.1" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

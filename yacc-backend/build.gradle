@@ -26,8 +26,8 @@ dependencies {
 
     // Intellij annotations (NotNull, Nullable)
     compile "${rootProject.ext.intellijAnnotations}"
-    // my library providing the preconditions checks from Guava
-    compile "${rootProject.ext.guavaPreconditions}"
+
+    compile "${rootProject.ext.guava}"
 
     compile "${rootProject.ext.retrofit}"
     compile "${rootProject.ext.retrofitJackson}"
@@ -40,6 +40,7 @@ dependencies {
 
     testCompile "com.squareup.retrofit:retrofit-mock:" +
             "${rootProject.ext.retrofitVersion}"
+    testCompile "${rootProject.ext.mockito}"
 }
 
 appengine {

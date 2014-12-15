@@ -34,6 +34,8 @@ ext {
     intellijAnnotations = 'com.intellij:annotations:12.0'
     guavaPreconditions = 'com.omricat.guava-preconditions:guava-preconditions:18.0'
 
+    guava = 'com.google.guava:guava:18.0@jar'
+
     rxJava = 'io.reactivex:rxjava:1.0.1'
 
     okhttpUrlConnection = 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
@@ -49,6 +51,7 @@ ext {
     junit = 'junit:junit:4.11'
     assertJ = 'org.assertj:assertj-core:1.7.0'
 
+    mockito = 'org.mockito:mockito-core:1.10.15'
 
 }
 
