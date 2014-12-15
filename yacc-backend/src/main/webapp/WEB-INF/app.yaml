@@ -3,8 +3,6 @@ version: 0-1-1
 runtime: java
 #api_version: 1
 threadsafe: true
-static_files: #
-    - include: /test/**.json
 
 handlers:
     - url: /update-currency-data
