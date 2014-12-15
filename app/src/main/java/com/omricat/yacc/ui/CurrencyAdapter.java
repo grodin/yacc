@@ -23,8 +23,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.omricat.yacc.R;
-import com.omricat.yacc.data.CurrencySet;
-import com.omricat.yacc.data.Currency;
+import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.Currency;
 
 import org.jetbrains.annotations.NotNull;
 

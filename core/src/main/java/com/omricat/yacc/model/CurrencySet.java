@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data;
+package com.omricat.yacc.model;
 
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -31,7 +31,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Immutable class to hold a collection of {@link com.omricat.yacc.data
+ * Immutable class to hold a collection of {@link com.omricat.yacc.model
  * .Currency} objects and a timestamp indicating when the currencies were last
  * updated.
  * <p/>
@@ -53,7 +53,7 @@ public class CurrencySet {
 
     /**
      * Instantiates a currencies list object.
-     * @param currencies array of {@link com.omricat.yacc.data.Currency}
+     * @param currencies array of {@link com.omricat.yacc.model.Currency}
      *                   objects. May be empty, but not null.
      * @param lastUpdatedTimestamp unix epoch timestamp indicating the last
      *                             time the list of currencies was updated.

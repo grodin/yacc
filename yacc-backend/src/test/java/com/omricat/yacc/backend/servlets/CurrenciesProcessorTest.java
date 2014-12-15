@@ -28,8 +28,8 @@ import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.datastore.NamesStore;
-import com.omricat.yacc.data.Currency;
-import com.omricat.yacc.data.CurrencySet;
+import com.omricat.yacc.model.Currency;
+import com.omricat.yacc.model.CurrencySet;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;

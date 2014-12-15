@@ -16,7 +16,7 @@
 
 package com.omricat.yacc.api;
 
-import com.omricat.yacc.data.CurrencySet;
+import com.omricat.yacc.model.CurrencySet;
 
 import retrofit.http.GET;
 import rx.Observable;

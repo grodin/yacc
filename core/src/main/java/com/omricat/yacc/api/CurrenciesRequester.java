@@ -17,7 +17,7 @@
 package com.omricat.yacc.api;
 
 import com.google.common.base.Preconditions;
-import com.omricat.yacc.data.CurrencySet;
+import com.omricat.yacc.model.CurrencySet;
 
 import org.jetbrains.annotations.NotNull;
 

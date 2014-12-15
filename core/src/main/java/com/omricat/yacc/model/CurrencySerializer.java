@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data;
+package com.omricat.yacc.model;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

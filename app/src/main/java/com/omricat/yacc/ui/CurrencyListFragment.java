@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
-import com.omricat.yacc.data.CurrencySet;
+import com.omricat.yacc.model.CurrencySet;
 import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.api.CurrenciesRequester;
 

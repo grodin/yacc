@@ -22,7 +22,7 @@ import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.datastore.NamesStore;
-import com.omricat.yacc.data.CurrencySet;
+import com.omricat.yacc.model.CurrencySet;
 
 import java.io.IOException;
 import java.io.Writer;
