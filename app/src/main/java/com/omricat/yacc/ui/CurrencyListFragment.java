@@ -26,8 +26,8 @@ import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.data.CurrencySet;
-import com.omricat.yacc.network.CurrenciesService;
-import com.omricat.yacc.rx.CurrenciesRequester;
+import com.omricat.yacc.api.CurrenciesService;
+import com.omricat.yacc.api.CurrenciesRequester;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

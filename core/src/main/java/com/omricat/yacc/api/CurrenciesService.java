@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.network;
+package com.omricat.yacc.api;
 
 import com.omricat.yacc.data.CurrencySet;
 
@@ -22,7 +22,9 @@ import retrofit.http.GET;
 import rx.Observable;
 
 /**
- * Created by jsc on 12/11/14.
+ * Interface representing the currency data return by the backend.
+ *
+ * @author Joseph Cooper
  */
 public interface CurrenciesService {
 

@@ -27,6 +27,8 @@
           <jvmflags>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000</jvmflags>
           <jvmflags>-Xdebug</jvmflags>
           <jvmflags>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000</jvmflags>
+          <jvmflags>-Xdebug</jvmflags>
+          <jvmflags>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000</jvmflags>
         </option>
         <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-app" />
         <option name="WEB_APP_DIR" value="$MODULE_DIR$/src/main/webapp" />

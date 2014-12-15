@@ -10,6 +10,13 @@ dependencies {
     // my library providing the preconditions checks from Guava
     compile "${rootProject.ext.guavaPreconditions}"
 
+    compile "${rootProject.ext.rxJava}"
+
+    compile "${rootProject.ext.retrofit}"
+    compile "${rootProject.ext.retrofitJackson}"
+
+    compile "${rootProject.ext.okhttpUrlConnection}"
+    compile "${rootProject.ext.okhttp}"
 
     compile "${rootProject.ext.jackson}"
 

@@ -36,6 +36,9 @@ ext {
 
     rxJava = 'io.reactivex:rxjava:1.0.1'
 
+    okhttpUrlConnection = 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    okhttp = 'com.squareup.okhttp:okhttp:2.0.0'
+
     retrofitVersion = '1.8.0'
 
     retrofit = "com.squareup.retrofit:retrofit:$retrofitVersion"

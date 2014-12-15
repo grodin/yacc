@@ -45,7 +45,11 @@ dependencies {
 appengine {
 
     // allow debugging the local dev server
-    jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000']
+    // Commented out since every time gradle syncs,
+    // it adds a new line to yacc-backend.iml,
+    // making commits less clear
+    // TODO: Try to fix backend jvmFlags
+//    jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000']
 
     daemon = false
     httpAddress = '0.0.0.0'
