@@ -26,16 +26,17 @@ import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class Requester {
+public class CurrencyDataRequester {
 
     private final Persister<String, CurrencySet> memPersister;
     private final Persister<String, CurrencySet> diskPersister;
     private final CurrenciesService service;
 
-    public Requester(@NotNull final Persister<String, CurrencySet> memPersister,
-                     @NotNull final Persister<String,
-                             CurrencySet> diskPersister,
-                     @NotNull final CurrenciesService service) {
+    public CurrencyDataRequester(@NotNull final Persister<String,
+            CurrencySet> memPersister,
+                                 @NotNull final Persister<String,
+                                         CurrencySet> diskPersister,
+                                 @NotNull final CurrenciesService service) {
         this.memPersister = checkNotNull(memPersister);
         this.diskPersister = checkNotNull(diskPersister);
         this.service = checkNotNull(service);
