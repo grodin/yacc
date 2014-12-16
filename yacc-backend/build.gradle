@@ -43,6 +43,8 @@ dependencies {
     testCompile "${rootProject.ext.mockito}"
 }
 
+appengineRun.dependsOn appengineStop
+
 appengine {
 
     // allow debugging the local dev server
@@ -52,7 +54,7 @@ appengine {
     // TODO: Try to fix backend jvmFlags
 //    jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000']
 
-    daemon = false
+    daemon = true
     httpAddress = '0.0.0.0'
     downloadSdk = false
     appcfg {
