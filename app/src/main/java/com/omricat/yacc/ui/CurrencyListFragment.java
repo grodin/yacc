@@ -25,9 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
+import com.omricat.yacc.api.NetworkCurrenciesService;
 import com.omricat.yacc.model.CurrencySet;
 import com.omricat.yacc.api.CurrenciesService;
-import com.omricat.yacc.api.CurrenciesRequester;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -56,7 +56,7 @@ public class CurrencyListFragment extends Fragment {
     RecyclerView mCardRecyclerView;
 
     private Observable<CurrencySet> request;
-    private CurrenciesRequester service;
+    private NetworkCurrenciesService service;
 
     private RestAdapter restAdapter;
 
@@ -83,7 +83,7 @@ public class CurrencyListFragment extends Fragment {
                 .setEndpoint("http://hp:8080")
                 .setConverter(new JacksonConverter())
                 .build();
-        service = new CurrenciesRequester(restAdapter.create
+        service = new NetworkCurrenciesService(restAdapter.create
                 (CurrenciesService.class));
         currencyAdapter = new CurrencyAdapter(CurrencySet.EMPTY);
 

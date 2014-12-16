@@ -29,7 +29,7 @@ import rx.Observable;
  * which wraps an existing implementation to add functionality. Planned
  * functionality includes retry with exponential back-off.
  */
-public class CurrenciesRequester implements CurrenciesService {
+public class NetworkCurrenciesService implements CurrenciesService {
 
     private final CurrenciesService service;
 
@@ -38,7 +38,7 @@ public class CurrenciesRequester implements CurrenciesService {
      * @param service instance of {@link com.omricat.yacc.api.CurrenciesService}
      *                to be wrapped. Cannot be null.
      */
-    public CurrenciesRequester(@NotNull CurrenciesService service) {
+    public NetworkCurrenciesService(@NotNull CurrenciesService service) {
         this.service = Preconditions.checkNotNull(service);
     }
 
