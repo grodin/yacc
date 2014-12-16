@@ -44,7 +44,7 @@ public class Currency {
     public static final String CODE = "code";
     public static final String NAME = "name";
     final BigDecimal value;
-    final String code;
+    final CurrencyKey code;
     final String name;
     final String description;
 
@@ -58,14 +58,39 @@ public class Currency {
      * <i>not</i> checked for validity.
      *
      * @param value       the value of the currency, relative to USD. Must be
-     *                    non-negative amd non-null.
+     *                    non-negative and non-null.
      * @param code        the standard three letter code for this currency (e.g.
      *                    USD, GBP, EUR, etc.) Cannot be null.
      * @param name        the name of this currency. Cannot be null.
      * @param description an optional short description of the currency (e.g.
      *                    "The currency used in the USA"). Cannot be null.
      */
-    public Currency(@NotNull final BigDecimal value, @NotNull final String code,
+    public Currency(@NotNull final BigDecimal value,
+                    @NotNull final String code,
+                    @NotNull final String name,
+                    @NotNull final String description) {
+        this(value, new CurrencyKey(code), name, description);
+    }
+
+    /**
+     * Constructs an instance of a currency, using the given parameters. The
+     * value parameter must be non-negative, and the three string parameters
+     * must be non-null.
+     * <p/>
+     * It is strongly suggested that the code and name parameters should be
+     * non-empty and actually match the intended use. The code parameter is
+     * <i>not</i> checked for validity.
+     *
+     * @param value       the value of the currency, relative to USD. Must be
+     *                    non-negative and non-null.
+     * @param code        {@link CurrencyKey} representing the ISO 4217 code for
+     *                    this currency, not null.
+     * @param name        the name of this currency, not null.
+     * @param description an optional short description of the currency (e.g.
+     *                    "The currency used in the USA"). Cannot be null.
+     */
+    public Currency(@NotNull final BigDecimal value,
+                    @NotNull final CurrencyKey code,
                     @NotNull final String name,
                     @NotNull final String description) {
         checkArgument(checkNotNull(value).compareTo(BigDecimal
@@ -94,7 +119,8 @@ public class Currency {
      * @param description an optional short description of the currency (e.g.
      *                    "The currency used in the USA"). Cannot be null
      */
-    public Currency(@NotNull final String value, @NotNull final String code,
+    public Currency(@NotNull final String value,
+                    @NotNull final String code,
                     @NotNull final String name,
                     @NotNull final String description) {
         this(new BigDecimal(value), code, name, description);
@@ -116,9 +142,9 @@ public class Currency {
      * @param name  the name of this currency. Cannot be null
      */
     @JsonCreator // This constructor will be used by Jackson for deserialisation
-    public Currency(@NotNull @JsonProperty( VALUE ) final String value,
-                    @NotNull @JsonProperty( CODE ) final String code,
-                    @NotNull @JsonProperty( NAME ) final String
+    public Currency(@NotNull @JsonProperty(VALUE) final String value,
+                    @NotNull @JsonProperty(CODE) final String code,
+                    @NotNull @JsonProperty(NAME) final String
                             name) {
         this(new BigDecimal(value), code, name, "");
     }
@@ -142,7 +168,7 @@ public class Currency {
      *
      * @return a string containing the three letter code
      */
-    public String getCode() {
+    public CurrencyKey getCode() {
         return code;
     }
 

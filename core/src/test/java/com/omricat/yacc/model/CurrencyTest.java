@@ -23,15 +23,15 @@ public class CurrencyTest {
 
     @Test
     public void testConvert() {
-        Currency curr1 = new Currency("1.0", "CU1", "", "");
-        Currency curr2 = new Currency("2.0", "CU2", "", "");
+        Currency curr1 = new Currency("1.0", "CUR", "", "");
+        Currency curr2 = new Currency("2.0", "CUS", "", "");
         BigDecimal val = Currency.convert(curr1, curr2, new BigDecimal(10));
         assertTrue(val.compareTo(new BigDecimal(5)) == 0);
     }
 
     @Test
     public void testConstructFromString() {
-        Currency curr = new Currency("13.3", "", "", "");
+        Currency curr = new Currency("13.3", "CUR", "", "");
         assertTrue("Value in USD is " + curr.getValueInUSD(),
                 curr.getValueInUSD().compareTo
                         (new BigDecimal("13.3")) == 0);

@@ -69,7 +69,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
     public void onBindViewHolder(final CurrencyViewHolder currencyViewHolder,
                                  final int i) {
         final Currency currency = cachedCurrencyList.get(i);
-        currencyViewHolder.vCode.setText(currency.getCode());
+        currencyViewHolder.vCode.setText(currency.getCode().key);
         currencyViewHolder.vName.setText(currency.getName());
         currencyViewHolder.vValue.setText(currency.getValueInUSD().toPlainString());
     }
