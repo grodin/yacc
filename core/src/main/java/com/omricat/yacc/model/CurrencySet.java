@@ -22,9 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -60,13 +58,12 @@ public class CurrencySet {
      *                             Must be non-negative.
      */
     @JsonCreator
-    public CurrencySet(@JsonProperty( CURRENCIES ) @NotNull final Currency[]
+    public CurrencySet(@JsonProperty( CURRENCIES ) @NotNull final Set<Currency>
                                currencies,
                        @JsonProperty( TIMESTAMP ) final long
                                lastUpdatedTimestamp) {
         checkArgument(lastUpdatedTimestamp >= 0);
-        this.currencies = Collections.unmodifiableSet(new HashSet<>(
-                Arrays.asList(checkNotNull(currencies))));
+        this.currencies = Collections.unmodifiableSet(checkNotNull(currencies));
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
@@ -99,5 +96,6 @@ public class CurrencySet {
         return result;
     }
 
-    public final static CurrencySet EMPTY = new CurrencySet(new Currency[] {}, 0);
+    public final static CurrencySet EMPTY =
+            new CurrencySet(Collections.<Currency>emptySet(), 0);
 }

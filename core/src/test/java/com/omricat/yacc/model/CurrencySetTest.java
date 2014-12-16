@@ -17,8 +17,12 @@
 package com.omricat.yacc.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.Set;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -35,24 +39,23 @@ public class CurrencySetTest {
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void testConstructorWithNullCurrencyArray() throws Exception {
-        new CurrencySet(null,1);
+        new CurrencySet(null, 1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void testConstructorWithNegativeTimestamp() throws Exception {
-        new CurrencySet(new Currency[] {},-1);
+        new CurrencySet(Collections.<Currency>emptySet(), -1);
     }
 
     @Test
     public void testJSONDeserialization() throws Exception {
-        final Currency[] currencies = {
-                new Currency("1", "USD", "US Dollars")
+        final Set<Currency> currencies = Sets.newHashSet(new Currency("1",
+                "USD", "US Dollars")
                 , new Currency("3.6732", "GBP", "UK Pound")
                 , new Currency("57.34", "EUR", "Euro")
-                , new Currency("111.42", "YEN", "Japanese Yen")
-        };
+                , new Currency("111.42", "YEN", "Japanese Yen"));
         final String json = "{\"currencies\":[{\"code\":\"GBP\"," +
                 "\"value\":\"3.6732\",\"name\":\"UK Pound\"}," +
                 "{\"code\":\"USD\",\"value\":\"1\",\"name\":\"US Dollars\"}," +
@@ -64,18 +67,17 @@ public class CurrencySetTest {
         ObjectMapper objectMapper = new ObjectMapper();
         final CurrencySet currencySetFromJSON = objectMapper.readValue(json,
                 CurrencySet
-                    .class);
+                        .class);
         assertThat(currencySetFromJSON).isEqualTo(expectedCurrencySet);
     }
 
     @Test
     public void testJSONSerializeThenDeserialize() throws Exception {
-        final Currency[] currencies = {
-                new Currency("1", "USD", "US Dollars")
+        final Set<Currency> currencies = Sets.newHashSet(new Currency("1",
+                "USD", "US Dollars")
                 , new Currency("3.6732", "GBP", "UK Pound")
                 , new Currency("57.34", "EUR", "Euro")
-                , new Currency("111.42", "YEN", "Japanese Yen")
-        };
+                , new Currency("111.42", "YEN", "Japanese Yen"));
         final CurrencySet expectedCurrencySet = new CurrencySet(currencies,
                 1415210401L);
         ObjectMapper objectMapper = new ObjectMapper();

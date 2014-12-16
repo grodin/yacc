@@ -30,9 +30,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -62,7 +62,7 @@ class CurrenciesProcessor {
         final Map<String, String> map = service.getLatestCurrencies()
                 .get(0); // Should only be one element in the array
         final long timeStamp = Long.parseLong(map.remove("DateTime"));
-        final List<Currency> currencyList = new LinkedList<>();
+        final Set<Currency> currencySet = new HashSet<>();
 
         Map<String, String> names;
         try (Reader in = namesStore.getReader()) {
@@ -79,12 +79,11 @@ class CurrenciesProcessor {
             if (name == null) {
                 name = "";
             }
-            currencyList.add(new Currency(currencyValue,
+            currencySet.add(new Currency(currencyValue,
                     entry.getKey(), name));
         }
 
-        return new CurrencySet(currencyList
-                .toArray(new Currency[currencyList.size()]), timeStamp);
+        return new CurrencySet(currencySet, timeStamp);
 
     }
 
