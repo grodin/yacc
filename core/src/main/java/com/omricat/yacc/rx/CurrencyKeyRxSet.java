@@ -16,9 +16,6 @@
 
 package com.omricat.yacc.rx;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ImmutableSet;
 import com.omricat.yacc.model.CurrencyKey;
 
@@ -39,19 +36,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * {@link Set} interface, but it should be thought of as behaving similarly.
  * Duplicate
  */
-@JsonSerialize(using = CurrencyKeyRxSetSerializer.class)
 class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
 
-    static final String SELECTED_KEYS = "selected-keys";
     private final Set<CurrencyKey> keySet = new LinkedHashSet<>();
 
     private CurrencyKeyRxSet(@NotNull final Collection<CurrencyKey> keySet) {
         this.keySet.addAll(checkNotNull(keySet));
     }
 
-    @JsonCreator
     static CurrencyKeyRxSet create(@NotNull
-                                          @JsonProperty( SELECTED_KEYS )
                                           final Collection<CurrencyKey> keys) {
         return new CurrencyKeyRxSet(keys);
     }

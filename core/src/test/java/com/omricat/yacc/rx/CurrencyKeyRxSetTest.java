@@ -16,7 +16,6 @@
 
 package com.omricat.yacc.rx;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.omricat.yacc.model.CurrencyKey;
 
@@ -98,26 +97,6 @@ public class CurrencyKeyRxSetTest {
         assertThat(keyObservable.toList().toBlocking().single()).containsAll
                 (keys);
 
-    }
-
-    @Test
-    public void testJsonSerialization() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        String ret = mapper.writeValueAsString(CurrencyKeyRxSet.create(keys));
-        assertThat(ret).isEqualTo("{\"selected-keys\":[\"GBP\",\"EUR\"," +
-                "\"USD\"]}");
-    }
-
-    @Test
-    public void testJsonDeserialization() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        CurrencyKeyRxSet keySet = mapper.readValue("{\"selected-keys\":[\"GBP" +
-                "\",\"EUR\",\"USD\"]}", CurrencyKeyRxSet.class);
-
-        assertThat(keySet.asObservable().toList().toBlocking().single())
-                .contains(gbp, usd, eur);
     }
 
     @Test
