@@ -25,5 +25,6 @@ dependencies {
     testCompile "${rootProject.ext.junit}"
     testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
     testCompile "${rootProject.ext.assertJ}"
+    testCompile "${rootProject.ext.mockito}"
 
 }
