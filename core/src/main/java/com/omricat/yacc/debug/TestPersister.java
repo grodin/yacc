@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.rx;
+package com.omricat.yacc.debug;
 
 import com.google.common.base.Optional;
+import com.omricat.yacc.rx.Persister;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ import rx.Observable;
 
 public class TestPersister<V> implements Persister<String,V> {
 
-    Map<String,V> dataMap = new HashMap<>();
+    protected Map<String,V> dataMap = new HashMap<>();
 
     @NotNull @Override
     public Observable<Optional<V>> get(@NotNull final java.lang.String key) {
@@ -40,4 +41,6 @@ public class TestPersister<V> implements Persister<String,V> {
         dataMap.put(key,data);
         return Observable.just(data);
     }
+
+
 }

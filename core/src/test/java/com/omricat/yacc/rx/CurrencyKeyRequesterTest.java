@@ -18,6 +18,7 @@ package com.omricat.yacc.rx;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
+import com.omricat.yacc.debug.TestPersister;
 import com.omricat.yacc.model.CurrencyKey;
 
 import org.junit.Test;
@@ -33,6 +34,7 @@ import java.util.Set;
 import rx.Observable;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -122,11 +124,13 @@ public class CurrencyKeyRequesterTest {
 
     @Test
     public void testRemove() throws Exception {
-
+        // TODO: implement CurrencyKeyRequesterTest#testRemove()
+        fail("Test not implemented");
     }
 
     @Test
     public void testRemoveAll() throws Exception {
-
+        // TODO: implement CurrencyKeyRequesterTest#testRemoveAll()
+        fail("Test not implemented");
     }
 }

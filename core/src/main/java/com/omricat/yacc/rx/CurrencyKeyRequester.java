@@ -126,22 +126,4 @@ public class CurrencyKeyRequester implements RxSet<CurrencyKey> {
         return keySet.asObservable();
     }
 
-    static class PersistFunc implements Func1<Set<CurrencyKey>,
-            Observable<? extends Set<CurrencyKey>>> {
-
-        private final Persister<String, Set<CurrencyKey>> diskPersister;
-
-        PersistFunc(@NotNull final Persister<String,
-                Set<CurrencyKey>> diskPersister) {
-            this.diskPersister = checkNotNull(diskPersister);
-        }
-
-        @Override
-        public Observable<? extends Set<CurrencyKey>> call(final Set<CurrencyKey> currencyKeys) {
-
-
-            return diskPersister.put
-                    (PERSISTENCE_KEY, currencyKeys);
-        }
-    }
 }
