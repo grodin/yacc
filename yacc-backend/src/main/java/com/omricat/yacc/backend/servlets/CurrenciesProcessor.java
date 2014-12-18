@@ -22,7 +22,7 @@ import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.datastore.CurrenciesStore;
 import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +58,7 @@ class CurrenciesProcessor {
 
     }
 
-    @NotNull CurrencySet download() throws IOException {
+    @NotNull CurrencyDataset download() throws IOException {
         final Map<String, String> map = service.getLatestCurrencies()
                 .get(0); // Should only be one element in the array
         final long timeStamp = Long.parseLong(map.remove("DateTime"));
@@ -83,19 +83,19 @@ class CurrenciesProcessor {
                     entry.getKey(), name));
         }
 
-        return new CurrencySet(currencySet, timeStamp);
+        return new CurrencyDataset(currencySet, timeStamp);
 
     }
 
     // Note close is not called  in a finally block because files aren't
     // written until they are closed. So if an exception is thrown,
     // the file will remain as it was before this method was called
-    public void writeToStore(@NotNull final CurrencySet currencySet)
+    public void writeToStore(@NotNull final CurrencyDataset currencyDataset)
             throws IOException {
 
         final Writer stream = CurrenciesStore.getInstance()
                 .getWriter();
-        mapper.writeValue(stream, currencySet);
+        mapper.writeValue(stream, currencyDataset);
         stream.close();
 
     }

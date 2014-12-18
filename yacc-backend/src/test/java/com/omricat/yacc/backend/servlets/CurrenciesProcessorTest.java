@@ -29,7 +29,7 @@ import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
@@ -99,7 +99,7 @@ public class CurrenciesProcessorTest {
 
     @Test
     public void testTimestamp() {
-        CurrencySet currs = null;
+        CurrencyDataset currs = null;
         try {
             currs = currenciesProcessorUnderTest.download();
         } catch (IOException e) {
@@ -110,7 +110,7 @@ public class CurrenciesProcessorTest {
 
     @Test
     public void testCurrencyData() throws Exception {
-        CurrencySet currs = currenciesProcessorUnderTest.download();
+        CurrencyDataset currs = currenciesProcessorUnderTest.download();
         Set<Currency> currSet = new HashSet<>();
         currSet.add(new Currency("1", "USD", "US Dollars"));
         currSet.add(new Currency("1.5", "GBP", "UK Pounds"));

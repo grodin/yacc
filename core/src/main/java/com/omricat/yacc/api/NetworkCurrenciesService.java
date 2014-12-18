@@ -17,7 +17,7 @@
 package com.omricat.yacc.api;
 
 import com.google.common.base.Preconditions;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +43,7 @@ public class NetworkCurrenciesService implements CurrenciesService {
     }
 
     @Override
-    public Observable<CurrencySet> getAllCurrencies() {
+    public Observable<CurrencyDataset> getAllCurrencies() {
         //TODO: Add exponential back-off using RxJava retryWhen()
         return service.getAllCurrencies();
     }

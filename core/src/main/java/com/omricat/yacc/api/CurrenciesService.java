@@ -16,7 +16,7 @@
 
 package com.omricat.yacc.api;
 
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 
 import retrofit.http.GET;
 import rx.Observable;
@@ -29,6 +29,6 @@ import rx.Observable;
 public interface CurrenciesService {
 
     @GET("/test/currencies-test.json")
-    Observable<CurrencySet> getAllCurrencies();
+    Observable<CurrencyDataset> getAllCurrencies();
 
 }

@@ -18,7 +18,7 @@ package com.omricat.yacc.rx;
 
 import com.google.common.collect.Sets;
 import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 
 import org.junit.Test;
 
@@ -34,7 +34,7 @@ public class IsDataStaleFuncTest {
     private final Currency usd = new Currency("1.0",
             "USD", "");
     private final HashSet<Currency> currencies = Sets.newHashSet(usd);
-    private final CurrencySet currencySet = new CurrencySet(currencies, 0);
+    private final CurrencyDataset currencyDataset = new CurrencyDataset(currencies, 0);
 
     @Test(expected = NullPointerException.class)
     public void testCreateWithNull() throws Exception {
@@ -43,37 +43,37 @@ public class IsDataStaleFuncTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCallWithNegativeEpoch() throws Exception {
-        IsDataStaleFunc.create(Observable.<CurrencySet>empty(),new Func0<Long>() {
+        IsDataStaleFunc.create(Observable.<CurrencyDataset>empty(),new Func0<Long>() {
 
 
             @Override public Long call() {
                 return (long) -1;
             }
-        }).call(CurrencySet.EMPTY);
+        }).call(CurrencyDataset.EMPTY);
     }
 
     @Test
     public void testCallWithLiveData() throws Exception {
-        CurrencySet ret = IsDataStaleFunc.create(Observable.just(CurrencySet
+        CurrencyDataset ret = IsDataStaleFunc.create(Observable.just(CurrencyDataset
                         .EMPTY),
                 new Func0<Long>() {
                     @Override public Long call() {
                         return (long) 2 * 60; // two minutes after 0 epoch
                     }
-                }).call(currencySet).toBlocking().single();
+                }).call(currencyDataset).toBlocking().single();
 
         assertThat(ret.getCurrencies()).contains(usd);
     }
 
     @Test
     public void testCallWithStaleData() throws Exception {
-        CurrencySet ret = IsDataStaleFunc.create(Observable.just(CurrencySet.EMPTY),
+        CurrencyDataset ret = IsDataStaleFunc.create(Observable.just(CurrencyDataset.EMPTY),
                 new Func0<Long>() {
                     @Override public Long call() {
                         return (long) (365 * 24 * 60 * 60); // one year after
                         // zero epoch
                     }
-                }).call(currencySet).toBlocking().single();
+                }).call(currencyDataset).toBlocking().single();
 
         assertThat(ret.getCurrencies()).doesNotContain(usd);
 

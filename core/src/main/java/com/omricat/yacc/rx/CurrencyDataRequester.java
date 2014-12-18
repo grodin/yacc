@@ -17,7 +17,7 @@
 package com.omricat.yacc.rx;
 
 import com.omricat.yacc.api.CurrenciesService;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,46 +28,46 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CurrencyDataRequester {
 
-    private final Persister<String, CurrencySet> memPersister;
-    private final Persister<String, CurrencySet> diskPersister;
+    private final Persister<String, CurrencyDataset> memPersister;
+    private final Persister<String, CurrencyDataset> diskPersister;
     private final CurrenciesService service;
 
     public CurrencyDataRequester(@NotNull final Persister<String,
-            CurrencySet> memPersister,
+            CurrencyDataset> memPersister,
                                  @NotNull final Persister<String,
-                                         CurrencySet> diskPersister,
+                                         CurrencyDataset> diskPersister,
                                  @NotNull final CurrenciesService service) {
         this.memPersister = checkNotNull(memPersister);
         this.diskPersister = checkNotNull(diskPersister);
         this.service = checkNotNull(service);
     }
 
-    @NotNull public Observable<CurrencySet> request(@NotNull final String key) {
-        final Observable<CurrencySet> networkFlow = service.getAllCurrencies()
-                .flatMap(new Func1<CurrencySet, Observable<? extends
-                        CurrencySet>>() {
+    @NotNull public Observable<CurrencyDataset> request(@NotNull final String key) {
+        final Observable<CurrencyDataset> networkFlow = service.getAllCurrencies()
+                .flatMap(new Func1<CurrencyDataset, Observable<? extends
+                        CurrencyDataset>>() {
 
 
                     @Override
-                    public Observable<? extends CurrencySet> call(final
-                                                                  CurrencySet
+                    public Observable<? extends CurrencyDataset> call(final
+                                                                                          CurrencyDataset
                                                                           currencySet) {
                         return diskPersister.put(key, currencySet);
                     }
                 })
-                .flatMap(new Func1<CurrencySet, Observable<? extends
-                        CurrencySet>>() {
+                .flatMap(new Func1<CurrencyDataset, Observable<? extends
+                        CurrencyDataset>>() {
 
 
                     @Override
-                    public Observable<? extends CurrencySet> call(final
-                                                                  CurrencySet
+                    public Observable<? extends CurrencyDataset> call(final
+                                                                                          CurrencyDataset
                                                                           currencySet) {
                         return memPersister.put(key, currencySet);
                     }
                 });
 
-        final Observable<CurrencySet> diskFlow = diskPersister
+        final Observable<CurrencyDataset> diskFlow = diskPersister
                 .get(key)
                 .flatMap(OptionalObservableFunc.of(networkFlow))
                 .flatMap(IsDataStaleFunc.create(networkFlow,

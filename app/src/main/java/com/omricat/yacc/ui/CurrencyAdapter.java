@@ -23,7 +23,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.omricat.yacc.R;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.model.Currency;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,16 +43,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
         .CurrencyViewHolder> {
 
-    private CurrencySet currencySet;
+    private CurrencyDataset currencyDataset;
     private List<Currency> cachedCurrencyList;
 
-    public CurrencyAdapter(@NotNull final CurrencySet currencySet) {
-        swapCurrencies(currencySet);
+    public CurrencyAdapter(@NotNull final CurrencyDataset currencyDataset) {
+        swapCurrencies(currencyDataset);
     }
 
-    public void swapCurrencies(@NotNull final CurrencySet currencySet) {
-        this.currencySet = checkNotNull(currencySet);
-        cachedCurrencyList = Arrays.asList(currencySet.getCurrencies().toArray
+    public void swapCurrencies(@NotNull final CurrencyDataset currencyDataset) {
+        this.currencyDataset = checkNotNull(currencyDataset);
+        cachedCurrencyList = Arrays.asList(currencyDataset.getCurrencies().toArray
                 (new Currency[]{}));
         notifyDataSetChanged();
     }

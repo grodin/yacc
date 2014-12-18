@@ -17,7 +17,7 @@
 package com.omricat.yacc.rx;
 
 import com.google.common.math.LongMath;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,20 +30,20 @@ import rx.functions.Func1;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class IsDataStaleFunc implements Func1<CurrencySet,
-        Observable<CurrencySet>> {
+class IsDataStaleFunc implements Func1<CurrencyDataset,
+        Observable<CurrencyDataset>> {
 
     public static final int FIVE_MINS = 5 * 60;
-    private final Observable<CurrencySet> other;
+    private final Observable<CurrencyDataset> other;
     private final Func0<Long> currentEpochFunc;
 
-    IsDataStaleFunc(@NotNull final Observable<CurrencySet> other,
+    IsDataStaleFunc(@NotNull final Observable<CurrencyDataset> other,
                     @NotNull final Func0<Long> currentEpochFunc) {
         this.other = checkNotNull(other);
         this.currentEpochFunc = checkNotNull(currentEpochFunc);
     }
 
-    static IsDataStaleFunc create(@NotNull final Observable<CurrencySet>
+    static IsDataStaleFunc create(@NotNull final Observable<CurrencyDataset>
                                           other,
                                   @NotNull final Func0<Long> currentEpochFunc) {
         return new IsDataStaleFunc(other, currentEpochFunc);
@@ -51,16 +51,16 @@ class IsDataStaleFunc implements Func1<CurrencySet,
 
     @NotNull
     @Override
-    public Observable<CurrencySet> call(final CurrencySet currencySet) {
+    public Observable<CurrencyDataset> call(final CurrencyDataset currencyDataset) {
         final Long epoch = currentEpochFunc.call();
         checkArgument(epoch>=0,"epochFunc must always return non-negative");
-        if (currencySet.getLastUpdatedTimestamp() + FIVE_MINS <
+        if (currencyDataset.getLastUpdatedTimestamp() + FIVE_MINS <
                 epoch) {
             // Data is stale
             return other;
         } else {
             // Data not stale, so re-wrap it
-            return Observable.just(currencySet);
+            return Observable.just(currencyDataset);
         }
     }
 

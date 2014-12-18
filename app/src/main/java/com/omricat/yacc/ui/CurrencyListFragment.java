@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.api.NetworkCurrenciesService;
-import com.omricat.yacc.model.CurrencySet;
+import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.api.CurrenciesService;
 
 import butterknife.ButterKnife;
@@ -55,7 +55,7 @@ public class CurrencyListFragment extends Fragment {
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
 
-    private Observable<CurrencySet> request;
+    private Observable<CurrencyDataset> request;
     private NetworkCurrenciesService service;
 
     private RestAdapter restAdapter;
@@ -85,7 +85,7 @@ public class CurrencyListFragment extends Fragment {
                 .build();
         service = new NetworkCurrenciesService(restAdapter.create
                 (CurrenciesService.class));
-        currencyAdapter = new CurrencyAdapter(CurrencySet.EMPTY);
+        currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY);
 
 
     }
@@ -120,7 +120,7 @@ public class CurrencyListFragment extends Fragment {
                 .getAllCurrencies());
         request.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<CurrencySet>() {
+                .subscribe(new Subscriber<CurrencyDataset>() {
                     @Override
                     public void onCompleted() {
 
@@ -133,9 +133,9 @@ public class CurrencyListFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(final CurrencySet currencySet) {
+                    public void onNext(final CurrencyDataset currencyDataset) {
                                 currencyAdapter.swapCurrencies
-                                        (currencySet);
+                                        (currencyDataset);
                         }
                 });
     }

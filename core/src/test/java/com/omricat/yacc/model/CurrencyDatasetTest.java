@@ -29,24 +29,24 @@ import nl.jqno.equalsverifier.Warning;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CurrencySetTest {
+public class CurrencyDatasetTest {
 
     @Test
     public void testEqualsContract() {
         // Fine to suppress null fields warning since constructor forbids nulls
-        EqualsVerifier.forClass(CurrencySet.class).suppress(Warning
+        EqualsVerifier.forClass(CurrencyDataset.class).suppress(Warning
                 .NULL_FIELDS).verify();
     }
 
 
     @Test( expected = NullPointerException.class )
     public void testConstructorWithNullCurrencyArray() throws Exception {
-        new CurrencySet(null, 1);
+        new CurrencyDataset(null, 1);
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void testConstructorWithNegativeTimestamp() throws Exception {
-        new CurrencySet(Collections.<Currency>emptySet(), -1);
+        new CurrencyDataset(Collections.<Currency>emptySet(), -1);
     }
 
     @Test
@@ -62,13 +62,13 @@ public class CurrencySetTest {
                 "{\"code\":\"EUR\",\"value\":\"57.34\",\"name\":\"Euro\"}," +
                 "{\"code\":\"YEN\",\"value\":\"111.42\"," +
                 "\"name\":\"Japanese Yen\"}],\"timestamp\":1415210401}";
-        final CurrencySet expectedCurrencySet = new CurrencySet(currencies,
+        final CurrencyDataset expectedCurrencyDataset = new CurrencyDataset(currencies,
                 1415210401L);
         ObjectMapper objectMapper = new ObjectMapper();
-        final CurrencySet currencySetFromJSON = objectMapper.readValue(json,
-                CurrencySet
+        final CurrencyDataset currencyDatasetFromJSON = objectMapper.readValue(json,
+                CurrencyDataset
                         .class);
-        assertThat(currencySetFromJSON).isEqualTo(expectedCurrencySet);
+        assertThat(currencyDatasetFromJSON).isEqualTo(expectedCurrencyDataset);
     }
 
     @Test
@@ -78,13 +78,13 @@ public class CurrencySetTest {
                 , new Currency("3.6732", "GBP", "UK Pound")
                 , new Currency("57.34", "EUR", "Euro")
                 , new Currency("111.42", "YEN", "Japanese Yen"));
-        final CurrencySet expectedCurrencySet = new CurrencySet(currencies,
+        final CurrencyDataset expectedCurrencyDataset = new CurrencyDataset(currencies,
                 1415210401L);
         ObjectMapper objectMapper = new ObjectMapper();
         final String serializedJSON = objectMapper.writeValueAsString
-                (expectedCurrencySet);
-        final CurrencySet currencySetFromJSON = objectMapper.readValue
-                (serializedJSON, CurrencySet.class);
-        assertThat(currencySetFromJSON).isEqualTo(expectedCurrencySet);
+                (expectedCurrencyDataset);
+        final CurrencyDataset currencyDatasetFromJSON = objectMapper.readValue
+                (serializedJSON, CurrencyDataset.class);
+        assertThat(currencyDatasetFromJSON).isEqualTo(expectedCurrencyDataset);
     }
 }
