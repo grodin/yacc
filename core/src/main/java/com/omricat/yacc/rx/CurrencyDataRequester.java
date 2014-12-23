@@ -28,18 +28,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CurrencyDataRequester {
 
-    private final Persister<String, CurrencyDataset> memPersister;
     private final Persister<String, CurrencyDataset> diskPersister;
     private final CurrenciesService service;
 
-    public CurrencyDataRequester(@NotNull final Persister<String,
-            CurrencyDataset> memPersister,
-                                 @NotNull final Persister<String,
-                                         CurrencyDataset> diskPersister,
-                                 @NotNull final CurrenciesService service) {
-        this.memPersister = checkNotNull(memPersister);
+    private CurrencyDataRequester(@NotNull final Persister<String,
+            CurrencyDataset> diskPersister,
+                                  @NotNull final CurrenciesService service) {
         this.diskPersister = checkNotNull(diskPersister);
         this.service = checkNotNull(service);
+    }
+
+    public static CurrencyDataRequester create(@NotNull final Persister<String,
+            CurrencyDataset>
+                                                       diskPersister,
+                                               @NotNull final CurrenciesService service) {
+        return new CurrencyDataRequester(diskPersister, service);
     }
 
     @NotNull public Observable<CurrencyDataset> request(@NotNull final String key) {
@@ -54,28 +57,12 @@ public class CurrencyDataRequester {
                                                                           currencySet) {
                         return diskPersister.put(key, currencySet);
                     }
-                })
-                .flatMap(new Func1<CurrencyDataset, Observable<? extends
-                        CurrencyDataset>>() {
-
-
-                    @Override
-                    public Observable<? extends CurrencyDataset> call(final
-                                                                                          CurrencyDataset
-                                                                          currencySet) {
-                        return memPersister.put(key, currencySet);
-                    }
                 });
 
-        final Observable<CurrencyDataset> diskFlow = diskPersister
+        return diskPersister
                 .get(key)
                 .flatMap(OptionalObservableFunc.of(networkFlow))
                 .flatMap(IsDataStaleFunc.create(networkFlow,
-                        IsDataStaleFunc.CURRENT_EPOCH_FUNC));
-
-        return memPersister.get(key)
-                .flatMap(OptionalObservableFunc.of(diskFlow))
-                .flatMap(IsDataStaleFunc.create(diskFlow,
                         IsDataStaleFunc.CURRENT_EPOCH_FUNC));
     }
 
