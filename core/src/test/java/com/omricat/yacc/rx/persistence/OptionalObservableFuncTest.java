@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.rx;
+package com.omricat.yacc.rx.persistence;
 
 import com.google.common.base.Optional;
 

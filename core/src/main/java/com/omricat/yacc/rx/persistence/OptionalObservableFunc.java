@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.rx;
+package com.omricat.yacc.rx.persistence;
 
 import com.google.common.base.Optional;
 
@@ -47,15 +47,16 @@ public class OptionalObservableFunc<T> implements Func1<Optional<T>,
     }
 
     /**
-     * Static factory method to create an instance.
+     * Static factory method to createDefault an instance.
      *
      * @param observableForEmptyOptional {@code Observable} to use when the
      *                                   {@code Optional} is empty
      * @param <T>                        the type to be wrapped by the {@code
      *                                   OptionalObservable}
      */
-    static <T> OptionalObservableFunc<T> of(@NotNull final Observable<? extends T>
-                                                    observableForEmptyOptional) {
+    public static <T> OptionalObservableFunc<T> of(@NotNull final
+                                                   Observable<? extends T>
+                                                           observableForEmptyOptional) {
         return new OptionalObservableFunc<>(observableForEmptyOptional);
     }
 

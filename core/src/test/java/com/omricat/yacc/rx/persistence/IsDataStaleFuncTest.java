@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.rx;
+package com.omricat.yacc.rx.persistence;
 
 import com.google.common.collect.Sets;
 import com.omricat.yacc.model.Currency;
 import com.omricat.yacc.model.CurrencyDataset;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.HashSet;
 
 import rx.Observable;
-import rx.functions.Func0;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 public class IsDataStaleFuncTest {
 
@@ -38,42 +40,39 @@ public class IsDataStaleFuncTest {
 
     @Test(expected = NullPointerException.class)
     public void testCreateWithNull() throws Exception {
-        IsDataStaleFunc.create(null,IsDataStaleFunc.CURRENT_EPOCH_FUNC);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCallWithNegativeEpoch() throws Exception {
-        IsDataStaleFunc.create(Observable.<CurrencyDataset>empty(),new Func0<Long>() {
-
-
-            @Override public Long call() {
-                return (long) -1;
-            }
-        }).call(CurrencyDataset.EMPTY);
+        IsDataStaleFunc.create(null);
     }
 
     @Test
     public void testCallWithLiveData() throws Exception {
-        CurrencyDataset ret = IsDataStaleFunc.create(Observable.just(CurrencyDataset
-                        .EMPTY),
-                new Func0<Long>() {
-                    @Override public Long call() {
-                        return (long) 2 * 60; // two minutes after 0 epoch
-                    }
-                }).call(currencyDataset).toBlocking().single();
+        final IsDataStalePredicate mockPredicate = Mockito.mock
+                (IsDataStalePredicate.class);
+
+        when(mockPredicate.call(any(CurrencyDataset.class))).thenReturn(false);
+
+        final IsDataStaleFunc dataStaleFunc = new IsDataStaleFunc
+                (Observable.just(CurrencyDataset.EMPTY), mockPredicate);
+
+        CurrencyDataset ret = dataStaleFunc.call(currencyDataset)
+                .toBlocking()
+                .single();
 
         assertThat(ret.getCurrencies()).contains(usd);
     }
 
     @Test
     public void testCallWithStaleData() throws Exception {
-        CurrencyDataset ret = IsDataStaleFunc.create(Observable.just(CurrencyDataset.EMPTY),
-                new Func0<Long>() {
-                    @Override public Long call() {
-                        return (long) (365 * 24 * 60 * 60); // one year after
-                        // zero epoch
-                    }
-                }).call(currencyDataset).toBlocking().single();
+        final IsDataStalePredicate mockPredicate = Mockito.mock
+                (IsDataStalePredicate.class);
+
+        when(mockPredicate.call(any(CurrencyDataset.class))).thenReturn(true);
+
+        final IsDataStaleFunc dataStaleFunc = new IsDataStaleFunc
+                (Observable.just(CurrencyDataset.EMPTY), mockPredicate);
+
+        CurrencyDataset ret = dataStaleFunc.call(currencyDataset)
+                .toBlocking()
+                .single();
 
         assertThat(ret.getCurrencies()).doesNotContain(usd);
 

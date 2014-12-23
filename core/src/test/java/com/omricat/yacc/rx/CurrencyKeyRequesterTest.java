@@ -20,6 +20,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 import com.omricat.yacc.debug.TestPersister;
 import com.omricat.yacc.model.CurrencyKey;
+import com.omricat.yacc.rx.persistence.Persister;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

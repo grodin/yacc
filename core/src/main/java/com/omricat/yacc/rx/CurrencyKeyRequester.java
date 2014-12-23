@@ -17,6 +17,8 @@
 package com.omricat.yacc.rx;
 
 import com.omricat.yacc.model.CurrencyKey;
+import com.omricat.yacc.rx.persistence.OptionalObservableFunc;
+import com.omricat.yacc.rx.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;
 

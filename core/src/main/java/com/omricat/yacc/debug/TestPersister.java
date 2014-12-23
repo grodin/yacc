@@ -17,7 +17,7 @@
 package com.omricat.yacc.debug;
 
 import com.google.common.base.Optional;
-import com.omricat.yacc.rx.Persister;
+import com.omricat.yacc.rx.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;
 

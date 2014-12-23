@@ -17,7 +17,7 @@
 package com.omricat.yacc.debug;
 
 import com.omricat.yacc.model.CurrencyDataset;
-import com.omricat.yacc.rx.Persister;
+import com.omricat.yacc.rx.persistence.Persister;
 
 /**
  * Implementation of a {@link CurrencyDataset} {@link Persister} which is backed by

@@ -18,6 +18,9 @@ package com.omricat.yacc.rx;
 
 import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.model.CurrencyDataset;
+import com.omricat.yacc.rx.persistence.IsDataStaleFunc;
+import com.omricat.yacc.rx.persistence.OptionalObservableFunc;
+import com.omricat.yacc.rx.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,21 +31,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CurrencyDataRequester {
 
-    private final Persister<String, CurrencyDataset> diskPersister;
+    private final Persister<String, CurrencyDataset> persister;
     private final CurrenciesService service;
 
     private CurrencyDataRequester(@NotNull final Persister<String,
-            CurrencyDataset> diskPersister,
+            CurrencyDataset> persister,
                                   @NotNull final CurrenciesService service) {
-        this.diskPersister = checkNotNull(diskPersister);
+        this.persister = checkNotNull(persister);
         this.service = checkNotNull(service);
     }
 
     public static CurrencyDataRequester create(@NotNull final Persister<String,
-            CurrencyDataset>
-                                                       diskPersister,
+            CurrencyDataset> datasetPersister,
                                                @NotNull final CurrenciesService service) {
-        return new CurrencyDataRequester(diskPersister, service);
+        return new CurrencyDataRequester(datasetPersister, service);
     }
 
     @NotNull public Observable<CurrencyDataset> request(@NotNull final String key) {
@@ -55,15 +57,15 @@ public class CurrencyDataRequester {
                     public Observable<? extends CurrencyDataset> call(final
                                                                                           CurrencyDataset
                                                                           currencySet) {
-                        return diskPersister.put(key, currencySet);
+                        return persister.put(key, currencySet);
                     }
                 });
 
-        return diskPersister
+        return persister
                 .get(key)
                 .flatMap(OptionalObservableFunc.of(networkFlow))
-                .flatMap(IsDataStaleFunc.create(networkFlow,
-                        IsDataStaleFunc.CURRENT_EPOCH_FUNC));
+                .flatMap(IsDataStaleFunc.create(networkFlow
+                ));
     }
 
 
