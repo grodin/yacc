@@ -18,7 +18,7 @@ package com.omricat.yacc.rx;
 
 import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.model.CurrencyDataset;
-import com.omricat.yacc.rx.persistence.IsDataStaleFunc;
+import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
 import com.omricat.yacc.rx.persistence.OptionalObservableFunc;
 import com.omricat.yacc.rx.persistence.Persister;
 
@@ -43,20 +43,23 @@ public class CurrencyDataRequester {
 
     public static CurrencyDataRequester create(@NotNull final Persister<String,
             CurrencyDataset> datasetPersister,
-                                               @NotNull final CurrenciesService service) {
+                                               @NotNull final
+                                               CurrenciesService service) {
         return new CurrencyDataRequester(datasetPersister, service);
     }
 
-    @NotNull public Observable<CurrencyDataset> request(@NotNull final String key) {
-        final Observable<CurrencyDataset> networkFlow = service.getAllCurrencies()
+    @NotNull
+    public Observable<CurrencyDataset> request(@NotNull final String key) {
+        final Observable<CurrencyDataset> networkFlow = service
+                .getAllCurrencies()
                 .flatMap(new Func1<CurrencyDataset, Observable<? extends
                         CurrencyDataset>>() {
 
 
                     @Override
                     public Observable<? extends CurrencyDataset> call(final
-                                                                                          CurrencyDataset
-                                                                          currencySet) {
+                                                                      CurrencyDataset
+                                                                              currencySet) {
                         return persister.put(key, currencySet);
                     }
                 });
@@ -64,8 +67,24 @@ public class CurrencyDataRequester {
         return persister
                 .get(key)
                 .flatMap(OptionalObservableFunc.of(networkFlow))
-                .flatMap(IsDataStaleFunc.create(networkFlow
-                ));
+                .flatMap(new Func1<CurrencyDataset,
+                        Observable<CurrencyDataset>>() {
+
+
+                    @Override
+                    public Observable<CurrencyDataset> call(final
+                                                            CurrencyDataset
+                                                                    currencyDataset) {
+                        if (IsDataStalePredicate.createDefault()
+                                .call(currencyDataset)) {
+                            // Data is stale
+                            return networkFlow;
+                        } else {
+                            // Data is current so re-wrap it
+                            return Observable.just(currencyDataset);
+                        }
+                    }
+                });
     }
 
 
