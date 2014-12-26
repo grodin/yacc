@@ -66,8 +66,6 @@ public final class FallbackPersister<K, V> implements Persister<K, V> {
 
     @NotNull @Override
     public Observable<Optional<V>> get(@NotNull final K key) {
-        final Observable<Optional<V>> second =
-                secondPersister.get(key);
 
         return firstPersister.get(key)
                 .flatMap(new Func1<Optional<V>, Observable<Optional<V>>>() {
@@ -75,11 +73,12 @@ public final class FallbackPersister<K, V> implements Persister<K, V> {
                     @Override
                     public Observable<Optional<V>> call(final Optional<V>
                                                                 vOptional) {
-                        if (vOptional.isPresent()) {
-                            return checkPredicate(predicate, vOptional.get(),
-                                    Observable.just(vOptional), second);
+                        if (vOptional.isPresent() &&
+                                (predicate == null ||
+                                        predicate.call(vOptional.get()))) {
+                                return Observable.just(vOptional);
                         } else {
-                            return second;
+                            return secondPersister.get(key);
                         }
                     }
                 });
@@ -94,18 +93,5 @@ public final class FallbackPersister<K, V> implements Persister<K, V> {
                 return secondPersister.put(key, v);
             }
         });
-    }
-
-
-    private static <V, T> T checkPredicate(final Func1<V, Boolean> predicate,
-                                           final V v, final T first,
-                                           final T second) {
-        if (predicate == null) {
-            return first;
-        } else if (predicate.call(v)) {
-            return first;
-        } else {
-            return second;
-        }
     }
 }

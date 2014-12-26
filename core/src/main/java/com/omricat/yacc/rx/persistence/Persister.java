@@ -23,6 +23,12 @@ import org.jetbrains.annotations.NotNull;
 import rx.Observable;
 
 /**
+ * An interface to represent storing and retrieving simple objects to/from
+ * somewhere.
+ * <p/>
+ * It is required as part of the contract of this interface that calls to
+ * {@link #put(K,V)} <emph>must</emph> return the same value as was passed
+ * in, wrapped in an Observable.
  *
  * @author Joseph Cooper
  */
@@ -34,16 +40,18 @@ public interface Persister<K, V> {
      * exists. Otherwise, the wrapped {@code Optional} will be empty.
      *
      * @param key the key to use to lookup the value
-     * @return an {@code Observable<Optional>} containing the value if it
-     * exists
+     * @return an {@code Observable<Optional>} containing the value if it exists
      */
-    @NotNull Observable<Optional<V>> get(@NotNull K key);
+    @NotNull Observable<Optional<V>> get(@NotNull final K key);
 
     /**
-     * @param key
-     * @param data
-     * @return an {@code Observable }
+     * Stores a value under a key and then returns the value wrapped in an
+     * {@link Observable}.
+     *
+     * @param key  the key to use to store the value
+     * @param data the value to be stored
+     * @return an {@code Observable } wrapping the value
      */
-    @NotNull Observable<V> put(@NotNull K key, @NotNull V data);
+    @NotNull Observable<V> put(@NotNull final K key, @NotNull final V data);
 
 }
