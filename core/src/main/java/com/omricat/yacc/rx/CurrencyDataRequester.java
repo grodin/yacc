@@ -18,8 +18,8 @@ package com.omricat.yacc.rx;
 
 import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.model.CurrencyDataset;
+import com.omricat.yacc.rx.persistence.EmptyFallbackTransformer;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
-import com.omricat.yacc.rx.persistence.OptionalObservableFunc;
 import com.omricat.yacc.rx.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;
@@ -66,25 +66,8 @@ public class CurrencyDataRequester {
 
         return persister
                 .get(key)
-                .flatMap(OptionalObservableFunc.of(networkFlow))
-                .flatMap(new Func1<CurrencyDataset,
-                        Observable<CurrencyDataset>>() {
-
-
-                    @Override
-                    public Observable<CurrencyDataset> call(final
-                                                            CurrencyDataset
-                                                                    currencyDataset) {
-                        if (IsDataStalePredicate.createDefault()
-                                .call(currencyDataset)) {
-                            // Data is stale
-                            return networkFlow;
-                        } else {
-                            // Data is current so re-wrap it
-                            return Observable.just(currencyDataset);
-                        }
-                    }
-                });
+                .filter(IsDataStalePredicate.createDefault())
+                .compose(EmptyFallbackTransformer.getInstance(networkFlow));
     }
 
 

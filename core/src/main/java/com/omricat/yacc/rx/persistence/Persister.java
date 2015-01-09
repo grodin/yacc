@@ -16,8 +16,6 @@
 
 package com.omricat.yacc.rx.persistence;
 
-import com.google.common.base.Optional;
-
 import org.jetbrains.annotations.NotNull;
 
 import rx.Observable;
@@ -35,21 +33,24 @@ import rx.Observable;
 public interface Persister<K, V> {
 
     /**
-     * Return an {@link Observable} wrapping an {@link Optional}, which will
+     * Return an {@link Observable} which will
      * contain the value corresponding to the parameter {@code key}, if it
-     * exists. Otherwise, the wrapped {@code Optional} will be empty.
+     * exists. Otherwise, the wrapped {@code Observable} will be empty (i.e.
+     * will complete immediately without emitting anything).
      *
-     * @param key the key to use to lookup the value
+     * @param key the key to use to lookup the value, not null.
      * @return an {@code Observable<Optional>} containing the value if it exists
      */
-    @NotNull Observable<Optional<V>> get(@NotNull final K key);
+    @NotNull Observable<V> get(@NotNull final K key);
 
     /**
      * Stores a value under a key and then returns the value wrapped in an
      * {@link Observable}.
+     * <p/>
+     * Note that {@code null} may not be used as a value or key.
      *
-     * @param key  the key to use to store the value
-     * @param data the value to be stored
+     * @param key  the key to use to store the value, not null.
+     * @param data the value to be stored, not null.
      * @return an {@code Observable } wrapping the value
      */
     @NotNull Observable<V> put(@NotNull final K key, @NotNull final V data);

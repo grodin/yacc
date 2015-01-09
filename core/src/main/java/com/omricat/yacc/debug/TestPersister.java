@@ -16,7 +16,6 @@
 
 package com.omricat.yacc.debug;
 
-import com.google.common.base.Optional;
 import com.omricat.yacc.rx.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,19 +25,26 @@ import java.util.Map;
 
 import rx.Observable;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class TestPersister<V> implements Persister<String,V> {
 
     protected Map<String,V> dataMap = new HashMap<>();
 
     @NotNull @Override
-    public Observable<Optional<V>> get(@NotNull final java.lang.String key) {
-        return Observable.just(Optional.fromNullable(dataMap.get(key)));
+    public Observable<V> get(@NotNull final String key) {
+        final V data = dataMap.get(key);
+        if (data == null) {
+            return Observable.empty();
+        } else {
+            return Observable.just(data);
+        }
     }
 
     @NotNull @Override
     public Observable<V> put(@NotNull final java.lang.String key, @NotNull
     final V data) {
-        dataMap.put(key,data);
+        dataMap.put(checkNotNull(key), checkNotNull(data));
         return Observable.just(data);
     }
 

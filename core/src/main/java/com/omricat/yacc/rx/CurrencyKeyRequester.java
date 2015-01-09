@@ -17,7 +17,7 @@
 package com.omricat.yacc.rx;
 
 import com.omricat.yacc.model.CurrencyKey;
-import com.omricat.yacc.rx.persistence.OptionalObservableFunc;
+import com.omricat.yacc.rx.persistence.EmptyFallbackTransformer;
 import com.omricat.yacc.rx.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;
@@ -80,9 +80,8 @@ public class CurrencyKeyRequester implements RxSet<CurrencyKey> {
     @Override @NotNull public Observable<Set<CurrencyKey>> get() {
         final Observable<Set<CurrencyKey>> diskflow
                 = diskPersister.get(PERSISTENCE_KEY)
-                .flatMap(OptionalObservableFunc.of(Observable.just
-                        (Collections.<CurrencyKey>emptySet()))); // unwrap Optional
-
+                .compose(EmptyFallbackTransformer.getInstance(
+                        Observable.just(Collections.<CurrencyKey>emptySet())));
 
         return keySet.get().flatMap(
                 new Func1<Set<CurrencyKey>,

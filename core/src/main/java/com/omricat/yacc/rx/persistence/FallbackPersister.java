@@ -16,11 +16,10 @@
 
 package com.omricat.yacc.rx.persistence;
 
-import com.google.common.base.Optional;
-
 import org.jetbrains.annotations.NotNull;
 
 import rx.Observable;
+import rx.functions.Func0;
 import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -53,35 +52,33 @@ public final class FallbackPersister<K, V> implements Persister<K, V> {
 
     public FallbackPersister(@NotNull final Persister<K, V> firstPersister,
                              @NotNull final Persister<K, V> secondPersister,
-                             final Func1<V, Boolean> predicate) {
-        this.predicate = predicate;
+                             @NotNull final Func1<V, Boolean> predicate) {
         this.firstPersister = checkNotNull(firstPersister);
         this.secondPersister = checkNotNull(secondPersister);
+        this.predicate = checkNotNull(predicate);
     }
 
     public FallbackPersister(@NotNull final Persister<K, V> firstPersister,
                              @NotNull final Persister<K, V> secondPersister) {
-        this(firstPersister, secondPersister, null);
+        this(firstPersister, secondPersister, new Func1<V, Boolean>() {
+            @Override public Boolean call(final V v) {
+                return Boolean.TRUE;
+            }
+        });
     }
 
     @NotNull @Override
-    public Observable<Optional<V>> get(@NotNull final K key) {
+    public Observable<V> get(@NotNull final K key) {
 
         return firstPersister.get(key)
-                .flatMap(new Func1<Optional<V>, Observable<Optional<V>>>() {
-
-                    @Override
-                    public Observable<Optional<V>> call(final Optional<V>
-                                                                vOptional) {
-                        if (vOptional.isPresent() &&
-                                (predicate == null ||
-                                        predicate.call(vOptional.get()))) {
-                                return Observable.just(vOptional);
-                        } else {
+                .filter(predicate)
+                .compose(EmptyFallbackTransformer
+                    .getLazyInstance(new Func0<Observable<V>>() {
+                        @Override public Observable<V> call() {
                             return secondPersister.get(key);
                         }
-                    }
-                });
+                    })
+                );
     }
 
     @NotNull @Override

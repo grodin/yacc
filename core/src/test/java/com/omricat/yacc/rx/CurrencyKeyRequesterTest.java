@@ -16,7 +16,6 @@
 
 package com.omricat.yacc.rx;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 import com.omricat.yacc.debug.TestPersister;
 import com.omricat.yacc.model.CurrencyKey;
@@ -62,7 +61,7 @@ public class CurrencyKeyRequesterTest {
     @Test
     public void testJustCreatedIsEmpty() throws Exception {
         when(mockDiskPersister.get(CurrencyKeyRequester.PERSISTENCE_KEY))
-                .thenReturn(Observable.just(Optional.of(EMPTY_KEY_SET)));
+                .thenReturn(Observable.just(EMPTY_KEY_SET));
 
         Set<?> set = CurrencyKeyRequester.create(mockDiskPersister).get()
                 .toBlocking().single();
@@ -73,9 +72,7 @@ public class CurrencyKeyRequesterTest {
     @Test
     public void testGetWithEmptyPersister() throws Exception {
         when(mockDiskPersister.get(persistenceKey))
-                .thenReturn(Observable.just(
-                        Optional.<Set<CurrencyKey>>absent()
-                ));
+                .thenReturn(Observable.<Set<CurrencyKey>>empty());
 
         CurrencyKeyRequester.create(mockDiskPersister).get()
                 .toBlocking().single();
@@ -105,20 +102,18 @@ public class CurrencyKeyRequesterTest {
 
         final TestPersister<Set<CurrencyKey>> testPersister = new
                 TestPersister<>();
+
         final CurrencyKeyRequester currencyKeyRequester =
                 CurrencyKeyRequester.create(testPersister);
+
         currencyKeyRequester.add(jpy);
         Set<CurrencyKey> set = currencyKeyRequester.addAll(keys)
                 .toBlocking().single();
 
         assertThat(set).containsAll(keys).contains(jpy);
 
-        Optional<Set<CurrencyKey>> setOptional;
-        assertThat((setOptional=testPersister.get(persistenceKey)
+        assertThat(testPersister.get(persistenceKey)
                 .toBlocking().single()) //unwrap Observable
-                .isPresent());
-
-        assertThat(setOptional.get())
                 .containsAll(keys)
                 .contains(jpy);
     }
