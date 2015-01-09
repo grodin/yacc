@@ -25,49 +25,64 @@ import com.omricat.yacc.rx.persistence.Persister;
 import org.jetbrains.annotations.NotNull;
 
 import rx.Observable;
+import rx.functions.Func0;
 import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CurrencyDataRequester {
 
+    final static String PERSISTENCE_KEY = "currency-data";
     private final Persister<String, CurrencyDataset> persister;
     private final CurrenciesService service;
+    private final Func1<CurrencyDataset,Boolean> predicate;
 
-    private CurrencyDataRequester(@NotNull final Persister<String,
+    private CurrencyDataRequester(final Persister<String,
             CurrencyDataset> persister,
-                                  @NotNull final CurrenciesService service) {
-        this.persister = checkNotNull(persister);
-        this.service = checkNotNull(service);
+                                  final CurrenciesService service, final
+    IsDataStalePredicate predicate) {
+        this.persister = persister;
+        this.service = service;
+        this.predicate = predicate;
     }
 
-    public static CurrencyDataRequester create(@NotNull final Persister<String,
-            CurrencyDataset> datasetPersister,
+    public static CurrencyDataRequester create(@NotNull final
+                                               Persister<String, CurrencyDataset>
+                                                       datasetPersister,
                                                @NotNull final
-                                               CurrenciesService service) {
-        return new CurrencyDataRequester(datasetPersister, service);
+                                               CurrenciesService service,
+                                               @NotNull final
+                                               IsDataStalePredicate
+                                                       dataStalePredicate) {
+        return new CurrencyDataRequester(checkNotNull(datasetPersister),
+                checkNotNull(service), checkNotNull(dataStalePredicate));
     }
 
     @NotNull
-    public Observable<CurrencyDataset> request(@NotNull final String key) {
-        final Observable<CurrencyDataset> networkFlow = service
-                .getAllCurrencies()
-                .flatMap(new Func1<CurrencyDataset, Observable<? extends
-                        CurrencyDataset>>() {
-
-
-                    @Override
-                    public Observable<? extends CurrencyDataset> call(final
-                                                                      CurrencyDataset
-                                                                              currencySet) {
-                        return persister.put(key, currencySet);
-                    }
-                });
+    public Observable<CurrencyDataset> request() {
 
         return persister
-                .get(key)
-                .filter(IsDataStalePredicate.createDefault())
-                .compose(EmptyFallbackTransformer.getInstance(networkFlow));
+                .get(PERSISTENCE_KEY)
+                .filter(predicate)
+                .compose(EmptyFallbackTransformer.getLazyInstance(
+                        new Func0<Observable<CurrencyDataset>>() {
+
+                            @Override public Observable<CurrencyDataset> call() {
+                                return service
+                                        .getAllCurrencies()
+                                        .flatMap(new Func1<CurrencyDataset, Observable<? extends
+                                                CurrencyDataset>>() {
+
+
+                                            @Override
+                                            public Observable<? extends CurrencyDataset> call(final
+                                                                                              CurrencyDataset
+                                                                                                      currencySet) {
+                                                return persister.put(PERSISTENCE_KEY, currencySet);
+                                            }
+                                        });
+                            }
+                        }));
     }
 
 
