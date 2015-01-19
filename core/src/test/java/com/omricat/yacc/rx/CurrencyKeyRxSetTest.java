@@ -33,7 +33,6 @@ import rx.Observable;
 import rx.functions.Func1;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -48,7 +47,7 @@ public class CurrencyKeyRxSetTest {
     private final CurrencyKey gbp = new CurrencyKey("GBP");
     private final CurrencyKey eur = new CurrencyKey("EUR");
     private final CurrencyKey jpy = new CurrencyKey("JPY");
-    private final Set<CurrencyKey> keys = Sets.newHashSet(usd, eur, gbp);
+    private final Set<CurrencyKey> testKeySet = Sets.newHashSet(usd, eur, gbp);
     private final String persistenceKey = CurrencyKeyRxSet.PERSISTENCE_KEY;
 
     @Test( expected = NullPointerException.class )
@@ -83,12 +82,12 @@ public class CurrencyKeyRxSetTest {
     @Test
     public void testGet_NonemptyPersister() throws Exception {
         when(mockPersister.get(persistenceKey))
-                .thenReturn(Observable.just(keys));
+                .thenReturn(Observable.just(testKeySet));
 
         Set<CurrencyKey> ret = CurrencyKeyRxSet.create(mockPersister).get()
                 .toBlocking().single();
 
-        assertThat(ret).containsAll(keys);
+        assertThat(ret).containsAll(testKeySet);
 
     }
 
@@ -99,17 +98,16 @@ public class CurrencyKeyRxSetTest {
 
     @Test
     public void testAddBeforeGet_NonemptyPersister() throws Exception {
-        final Set<CurrencyKey> set = Sets.newHashSet(usd,gbp);
 
         final Persister<String, Set<CurrencyKey>> testPersister = new
                 TestPersister<>();
-        testPersister.put(persistenceKey, set);
+        testPersister.put(persistenceKey, testKeySet);
 
         final Set<CurrencyKey> ret2 = CurrencyKeyRxSet.create(testPersister)
                 .add(eur)
                 .toBlocking().single();
 
-        assertThat(ret2).containsAll(set).contains(eur);
+        assertThat(ret2).containsAll(testKeySet).contains(eur);
     }
 
     @Test(expected = NullPointerException.class)
@@ -136,16 +134,16 @@ public class CurrencyKeyRxSetTest {
                     public Observable<? extends Set<CurrencyKey>> call(final
                                                               Set<CurrencyKey>
                                                                      currencyKeys) {
-                        return currencyKeyRxSet.addAll(keys);
+                        return currencyKeyRxSet.addAll(testKeySet);
                     }
                  })
                 .toBlocking().single();
 
-        assertThat(set).containsAll(keys).contains(jpy);
+        assertThat(set).containsAll(testKeySet).contains(jpy);
 
         assertThat(testPersister.get(persistenceKey)
                 .toBlocking().single())
-                .containsAll(keys).contains(jpy);
+                .containsAll(testKeySet).contains(jpy);
     }
 
     @Test(expected = NullPointerException.class)
@@ -154,13 +152,19 @@ public class CurrencyKeyRxSetTest {
     }
 
     @Test
-    public void testRemove_EltPresent() throws Exception {
-        // TODO: implement CurrencyKeyRequesterTest#testRemove()
+    public void testRemove_EltPresentInPersister() throws Exception {
+        final Persister<String, Set<CurrencyKey>> testPersister = new
+                TestPersister<>();
+        testPersister.put(persistenceKey, testKeySet);
 
+        final Set<CurrencyKey> ret = CurrencyKeyRxSet.create(testPersister)
+                .remove(usd)
+                .toBlocking().single();
 
+        assertThat(ret).contains(eur,gbp).doesNotContain(usd);
 
-
-        fail("Test not implemented");
+        assertThat(testPersister.get(persistenceKey).toBlocking().single())
+                .contains(eur,gbp).doesNotContain(usd);
     }
 
     @Test(expected = NullPointerException.class)
@@ -171,7 +175,17 @@ public class CurrencyKeyRxSetTest {
 
     @Test
     public void testRemoveAll() throws Exception {
-        // TODO: implement CurrencyKeyRequesterTest#testRemoveAll()
-        fail("Test not implemented");
+        final Persister<String, Set<CurrencyKey>> testPersister = new
+                TestPersister<>();
+        testPersister.put(persistenceKey, testKeySet);
+
+        final Set<CurrencyKey> ret = CurrencyKeyRxSet.create(testPersister)
+                .removeAll(Sets.newHashSet(usd,jpy))
+                .toBlocking().single();
+
+        assertThat(ret).contains(eur,gbp).doesNotContain(usd);
+
+        assertThat(testPersister.get(persistenceKey).toBlocking().single())
+                .contains(eur,gbp).doesNotContain(usd);
     }
 }
