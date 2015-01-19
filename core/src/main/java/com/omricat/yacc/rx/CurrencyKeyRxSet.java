@@ -44,12 +44,12 @@ class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
         this.keySet.addAll(checkNotNull(keySet));
     }
 
-    static CurrencyKeyRxSet create(@NotNull
+    @NotNull static CurrencyKeyRxSet create(@NotNull
                                           final Collection<CurrencyKey> keys) {
         return new CurrencyKeyRxSet(keys);
     }
 
-    static CurrencyKeyRxSet create() {
+    @NotNull static CurrencyKeyRxSet create() {
         return create(Collections.<CurrencyKey>emptySet());
     }
 
@@ -62,14 +62,14 @@ class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
                 ImmutableSet.copyOf(keySet));
     }
 
-    @Override
-    @NotNull public Observable<Set<CurrencyKey>> add(@NotNull CurrencyKey
+    @Override @NotNull
+    public Observable<Set<CurrencyKey>> add(@NotNull CurrencyKey
                                                              key) {
         keySet.add(key);
         return get();
     }
 
-    @NotNull @Override
+    @Override @NotNull
     public Observable<Set<CurrencyKey>> addAll(@NotNull final
                                                Collection<? extends
                                                        CurrencyKey> keys) {
@@ -78,14 +78,14 @@ class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
     }
 
 
-    @Override
-    @NotNull public Observable<Set<CurrencyKey>> remove(@NotNull CurrencyKey
+    @Override @NotNull
+    public Observable<Set<CurrencyKey>> remove(@NotNull CurrencyKey
                                                                 key) {
         keySet.remove(key);
         return get();
     }
 
-    @NotNull @Override
+    @Override @NotNull
     public Observable<Set<CurrencyKey>> removeAll(@NotNull final
                                                   Collection<? extends
                                                           CurrencyKey> keys) {
@@ -93,7 +93,7 @@ class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
         return get();
     }
 
-    @NotNull @Override public Observable<CurrencyKey> asObservable() {
+    @Override @NotNull public Observable<CurrencyKey> asObservable() {
         return Observable.from(keySet);
     }
 

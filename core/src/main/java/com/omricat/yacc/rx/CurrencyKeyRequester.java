@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import rx.Observable;
@@ -34,40 +35,49 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CurrencyKeyRequester implements RxSet<CurrencyKey> {
 
     final static String PERSISTENCE_KEY = "selected-currencies";
-    private final Func1<Set<CurrencyKey>, Observable<? extends
-            Set<CurrencyKey>>> getKeysFunc;
-    private CurrencyKeyRxSet keySet = CurrencyKeyRxSet.create();
-    private final Persister<String, Set<CurrencyKey>> diskPersister;
+    private final Set<CurrencyKey> keySet = new HashSet<>();
+
+    private final Persister<String, Set<CurrencyKey>> persister;
 
     // Function which persists the set of currencies keys and returns it as
     //  an Observable
     private final Func1<Set<CurrencyKey>, Observable<? extends
-            Set<CurrencyKey>>> persistFunc;
+            Set<CurrencyKey>>>
+            persistFunc = new Func1<Set<CurrencyKey>, Observable<? extends
+            Set<CurrencyKey>>>() {
+
+
+        @Override
+        public Observable<? extends Set<CurrencyKey>> call(final
+                                                           Set<CurrencyKey>
+                                                                   currencyKeys) {
+            return persister.put(PERSISTENCE_KEY, currencyKeys);
+        }
+    };
+
+    private final Func1<Set<CurrencyKey>, Observable<? extends Set<CurrencyKey>>>
+            storeInMemFunc = new Func1<Set<CurrencyKey>,
+            Observable<? extends Set<CurrencyKey>>>() {
+
+
+        @Override
+        public Observable<? extends Set<CurrencyKey>> call(final Set<CurrencyKey>
+                                                         currencyKeys) {
+            keySet.clear();
+            keySet.addAll(currencyKeys);
+            return Observable.just(keySet);
+        }
+    };
+
+    private final EmptyFallbackTransformer<Set<CurrencyKey>>
+            emptyFallbackTransformer = EmptyFallbackTransformer.getInstance(
+            Observable.just(Collections
+                    .<CurrencyKey>emptySet()));
 
     private CurrencyKeyRequester(@NotNull final
                                  Persister<String, Set<CurrencyKey>>
-                                         diskPersister) {
-        this.diskPersister = checkNotNull(diskPersister);
-        persistFunc = new Func1<Set<CurrencyKey>, Observable<? extends Set<CurrencyKey>>>() {
-
-
-            @Override
-            public Observable<? extends Set<CurrencyKey>> call(final
-                                                               Set<CurrencyKey> currencyKeys) {
-                return diskPersister.put(PERSISTENCE_KEY, currencyKeys);
-            }
-        };
-        getKeysFunc = new Func1<Set<CurrencyKey>, Observable<? extends
-                        Set<CurrencyKey>>>() {
-
-
-            @Override
-            public Observable<? extends Set<CurrencyKey>> call(final
-                                                               Set<CurrencyKey>
-                                                                       currencyKeys) {
-                return keySet.get();
-            }
-        };
+                                         persister) {
+        this.persister = checkNotNull(persister);
     }
 
     public static CurrencyKeyRequester create(@NotNull final
@@ -77,21 +87,26 @@ public class CurrencyKeyRequester implements RxSet<CurrencyKey> {
         return new CurrencyKeyRequester(diskPersister);
     }
 
-    @Override @NotNull public Observable<Set<CurrencyKey>> get() {
-        final Observable<Set<CurrencyKey>> diskflow
-                = diskPersister.get(PERSISTENCE_KEY)
-                .compose(EmptyFallbackTransformer.getInstance(
-                        Observable.just(Collections.<CurrencyKey>emptySet())));
+    @Override @NotNull public Observable<? extends Set<CurrencyKey>> get() {
 
-        return keySet.get().flatMap(
+        return Observable.just(keySet).flatMap(
                 new Func1<Set<CurrencyKey>,
-                        Observable<Set<CurrencyKey>>>() {
+                        Observable<? extends Set<CurrencyKey>>>() {
                     @Override
-                    public Observable<Set<CurrencyKey>> call(final
+                    public Observable<? extends Set<CurrencyKey>> call(final
                                                              Set<CurrencyKey>
                                                                      currencyKeys) {
                         if (currencyKeys.isEmpty()) {
-                            return diskflow;
+                            /* If the key set is empty, try to load a set from
+                             * the Persister. If that fails then we don't
+                             * have a previous set in memory or persistence,
+                             * so fallback to an empty set anyway.
+                             * In either case, update keyRxSet so it contains
+                             * whatever we've got.
+                             */
+                            return persister.get(PERSISTENCE_KEY)
+                                    .compose(emptyFallbackTransformer)
+                                    .flatMap(storeInMemFunc);
                         } else {
                             return Observable.just(currencyKeys);
                         }
@@ -100,31 +115,82 @@ public class CurrencyKeyRequester implements RxSet<CurrencyKey> {
     }
 
     @Override @NotNull
-    public Observable<Set<CurrencyKey>> add(@NotNull final CurrencyKey key) {
-      return keySet.add(key).flatMap(persistFunc).flatMap(getKeysFunc);
-    }
+    public Observable<? extends Set<CurrencyKey>> add(@NotNull final CurrencyKey key) {
 
-    @NotNull @Override
-    public Observable<Set<CurrencyKey>> addAll(@NotNull final Collection<?
-            extends CurrencyKey> keys) {
-        return keySet.addAll(keys).flatMap(persistFunc).flatMap(getKeysFunc);
+        final CurrencyKey keyToAdd = checkNotNull(key);
+        return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
+                Observable<? extends Set<CurrencyKey>>>() {
+
+            @Override
+            public Observable<? extends Set<CurrencyKey>> call(final
+                                                               Set<CurrencyKey>
+                                                                       currencyKeys) {
+                keySet.add(keyToAdd);
+                return Observable.just(keySet);
+            }
+        });
     }
 
     @Override @NotNull
-    public Observable<Set<CurrencyKey>> remove(
-            @NotNull final CurrencyKey key) {
-        return keySet.remove(key).flatMap(persistFunc).flatMap(getKeysFunc);
+    public Observable<? extends Set<CurrencyKey>> addAll(@NotNull final Collection<?
+            extends CurrencyKey> keys) {
+        final Collection<? extends CurrencyKey> keysToAdd = checkNotNull(keys);
+        return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
+                Observable<? extends Set<CurrencyKey>>>() {
+            @Override
+            public Observable<? extends Set<CurrencyKey>> call(final
+                                                               Set<CurrencyKey>
+                                                                       currencyKeys) {
+                keySet.addAll(keysToAdd);
+                return Observable.just(keySet);
+            }
+        });
     }
 
-    @NotNull @Override
-    public Observable<Set<CurrencyKey>> removeAll(
+    @Override @NotNull
+    public Observable<? extends Set<CurrencyKey>> remove(@NotNull final CurrencyKey key) {
+        final CurrencyKey keyToRemove = checkNotNull(key);
+        return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
+                Observable<? extends
+                        Set<CurrencyKey>>>() {
+
+
+            @Override
+            public Observable<? extends Set<CurrencyKey>> call(final
+                                                               Set<CurrencyKey> currencyKeys) {
+                keySet.remove(keyToRemove);
+                return Observable.just(keySet);
+            }
+        });
+    }
+
+    @Override @NotNull
+    public Observable<? extends Set<CurrencyKey>> removeAll(
             @NotNull final Collection<?
                     extends CurrencyKey> keys) {
-        return keySet.removeAll(keys).flatMap(persistFunc).flatMap(getKeysFunc);
+        final Collection<? extends CurrencyKey> keysToRemove = checkNotNull(keys);
+        return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
+                Observable<? extends Set<CurrencyKey>>>() {
+
+
+            @Override
+            public Observable<? extends Set<CurrencyKey>> call(final
+                                                               Set<CurrencyKey> currencyKeys) {
+                keySet.removeAll(keysToRemove);
+                return Observable.just(keySet);
+            }
+        });
     }
 
-    @NotNull @Override public Observable<CurrencyKey> asObservable() {
-        return keySet.asObservable();
+    @Override @NotNull
+    public Observable<CurrencyKey> asObservable() {
+        return Observable.from(keySet);
+    }
+
+    private Observable<? extends Set<CurrencyKey>> applyFuncThenPersist
+            (Func1<Set<CurrencyKey>,
+                    Observable<? extends Set<CurrencyKey>>> func) {
+        return get().flatMap(func).flatMap(persistFunc);
     }
 
 }

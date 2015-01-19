@@ -23,19 +23,17 @@ import com.omricat.yacc.rx.persistence.Persister;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import rx.Observable;
+import rx.functions.Func1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +43,7 @@ public class CurrencyKeyRequesterTest {
     static final Set<CurrencyKey> EMPTY_KEY_SET = Collections.emptySet();
 
     @Mock
-    Persister<String, Set<CurrencyKey>> mockDiskPersister;
+    Persister<String, Set<CurrencyKey>> mockPersister;
     private final CurrencyKey usd = new CurrencyKey("USD");
     private final CurrencyKey gbp = new CurrencyKey("GBP");
     private final CurrencyKey eur = new CurrencyKey("EUR");
@@ -60,41 +58,63 @@ public class CurrencyKeyRequesterTest {
 
     @Test
     public void testJustCreatedIsEmpty() throws Exception {
-        when(mockDiskPersister.get(CurrencyKeyRequester.PERSISTENCE_KEY))
-                .thenReturn(Observable.just(EMPTY_KEY_SET));
+        when(mockPersister.get(CurrencyKeyRequester.PERSISTENCE_KEY))
+                .thenReturn(Observable.<Set<CurrencyKey>>empty());
 
-        Set<?> set = CurrencyKeyRequester.create(mockDiskPersister).get()
+        Set<?> set = CurrencyKeyRequester.create(mockPersister).get()
                 .toBlocking().single();
 
         assertThat(set).isEmpty();
     }
 
     @Test
-    public void testGetWithEmptyPersister() throws Exception {
-        when(mockDiskPersister.get(persistenceKey))
+    public void testGet_EmptyPersister() throws Exception {
+        when(mockPersister.get(persistenceKey))
                 .thenReturn(Observable.<Set<CurrencyKey>>empty());
 
-        CurrencyKeyRequester.create(mockDiskPersister).get()
+        Set<?> ret = CurrencyKeyRequester.create(mockPersister).get()
                 .toBlocking().single();
 
-        verify(mockDiskPersister).get(CurrencyKeyRequester.PERSISTENCE_KEY);
+        assertThat(ret).isEmpty();
+
+        verify(mockPersister).get(CurrencyKeyRequester.PERSISTENCE_KEY);
     }
 
     @Test
-    public void testAdd() throws Exception {
-        final Set<CurrencyKey> keySet = new HashSet<>();
-        keySet.add(usd);
+    public void testGet_NonemptyPersister() throws Exception {
+        when(mockPersister.get(persistenceKey))
+                .thenReturn(Observable.just(keys));
 
-        when(mockDiskPersister.put(anyString(),
-                Matchers.<Set<CurrencyKey>>any()))
-                .thenReturn(Observable.just(keySet));
-
-        Set<?> set = CurrencyKeyRequester.create(mockDiskPersister).add(usd)
+        Set<CurrencyKey> ret = CurrencyKeyRequester.create(mockPersister).get()
                 .toBlocking().single();
 
-        verify(mockDiskPersister).put(persistenceKey, keySet);
+        assertThat(ret).containsAll(keys);
 
-        assertThat(set).containsExactly(usd);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testAdd_NullParam() throws Exception {
+        CurrencyKeyRequester.create(mockPersister).add(null);
+    }
+
+    @Test
+    public void testAddBeforeGet_NonemptyPersister() throws Exception {
+        final Set<CurrencyKey> set = Sets.newHashSet(usd,gbp);
+
+        final Persister<String, Set<CurrencyKey>> testPersister = new
+                TestPersister<>();
+        testPersister.put(persistenceKey, set);
+
+        final Set<CurrencyKey> ret2 = CurrencyKeyRequester.create(testPersister)
+                .add(eur)
+                .toBlocking().single();
+
+        assertThat(ret2).containsAll(set).contains(eur);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testAddAll_NullParam() throws Exception {
+        CurrencyKeyRequester.create(mockPersister).addAll(null);
     }
 
     @Test
@@ -106,23 +126,48 @@ public class CurrencyKeyRequesterTest {
         final CurrencyKeyRequester currencyKeyRequester =
                 CurrencyKeyRequester.create(testPersister);
 
-        currencyKeyRequester.add(jpy);
-        Set<CurrencyKey> set = currencyKeyRequester.addAll(keys)
+        Set<CurrencyKey> set = currencyKeyRequester
+                .add(jpy)
+                .flatMap(new Func1<Set<CurrencyKey>,
+                                    Observable<? extends Set<CurrencyKey>>>() {
+
+
+                    @Override
+                    public Observable<? extends Set<CurrencyKey>> call(final
+                                                              Set<CurrencyKey>
+                                                                     currencyKeys) {
+                        return currencyKeyRequester.addAll(keys);
+                    }
+                 })
                 .toBlocking().single();
 
         assertThat(set).containsAll(keys).contains(jpy);
 
         assertThat(testPersister.get(persistenceKey)
-                .toBlocking().single()) //unwrap Observable
-                .containsAll(keys)
-                .contains(jpy);
+                .toBlocking().single())
+                .containsAll(keys).contains(jpy);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testRemove_NullParam() throws Exception {
+        CurrencyKeyRequester.create(mockPersister).remove(null);
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove_EltPresent() throws Exception {
         // TODO: implement CurrencyKeyRequesterTest#testRemove()
+
+
+
+
         fail("Test not implemented");
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testRemoveAll_NullParam() throws Exception {
+        CurrencyKeyRequester.create(mockPersister).removeAll(null);
+    }
+
 
     @Test
     public void testRemoveAll() throws Exception {

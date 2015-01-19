@@ -25,34 +25,36 @@ import rx.functions.Func1;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class EmptyFallbackTransformer<T>
-        implements Observable.Transformer<T, T> {
+        implements Observable.Transformer<T,T> {
 
-    private final Observable<T> fallbackObservable;
+    private final Observable<? extends T> fallbackObservable;
     private final Func0<Observable<T>> fallbackObservableFactory;
 
-    private EmptyFallbackTransformer(final Observable<T> fallbackObservable,
+    private EmptyFallbackTransformer(final Observable<? extends T> fallbackObservable,
                                      final Func0<Observable<T>>
                                              fallbackObservableFactory) {
         this.fallbackObservable = fallbackObservable;
         this.fallbackObservableFactory = fallbackObservableFactory;
     }
 
-    public static <T> EmptyFallbackTransformer<T> getLazyInstance(@NotNull
+    public static <T> EmptyFallbackTransformer<T> getLazyInstance
+            (@NotNull
                                                                   final
                                                                   Func0<Observable<T>>
                                                                           fallbackObservableFactory) {
-        return new EmptyFallbackTransformer<T>(null,
+        return new EmptyFallbackTransformer<>(null,
                 checkNotNull(fallbackObservableFactory));
     }
 
     public static <T> EmptyFallbackTransformer<T> getInstance(@NotNull final
-                                                              Observable<T>
+                                                              Observable<? extends T>
                                                                       fallbackObservable) {
-        return new EmptyFallbackTransformer<T>(
+        return new EmptyFallbackTransformer<>(
                 checkNotNull(fallbackObservable),null);
     }
 
-    @Override public Observable<T> call(final Observable<T> tObservable) {
+    @Override public Observable<T> call(final Observable<T>
+                                                       tObservable) {
         return tObservable.isEmpty().flatMap(new Func1<Boolean,
                 Observable<? extends T>>() {
 

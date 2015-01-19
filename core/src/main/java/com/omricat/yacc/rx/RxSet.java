@@ -35,18 +35,18 @@ public interface RxSet<T> {
      * Returns an {@link Observable} wrapping a {@link Set} which represents
      * the underlying set of objects.
      */
-    @NotNull Observable<Set<T>> get();
+    @NotNull Observable<? extends Set<T>> get();
 
     /**
      * Add an object to the set.
      */
-    @NotNull Observable<Set<T>> add(@NotNull T object);
+    @NotNull Observable<? extends Set<T>> add(@NotNull T object);
 
-    @NotNull Observable<Set<T>> addAll(@NotNull Collection<? extends T> keys);
+    @NotNull Observable<? extends Set<T>> addAll(@NotNull Collection<? extends T> keys);
 
-    @NotNull Observable<Set<T>> remove(@NotNull T object);
+    @NotNull Observable<? extends Set<T>> remove(@NotNull T object);
 
-    @NotNull Observable<Set<T>> removeAll(@NotNull Collection<? extends T> keys);
+    @NotNull Observable<? extends Set<T>> removeAll(@NotNull Collection<? extends T> keys);
 
     @NotNull Observable<T> asObservable();
 }
