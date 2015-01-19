@@ -97,7 +97,7 @@ public class CurrencyKeyRxSetTest {
     }
 
     @Test
-    public void testAddBeforeGet_NonemptyPersister() throws Exception {
+    public void testAdd_NonemptyPersister() throws Exception {
 
         final Persister<String, Set<CurrencyKey>> testPersister = new
                 TestPersister<>();
@@ -108,6 +108,21 @@ public class CurrencyKeyRxSetTest {
                 .toBlocking().single();
 
         assertThat(ret2).containsAll(testKeySet).contains(eur);
+    }
+
+    @Test
+    public void testAddThenGet() throws Exception {
+
+        final Persister<String, Set<CurrencyKey>> testPersister = new
+                TestPersister<>();
+
+        CurrencyKeyRxSet keySet = CurrencyKeyRxSet.create(testPersister);
+
+        keySet.add(usd).toBlocking().single();
+
+        final Set<CurrencyKey> ret = keySet.get().toBlocking().single();
+
+        assertThat(ret).containsExactly(usd);
     }
 
     @Test(expected = NullPointerException.class)
@@ -180,7 +195,7 @@ public class CurrencyKeyRxSetTest {
         testPersister.put(persistenceKey, testKeySet);
 
         final Set<CurrencyKey> ret = CurrencyKeyRxSet.create(testPersister)
-                .removeAll(Sets.newHashSet(usd,jpy))
+                .removeAll(Sets.newHashSet(usd, jpy))
                 .toBlocking().single();
 
         assertThat(ret).contains(eur,gbp).doesNotContain(usd);
