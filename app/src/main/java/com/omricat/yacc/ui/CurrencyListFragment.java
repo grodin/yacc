@@ -25,9 +25,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
+import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.api.NetworkCurrenciesService;
 import com.omricat.yacc.model.CurrencyDataset;
-import com.omricat.yacc.api.CurrenciesService;
+import com.omricat.yacc.model.CurrencyKey;
+
+import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -35,9 +38,8 @@ import retrofit.RestAdapter;
 import retrofit.converter.JacksonConverter;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.observables.AndroidObservable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -47,39 +49,32 @@ public class CurrencyListFragment extends Fragment {
     // Debug Log tag
     private static final String TAG = "CurrencyListFragment";
 
-    /**
-     * The fragment argument representing the section number for this fragment.
-     */
-    private static final String ARG_SECTION_NUMBER = "section_number";
-
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
 
-    private Observable<CurrencyDataset> request;
-    private NetworkCurrenciesService service;
+    private Observable<CurrencyDataset> allCurrencies;
+    private Observable<Set<CurrencyKey>> selectedCurrencies;
+    private Subscription subscription = Subscriptions.empty();
 
-    private RestAdapter restAdapter;
+    private NetworkCurrenciesService service;
 
     private CurrencyAdapter currencyAdapter;
 
     /**
      * Returns a new instance of this fragment for the given section number.
      */
-    public static CurrencyListFragment newInstance(int sectionNumber) {
-        CurrencyListFragment fragment = new CurrencyListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
+    public static CurrencyListFragment newInstance() {
+        return new CurrencyListFragment();
     }
 
     public CurrencyListFragment() {
+        setRetainInstance(true);
     }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        restAdapter = new RestAdapter.Builder()
+        final RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://hp:8080")
                 .setConverter(new JacksonConverter())
                 .build();
@@ -116,11 +111,8 @@ public class CurrencyListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        request = AndroidObservable.bindFragment(this, service
-                .getAllCurrencies());
-        request.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<CurrencyDataset>() {
+        subscription = allCurrencies.subscribe(new Subscriber<CurrencyDataset>
+                () {
                     @Override
                     public void onCompleted() {
 
@@ -142,7 +134,8 @@ public class CurrencyListFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        subscription.unsubscribe();
         ButterKnife.reset(this);
+        super.onDestroyView();
     }
 }

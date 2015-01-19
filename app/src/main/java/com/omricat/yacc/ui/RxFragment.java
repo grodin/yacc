@@ -18,22 +18,11 @@ package com.omricat.yacc.ui;
 
 import android.app.Fragment;
 
-import rx.Observable;
-import rx.android.observables.AndroidObservable;
-import rx.subjects.PublishSubject;
+public class RxFragment<T> extends Fragment {
 
-public abstract class RxFragment extends Fragment {
-
-    protected final PublishSubject<Void> detached = PublishSubject.create();
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        detached.onNext(null);
+    public RxFragment() {
+        setRetainInstance(true);
     }
 
 
-    public final <T> Observable<T> bindObservable(Observable<T> in) {
-        return AndroidObservable.bindFragment(this, in).takeUntil(detached);
-    }
 }
