@@ -68,7 +68,7 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
                                                                    currencyKeys) {
             keySet.clear();
             keySet.addAll(currencyKeys);
-            return Observable.just(keySet);
+            return keySetObservable(keySet);
         }
     };
 
@@ -92,7 +92,7 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
 
     @Override @NotNull public Observable<? extends Set<CurrencyKey>> get() {
 
-        return Observable.just(keySet).flatMap(
+        return keySetObservable(keySet).flatMap(
                 new Func1<Set<CurrencyKey>,
                         Observable<? extends Set<CurrencyKey>>>() {
                     @Override
@@ -111,7 +111,7 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
                                     .compose(emptyFallbackTransformer)
                                     .flatMap(storeInMemFunc);
                         } else {
-                            return Observable.just(currencyKeys);
+                            return keySetObservable(currencyKeys);
                         }
                     }
                 });
@@ -135,7 +135,7 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
                                                                Set<CurrencyKey>
                                                                        currencyKeys) {
                 keySet.addAll(keysToAdd);
-                return Observable.just(keySet);
+                return keySetObservable(keySet);
             }
         });
     }
@@ -150,8 +150,8 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
     public Observable<? extends Set<CurrencyKey>> removeAll(
             @NotNull final Collection<?
                     extends CurrencyKey> keys) {
-        final Collection<? extends CurrencyKey> keysToRemove = checkNotNull
-                (keys);
+        final Collection<? extends CurrencyKey> keysToRemove
+                = checkNotNull(keys);
         return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
                 Observable<? extends Set<CurrencyKey>>>() {
 
@@ -160,7 +160,7 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
             public Observable<? extends Set<CurrencyKey>> call(final
                                                                Set<CurrencyKey> currencyKeys) {
                 keySet.removeAll(keysToRemove);
-                return Observable.just(keySet);
+                return keySetObservable(keySet);
             }
         });
     }
@@ -170,10 +170,14 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
         return Observable.from(keySet);
     }
 
+    private Observable<? extends Set<CurrencyKey>> keySetObservable(final
+                                                                    Set<CurrencyKey> keys) {
+        return Observable.just(ImmutableSet.copyOf(keys));
+    }
+
     private Observable<? extends Set<CurrencyKey>> applyFuncThenPersist
             (Func1<Set<CurrencyKey>,
                     Observable<? extends Set<CurrencyKey>>> func) {
         return get().flatMap(func).flatMap(persistFunc);
     }
-
 }
