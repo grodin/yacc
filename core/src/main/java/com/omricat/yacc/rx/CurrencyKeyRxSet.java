@@ -16,6 +16,7 @@
 
 package com.omricat.yacc.rx;
 
+import com.google.common.collect.ImmutableSet;
 import com.omricat.yacc.model.CurrencyKey;
 import com.omricat.yacc.rx.persistence.EmptyFallbackTransformer;
 import com.omricat.yacc.rx.persistence.Persister;
@@ -55,14 +56,16 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
         }
     };
 
-    private final Func1<Set<CurrencyKey>, Observable<? extends Set<CurrencyKey>>>
+    private final Func1<Set<CurrencyKey>, Observable<? extends
+            Set<CurrencyKey>>>
             storeInMemFunc = new Func1<Set<CurrencyKey>,
             Observable<? extends Set<CurrencyKey>>>() {
 
 
         @Override
-        public Observable<? extends Set<CurrencyKey>> call(final Set<CurrencyKey>
-                                                         currencyKeys) {
+        public Observable<? extends Set<CurrencyKey>> call(final
+                                                           Set<CurrencyKey>
+                                                                   currencyKeys) {
             keySet.clear();
             keySet.addAll(currencyKeys);
             return Observable.just(keySet);
@@ -81,9 +84,9 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
     }
 
     public static CurrencyKeyRxSet create(@NotNull final
-                                              Persister<String,
-                                                      Set<CurrencyKey>>
-                                                      diskPersister) {
+                                          Persister<String,
+                                                  Set<CurrencyKey>>
+                                                  diskPersister) {
         return new CurrencyKeyRxSet(diskPersister);
     }
 
@@ -94,8 +97,8 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
                         Observable<? extends Set<CurrencyKey>>>() {
                     @Override
                     public Observable<? extends Set<CurrencyKey>> call(final
-                                                             Set<CurrencyKey>
-                                                                     currencyKeys) {
+                                                                       Set<CurrencyKey>
+                                                                               currencyKeys) {
                         if (currencyKeys.isEmpty()) {
                             /* If the key set is empty, try to load a set from
                              * the Persister. If that fails then we don't
@@ -115,24 +118,14 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
     }
 
     @Override @NotNull
-    public Observable<? extends Set<CurrencyKey>> add(@NotNull final CurrencyKey key) {
-
-        final CurrencyKey keyToAdd = checkNotNull(key);
-        return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
-                Observable<? extends Set<CurrencyKey>>>() {
-
-            @Override
-            public Observable<? extends Set<CurrencyKey>> call(final
-                                                               Set<CurrencyKey>
-                                                                       currencyKeys) {
-                keySet.add(keyToAdd);
-                return Observable.just(keySet);
-            }
-        });
+    public Observable<? extends Set<CurrencyKey>> add(@NotNull final
+                                                          CurrencyKey key) {
+        return addAll(ImmutableSet.of(checkNotNull(key)));
     }
 
     @Override @NotNull
-    public Observable<? extends Set<CurrencyKey>> addAll(@NotNull final Collection<?
+    public Observable<? extends Set<CurrencyKey>> addAll(@NotNull final
+                                                             Collection<?
             extends CurrencyKey> keys) {
         final Collection<? extends CurrencyKey> keysToAdd = checkNotNull(keys);
         return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
@@ -148,27 +141,17 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyKey> {
     }
 
     @Override @NotNull
-    public Observable<? extends Set<CurrencyKey>> remove(@NotNull final CurrencyKey key) {
-        final CurrencyKey keyToRemove = checkNotNull(key);
-        return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
-                Observable<? extends
-                        Set<CurrencyKey>>>() {
-
-
-            @Override
-            public Observable<? extends Set<CurrencyKey>> call(final
-                                                               Set<CurrencyKey> currencyKeys) {
-                keySet.remove(keyToRemove);
-                return Observable.just(keySet);
-            }
-        });
+    public Observable<? extends Set<CurrencyKey>> remove(@NotNull final
+                                                             CurrencyKey key) {
+        return removeAll(ImmutableSet.of(checkNotNull(key)));
     }
 
     @Override @NotNull
     public Observable<? extends Set<CurrencyKey>> removeAll(
             @NotNull final Collection<?
                     extends CurrencyKey> keys) {
-        final Collection<? extends CurrencyKey> keysToRemove = checkNotNull(keys);
+        final Collection<? extends CurrencyKey> keysToRemove = checkNotNull
+                (keys);
         return applyFuncThenPersist(new Func1<Set<CurrencyKey>,
                 Observable<? extends Set<CurrencyKey>>>() {
 
