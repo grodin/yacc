@@ -20,6 +20,7 @@ package com.omricat.yacc.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.common.base.MoreObjects;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,30 +60,6 @@ public class Currency {
      *
      * @param value       the value of the currency, relative to USD. Must be
      *                    non-negative and non-null.
-     * @param code        the standard three letter code for this currency (e.g.
-     *                    USD, GBP, EUR, etc.) Cannot be null.
-     * @param name        the name of this currency. Cannot be null.
-     * @param description an optional short description of the currency (e.g.
-     *                    "The currency used in the USA"). Cannot be null.
-     */
-    public Currency(@NotNull final BigDecimal value,
-                    @NotNull final String code,
-                    @NotNull final String name,
-                    @NotNull final String description) {
-        this(value, new CurrencyKey(code), name, description);
-    }
-
-    /**
-     * Constructs an instance of a currency, using the given parameters. The
-     * value parameter must be non-negative, and the three string parameters
-     * must be non-null.
-     * <p/>
-     * It is strongly suggested that the code and name parameters should be
-     * non-empty and actually match the intended use. The code parameter is
-     * <i>not</i> checked for validity.
-     *
-     * @param value       the value of the currency, relative to USD. Must be
-     *                    non-negative and non-null.
      * @param code        {@link CurrencyKey} representing the ISO 4217 code for
      *                    this currency, not null.
      * @param name        the name of this currency, not null.
@@ -95,7 +72,7 @@ public class Currency {
                     @NotNull final String description) {
         checkArgument(checkNotNull(value).compareTo(BigDecimal
                 .ZERO) >= 0);
-        this.value = checkNotNull(value);
+        this.value = value;
         this.code = checkNotNull(code);
         this.name = checkNotNull(name);
         this.description = checkNotNull(description);
@@ -123,7 +100,7 @@ public class Currency {
                     @NotNull final String code,
                     @NotNull final String name,
                     @NotNull final String description) {
-        this(new BigDecimal(value), code, name, description);
+        this(new BigDecimal(value), new CurrencyKey(code), name, description);
     }
 
     /**
@@ -146,7 +123,7 @@ public class Currency {
                     @NotNull @JsonProperty(CODE) final String code,
                     @NotNull @JsonProperty(NAME) final String
                             name) {
-        this(new BigDecimal(value), code, name, "");
+        this(value, code, name, "");
     }
 
     /**
@@ -158,6 +135,7 @@ public class Currency {
      *
      * @return the value of this currency as a float relative to USD
      */
+    @NotNull
     public BigDecimal getValueInUSD() {
         return value;
     }
@@ -168,6 +146,7 @@ public class Currency {
      *
      * @return a string containing the three letter code
      */
+    @NotNull
     public CurrencyKey getCode() {
         return code;
     }
@@ -178,6 +157,7 @@ public class Currency {
      *
      * @return a string containing the human readable name
      */
+    @NotNull
     public String getName() {
         return name;
     }
@@ -190,6 +170,7 @@ public class Currency {
      * @return a string containing a description of this currency, if one was
      * passed to the constructor.
      */
+    @NotNull
     public String getDescription() {
         return description;
     }
@@ -204,6 +185,7 @@ public class Currency {
      *               currency. It should be non-negative.
      * @return the value converted into the target currency
      */
+    @NotNull
     public static BigDecimal convert(@NotNull final Currency source,
                                      @NotNull final Currency target,
                                      @NotNull final BigDecimal value) {
@@ -238,5 +220,12 @@ public class Currency {
         return result;
     }
 
-
+    @Override public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("value", value)
+                .add("code", code)
+                .add("name", name)
+                .add("description", description.isEmpty() ? null : description)
+                .toString();
+    }
 }
