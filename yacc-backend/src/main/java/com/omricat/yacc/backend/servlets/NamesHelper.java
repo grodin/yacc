@@ -34,7 +34,7 @@ import retrofit.converter.JacksonConverter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class NamesHelper implements Serializable {
+class NamesHelper implements Serializable {
     final ObjectMapper mapper;
     final NamesService service;
 
