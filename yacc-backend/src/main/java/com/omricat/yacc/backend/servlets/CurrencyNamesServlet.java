@@ -17,6 +17,9 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omricat.yacc.backend.Config;
+import com.omricat.yacc.backend.api.NamesService;
+import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.backend.util.HttpUtils;
 import com.omricat.yacc.model.CurrencyCode;
 
@@ -28,6 +31,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import retrofit.RestAdapter;
+import retrofit.appengine.UrlFetchClient;
+import retrofit.converter.JacksonConverter;
+
 public class CurrencyNamesServlet extends HttpServlet {
 
     private NamesHelper namesHelper;
@@ -35,14 +42,22 @@ public class CurrencyNamesServlet extends HttpServlet {
 
     @Override public void init() throws ServletException {
 
-        namesHelper = NamesHelper.getInstance(mapper);
+        final RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(Config.CURRENCY_NAMES_ENDPOINT)
+                .setClient(new UrlFetchClient())
+                .setConverter(new JacksonConverter(this.mapper))
+                .build();
+
+        namesHelper = NamesHelper.getInstance(mapper,
+                restAdapter.create(NamesService.class));
     }
 
     @Override
     protected void doGet(final HttpServletRequest req,
                          final HttpServletResponse resp)
             throws ServletException, IOException {
-        Map<CurrencyCode, String> names = namesHelper.getAndStoreCurrencyNames();
+        Map<CurrencyCode, String> names = namesHelper
+                .getAndStoreCurrencyNames(NamesStore.getInstance());
 
         HttpUtils.setJsonUTF8ContentType(resp);
 

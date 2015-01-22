@@ -17,7 +17,6 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.model.CurrencyCode;
@@ -29,37 +28,31 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.Map;
 
-import retrofit.RestAdapter;
-import retrofit.appengine.UrlFetchClient;
-import retrofit.converter.JacksonConverter;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 class NamesHelper implements Serializable {
     final ObjectMapper mapper;
     final NamesService service;
 
-    private NamesHelper(@NotNull final ObjectMapper mapper) {
+    private NamesHelper(@NotNull final ObjectMapper mapper,
+                        @NotNull final NamesService namesService) {
         this.mapper = checkNotNull(mapper);
-        final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(Config.CURRENCY_NAMES_ENDPOINT)
-                .setClient(new UrlFetchClient())
-                .setConverter(new JacksonConverter(this.mapper))
-                .build();
-
-        service = restAdapter.create(NamesService.class);
+        this.service = checkNotNull(namesService);
 
     }
 
-    public static NamesHelper getInstance(@NotNull final ObjectMapper mapper) {
-        return new NamesHelper(mapper);
+    public static NamesHelper getInstance(@NotNull final ObjectMapper mapper,
+                                          @NotNull final NamesService
+                                                  namesService) {
+        return new NamesHelper(mapper, namesService);
     }
 
-    Map<CurrencyCode, String> getAndStoreCurrencyNames()
+    Map<CurrencyCode, String> getAndStoreCurrencyNames(@NotNull final NamesStore
+                                                               namesStore)
             throws IOException {
 
         final Map<CurrencyCode, String> names = service.getCurrencyNames();
-        try (Writer out = NamesStore.getInstance().getWriter()) {
+        try (Writer out = checkNotNull(namesStore).getWriter()) {
             mapper.writeValue(out, names);
         }
 
