@@ -21,9 +21,6 @@ import java.util.Map;
 
 import retrofit.http.GET;
 
-/**
- * Created by jsc on 30/11/14.
- */
 public interface CurrencyService {
 
     @GET("/api/latest.json")

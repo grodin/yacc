@@ -40,7 +40,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * equal according to {@link #equals(Object)} and {@link #hashCode()} if and
  * only if they have equal keys.
  */
-public final class CurrencyKey {
+public final class CurrencyCode {
 
     @NotNull
     private final String key;
@@ -49,7 +49,7 @@ public final class CurrencyKey {
      * Creates a new instance with the passed {@code String} as key.
      * @param key {@code String} to use as key
      */
-    public CurrencyKey(@NotNull final String key) {
+    public CurrencyCode(@NotNull final String key) {
         checkNotNull(key);
         checkArgument(CharMatcher.inRange('A', 'Z').matchesAllOf(key));
         checkArgument(key.length() == 3);
@@ -61,24 +61,24 @@ public final class CurrencyKey {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final CurrencyKey that = (CurrencyKey) o;
+        final CurrencyCode that = (CurrencyCode) o;
 
-        return getKey().equals(that.getKey());
+        return getCode().equals(that.getCode());
 
     }
 
     @Override
     public int hashCode() {
-        return getKey().hashCode();
+        return getCode().hashCode();
     }
 
     @Override public String toString() {
         return "CurrencyKey{" +
-                "key='" + getKey() + '\'' +
+                "key='" + getCode() + '\'' +
                 '}';
     }
 
-    @JsonValue @NotNull public String getKey() {
+    @JsonValue @NotNull public String getCode() {
         return key;
     }
 }

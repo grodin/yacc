@@ -29,7 +29,7 @@ import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.debug.DebugCurrenciesService;
 import com.omricat.yacc.debug.TestPersister;
 import com.omricat.yacc.model.CurrencyDataset;
-import com.omricat.yacc.model.CurrencyKey;
+import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.CurrencyKeyRxSet;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
@@ -60,7 +60,7 @@ public class CurrencyListFragment extends Fragment {
     private CurrencyKeyRxSet selectedKeySet;
 
     private Observable<CurrencyDataset> allCurrencies;
-    private Observable<? extends Set<CurrencyKey>> selectedCurrencies;
+    private Observable<? extends Set<CurrencyCode>> selectedCurrencies;
     private Subscription subscription = Subscriptions.empty();
 
     private CurrencyAdapter currencyAdapter;
@@ -88,7 +88,7 @@ public class CurrencyListFragment extends Fragment {
         }
 
         currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY
-                .getCurrencies(), Collections.<CurrencyKey>emptySet());
+                .getCurrencies(), Collections.<CurrencyCode>emptySet());
 
         currencyDataRequester = CurrencyDataRequester.create(
                 new TestPersister<CurrencyDataset>(),
@@ -96,7 +96,7 @@ public class CurrencyListFragment extends Fragment {
                 IsDataStalePredicate.createDefault());
 
         selectedKeySet = CurrencyKeyRxSet.create(
-                new TestPersister<Set<CurrencyKey>>());
+                new TestPersister<Set<CurrencyCode>>());
 
         allCurrencies = bindFragment(this, currencyDataRequester.request());
 
@@ -146,7 +146,7 @@ public class CurrencyListFragment extends Fragment {
                                         (currencyDataset.getCurrencies());
                         }
                 }),
-                selectedCurrencies.subscribe(new Subscriber<Set<CurrencyKey>>() {
+                selectedCurrencies.subscribe(new Subscriber<Set<CurrencyCode>>() {
 
 
                     @Override public void onCompleted() { }
@@ -155,7 +155,7 @@ public class CurrencyListFragment extends Fragment {
                         throw new RuntimeException(e);
                     }
 
-                    @Override public void onNext(final Set<CurrencyKey> keys) {
+                    @Override public void onNext(final Set<CurrencyCode> keys) {
                                 currencyAdapter.swapSelectedCurrencies(keys);
                     }
                 }));

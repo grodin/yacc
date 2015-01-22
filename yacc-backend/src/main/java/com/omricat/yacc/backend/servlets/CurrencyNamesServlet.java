@@ -18,6 +18,7 @@ package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omricat.yacc.backend.util.HttpUtils;
+import com.omricat.yacc.model.CurrencyCode;
 
 import java.io.IOException;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class CurrencyNamesServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest req,
                          final HttpServletResponse resp)
             throws ServletException, IOException {
-        Map<String, String> names = namesHelper.getAndStoreCurrencyNames();
+        Map<CurrencyCode, String> names = namesHelper.getAndStoreCurrencyNames();
 
         HttpUtils.setJsonUTF8ContentType(resp);
 

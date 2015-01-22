@@ -26,44 +26,44 @@ import nl.jqno.equalsverifier.Warning;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CurrencyKeyTest {
+public class CurrencyCodeTest {
 
     @Test(expected = NullPointerException.class)
     public void testConstruction_Null() throws Exception {
-        new CurrencyKey(null);
+        new CurrencyCode(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstruction_IncorrectChars() throws Exception {
-        new CurrencyKey("gbp");
+        new CurrencyCode("gbp");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstruction_TooShortString() throws Exception {
-        new CurrencyKey("GB");
+        new CurrencyCode("GB");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstruction_TooLongString() throws Exception {
-        new CurrencyKey("GBOD");
+        new CurrencyCode("GBOD");
     }
 
     @Test
     public void testConstruction() throws Exception {
-        String ret = new CurrencyKey("USD").getKey();
+        String ret = new CurrencyCode("USD").getCode();
         assertThat(ret).isEqualTo("USD");
     }
 
     @Test
     public void testEqualsContract() throws Exception {
-        EqualsVerifier.forClass(CurrencyKey.class)
+        EqualsVerifier.forClass(CurrencyCode.class)
                 .usingGetClass()
                 .suppress(Warning.NULL_FIELDS);
     }
 
     @Test
     public void testToString() throws Exception {
-        String ret = new CurrencyKey("EUR").toString();
+        String ret = new CurrencyCode("EUR").toString();
         assertThat(ret).isEqualTo("CurrencyKey{key='EUR'}");
     }
 
@@ -71,7 +71,7 @@ public class CurrencyKeyTest {
     public void testJsonSerialization() throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
 
-        final String json = mapper.writeValueAsString(new CurrencyKey("EUR"));
+        final String json = mapper.writeValueAsString(new CurrencyCode("EUR"));
 
         assertThat(json).isEqualTo("\"EUR\"");
     }
@@ -80,9 +80,9 @@ public class CurrencyKeyTest {
     public void testJsonDeserialization_ValidData() throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
 
-        final CurrencyKey key = mapper.readValue("\"EUR\"",CurrencyKey.class);
+        final CurrencyCode key = mapper.readValue("\"EUR\"",CurrencyCode.class);
 
-        assertThat(key).isEqualTo(new CurrencyKey("EUR"));
+        assertThat(key).isEqualTo(new CurrencyCode("EUR"));
 
     }
 
@@ -90,6 +90,6 @@ public class CurrencyKeyTest {
     public void testJsonDeserialization_InvalidData() throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
 
-        final CurrencyKey key = mapper.readValue("\"er\"", CurrencyKey.class);
+        final CurrencyCode key = mapper.readValue("\"er\"", CurrencyCode.class);
     }
 }

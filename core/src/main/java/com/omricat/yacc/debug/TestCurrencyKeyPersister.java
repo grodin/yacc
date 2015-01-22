@@ -16,10 +16,10 @@
 
 package com.omricat.yacc.debug;
 
-import com.omricat.yacc.model.CurrencyKey;
+import com.omricat.yacc.model.CurrencyCode;
 
 import java.util.Set;
 
-public class TestCurrencyKeyPersister extends TestPersister<Set<CurrencyKey>> {
+public class TestCurrencyKeyPersister extends TestPersister<Set<CurrencyCode>> {
 
 }

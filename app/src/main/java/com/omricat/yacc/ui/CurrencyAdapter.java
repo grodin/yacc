@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.omricat.yacc.R;
 import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencyKey;
+import com.omricat.yacc.model.CurrencyCode;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,10 +45,10 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
         .ViewHolder> {
 
     private ImmutableList<Currency> cachedCurrencyList;
-    private ImmutableSet<CurrencyKey> selectedCurrencies;
+    private ImmutableSet<CurrencyCode> selectedCurrencies;
 
     public CurrencyAdapter(@NotNull final Iterable<Currency> currencyDataset,
-                           @NotNull final Iterable<CurrencyKey>
+                           @NotNull final Iterable<CurrencyCode>
                                    selectedCurrencies) {
         swapSelected(selectedCurrencies);
         swapCurrencies(currencyDataset);
@@ -66,13 +66,13 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
                 checkNotNull(currencyDataset));
     }
 
-    public void swapSelectedCurrencies(@NotNull final Iterable<CurrencyKey>
+    public void swapSelectedCurrencies(@NotNull final Iterable<CurrencyCode>
                                                selectedCurrencies) {
         swapSelected(selectedCurrencies);
         notifyDataSetChanged();
     }
 
-    private void swapSelected(final Iterable<CurrencyKey> selectedCurrencies) {
+    private void swapSelected(final Iterable<CurrencyCode> selectedCurrencies) {
         this.selectedCurrencies = ImmutableSet.copyOf(
                 checkNotNull(selectedCurrencies));
     }
@@ -90,7 +90,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
                                  final int i) {
         final Currency currency = cachedCurrencyList.get(i);
         viewHolder.vSelected.setChecked(selectedCurrencies.contains(currency.getCode()));
-        viewHolder.vCode.setText(currency.getCode().getKey());
+        viewHolder.vCode.setText(currency.getCode().getCode());
         viewHolder.vName.setText(currency.getName());
         viewHolder.vValue.setText(currency.getValueInUSD().toPlainString());
     }

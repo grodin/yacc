@@ -45,7 +45,7 @@ public class Currency {
     public static final String CODE = "code";
     public static final String NAME = "name";
     final BigDecimal value;
-    final CurrencyKey code;
+    final CurrencyCode code;
     final String name;
     final String description;
 
@@ -60,14 +60,14 @@ public class Currency {
      *
      * @param value       the value of the currency, relative to USD. Must be
      *                    non-negative and non-null.
-     * @param code        {@link CurrencyKey} representing the ISO 4217 code for
+     * @param code        {@link CurrencyCode} representing the ISO 4217 code for
      *                    this currency, not null.
      * @param name        the name of this currency, not null.
      * @param description an optional short description of the currency (e.g.
      *                    "The currency used in the USA"). Cannot be null.
      */
     public Currency(@NotNull final BigDecimal value,
-                    @NotNull final CurrencyKey code,
+                    @NotNull final CurrencyCode code,
                     @NotNull final String name,
                     @NotNull final String description) {
         checkArgument(checkNotNull(value).compareTo(BigDecimal
@@ -100,7 +100,7 @@ public class Currency {
                     @NotNull final String code,
                     @NotNull final String name,
                     @NotNull final String description) {
-        this(new BigDecimal(value), new CurrencyKey(code), name, description);
+        this(new BigDecimal(value), new CurrencyCode(code), name, description);
     }
 
     /**
@@ -147,7 +147,7 @@ public class Currency {
      * @return a string containing the three letter code
      */
     @NotNull
-    public CurrencyKey getCode() {
+    public CurrencyCode getCode() {
         return code;
     }
 

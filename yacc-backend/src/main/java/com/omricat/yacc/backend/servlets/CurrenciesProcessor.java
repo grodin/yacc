@@ -22,6 +22,7 @@ import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.datastore.CurrenciesStore;
 import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.model.Currency;
+import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +47,7 @@ class CurrenciesProcessor {
 
     private final NamesStore namesStore;
 
+
     CurrenciesProcessor(@NotNull final CurrencyService service,
                         @NotNull final ObjectMapper mapper,
                         @NotNull final NamesStore namesStore) {
@@ -59,28 +61,26 @@ class CurrenciesProcessor {
     }
 
     @NotNull CurrencyDataset download() throws IOException {
-        final Map<String, String> map = service.getLatestCurrencies()
+        final Map<String, String> rawDataMap = service.getLatestCurrencies()
                 .get(0); // Should only be one element in the array
-        final long timeStamp = Long.parseLong(map.remove("DateTime"));
+        final long timeStamp = Long.parseLong(rawDataMap.remove("DateTime"));
         final Set<Currency> currencySet = new HashSet<>();
 
-        Map<String, String> names;
+        Map<CurrencyCode, String> names;
         try (Reader in = namesStore.getReader()) {
             names = mapper.readValue(in, mapType);
         } catch (FileNotFoundException e) {
             names = NamesHelper.getInstance(mapper).getAndStoreCurrencyNames();
         }
 
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        for (Map.Entry<String, String> entry : rawDataMap.entrySet()) {
             // The currency service gives currency values which end
             //   with "\r" so we remove it from each
-            String currencyValue = entry.getValue().replace("\r", "");
-            String name = names.get(entry.getKey());
-            if (name == null) {
-                name = "";
-            }
-            currencySet.add(new Currency(currencyValue,
-                    entry.getKey(), name));
+            final String currencyValue = entry.getValue().replace("\r", "");
+            final String name = names.get(new CurrencyCode(entry.getKey()));
+
+            currencySet.add(new Currency(currencyValue, entry.getKey(),
+                    name == null ? "" : name));
         }
 
         return new CurrencyDataset(currencySet, timeStamp);
