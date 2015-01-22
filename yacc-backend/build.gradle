@@ -41,6 +41,7 @@ dependencies {
     testCompile "com.squareup.retrofit:retrofit-mock:" +
             "${rootProject.ext.retrofitVersion}"
     testCompile "${rootProject.ext.mockito}"
+    testCompile "${rootProject.ext.assertJ}"
 }
 
 appengineRun.dependsOn appengineStop
