@@ -20,13 +20,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cardView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp"
-    android:layout_margin="4dp" >
+    android:layout_margin="8dp" >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp">
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -53,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/selected"
             android:layout_toEndOf="@id/selected"
-            android:layout_alignTop="@id/code"
+            android:layout_below="@id/code"
             android:textAppearance="?android:attr/textAppearance"
             />
 
@@ -64,11 +68,8 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignLeft="@id/code"
-            android:layout_alignStart="@id/code"
-            android:layout_marginLeft="24dp"
-            android:layout_marginStart="24dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="end"
             />
 
     </RelativeLayout>
