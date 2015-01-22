@@ -20,16 +20,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.omricat.yacc.R;
-import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.model.Currency;
+import com.omricat.yacc.model.CurrencyKey;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,40 +38,61 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**
- * Immutable(?) instance of a {@link android.support.v7.widget.RecyclerView.Adapter}
+ * Immutable(?) instance of a {@link android.support.v7.widget.RecyclerView
+ * .Adapter}
  */
 public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
-        .CurrencyViewHolder> {
+        .ViewHolder> {
 
-    private CurrencyDataset currencyDataset;
-    private List<Currency> cachedCurrencyList;
+    private ImmutableList<Currency> cachedCurrencyList;
+    private ImmutableSet<CurrencyKey> selectedCurrencies;
 
-    public CurrencyAdapter(@NotNull final CurrencyDataset currencyDataset) {
+    public CurrencyAdapter(@NotNull final Iterable<Currency> currencyDataset,
+                           @NotNull final Iterable<CurrencyKey>
+                                   selectedCurrencies) {
+        swapSelected(selectedCurrencies);
         swapCurrencies(currencyDataset);
-    }
-
-    public void swapCurrencies(@NotNull final CurrencyDataset currencyDataset) {
-        this.currencyDataset = checkNotNull(currencyDataset);
-        cachedCurrencyList = Arrays.asList(currencyDataset.getCurrencies().toArray
-                (new Currency[]{}));
         notifyDataSetChanged();
     }
 
-    @Override
-    public CurrencyViewHolder onCreateViewHolder(final ViewGroup viewGroup,
-                                                 final int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.cardview_currency, viewGroup, false);
-        return new CurrencyViewHolder(v);
+    public void swapCurrencyList(@NotNull final Iterable<Currency>
+                                         currencyDataset) {
+        swapCurrencies(currencyDataset);
+        notifyDataSetChanged();
+    }
+
+    private void swapCurrencies(final Iterable<Currency> currencyDataset) {
+        cachedCurrencyList = ImmutableList.copyOf(
+                checkNotNull(currencyDataset));
+    }
+
+    public void swapSelectedCurrencies(@NotNull final Iterable<CurrencyKey>
+                                               selectedCurrencies) {
+        swapSelected(selectedCurrencies);
+        notifyDataSetChanged();
+    }
+
+    private void swapSelected(final Iterable<CurrencyKey> selectedCurrencies) {
+        this.selectedCurrencies = ImmutableSet.copyOf(
+                checkNotNull(selectedCurrencies));
     }
 
     @Override
-    public void onBindViewHolder(final CurrencyViewHolder currencyViewHolder,
+    public ViewHolder onCreateViewHolder(final ViewGroup viewGroup,
+                                         final int i) {
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(
+                R.layout.cardview_currency, viewGroup, false);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder viewHolder,
                                  final int i) {
         final Currency currency = cachedCurrencyList.get(i);
-        currencyViewHolder.vCode.setText(currency.getCode().key);
-        currencyViewHolder.vName.setText(currency.getName());
-        currencyViewHolder.vValue.setText(currency.getValueInUSD().toPlainString());
+        viewHolder.vSelected.setChecked(selectedCurrencies.contains(currency.getCode()));
+        viewHolder.vCode.setText(currency.getCode().key);
+        viewHolder.vName.setText(currency.getName());
+        viewHolder.vValue.setText(currency.getValueInUSD().toPlainString());
     }
 
     @Override
@@ -79,7 +100,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
         return cachedCurrencyList.size();
     }
 
-    public static class CurrencyViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         @InjectView( R.id.code )
         TextView vCode;
@@ -87,8 +108,10 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
         TextView vName;
         @InjectView( R.id.value )
         TextView vValue;
+        @InjectView( R.id.selected)
+        CheckBox vSelected;
 
-        public CurrencyViewHolder(final View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.inject(this, itemView);
         }

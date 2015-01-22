@@ -26,24 +26,28 @@ import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.api.CurrenciesService;
-import com.omricat.yacc.api.NetworkCurrenciesService;
+import com.omricat.yacc.debug.DebugCurrenciesService;
+import com.omricat.yacc.debug.TestPersister;
 import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.model.CurrencyKey;
+import com.omricat.yacc.rx.CurrencyDataRequester;
+import com.omricat.yacc.rx.CurrencyKeyRxSet;
+import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import retrofit.RestAdapter;
-import retrofit.converter.JacksonConverter;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+import static rx.android.observables.AndroidObservable.bindFragment;
+
 public class CurrencyListFragment extends Fragment {
 
     // Debug Log tag
@@ -52,11 +56,12 @@ public class CurrencyListFragment extends Fragment {
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
 
-    private Observable<CurrencyDataset> allCurrencies;
-    private Observable<Set<CurrencyKey>> selectedCurrencies;
-    private Subscription subscription = Subscriptions.empty();
+    private CurrencyDataRequester currencyDataRequester;
+    private CurrencyKeyRxSet selectedKeySet;
 
-    private NetworkCurrenciesService service;
+    private Observable<CurrencyDataset> allCurrencies;
+    private Observable<? extends Set<CurrencyKey>> selectedCurrencies;
+    private Subscription subscription = Subscriptions.empty();
 
     private CurrencyAdapter currencyAdapter;
 
@@ -74,15 +79,28 @@ public class CurrencyListFragment extends Fragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://hp:8080")
-                .setConverter(new JacksonConverter())
-                .build();
-        service = new NetworkCurrenciesService(restAdapter.create
-                (CurrenciesService.class));
-        currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY);
 
+        final CurrenciesService service;
+        try {
+            service = new DebugCurrenciesService();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+        currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY
+                .getCurrencies(), Collections.<CurrencyKey>emptySet());
+
+        currencyDataRequester = CurrencyDataRequester.create(
+                new TestPersister<CurrencyDataset>(),
+                service,
+                IsDataStalePredicate.createDefault());
+
+        selectedKeySet = CurrencyKeyRxSet.create(
+                new TestPersister<Set<CurrencyKey>>());
+
+        allCurrencies = bindFragment(this, currencyDataRequester.request());
+
+        selectedCurrencies = bindFragment(this, selectedKeySet.get());
     }
 
     @Override
@@ -111,25 +129,36 @@ public class CurrencyListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        subscription = allCurrencies.subscribe(new Subscriber<CurrencyDataset>
+        subscription = new CompositeSubscription(
+                allCurrencies.subscribe(new Subscriber<CurrencyDataset>
                 () {
                     @Override
-                    public void onCompleted() {
-
-                    }
+                    public void onCompleted() { }
 
                     @Override
                     public void onError(final Throwable e) {
-                        e.printStackTrace();
-                        throw new IllegalStateException(e);
+                        throw new RuntimeException(e);
                     }
 
                     @Override
                     public void onNext(final CurrencyDataset currencyDataset) {
-                                currencyAdapter.swapCurrencies
-                                        (currencyDataset);
+                                currencyAdapter.swapCurrencyList
+                                        (currencyDataset.getCurrencies());
                         }
-                });
+                }),
+                selectedCurrencies.subscribe(new Subscriber<Set<CurrencyKey>>() {
+
+
+                    @Override public void onCompleted() { }
+
+                    @Override public void onError(final Throwable e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    @Override public void onNext(final Set<CurrencyKey> keys) {
+                                currencyAdapter.swapSelectedCurrencies(keys);
+                    }
+                }));
     }
 
     @Override
