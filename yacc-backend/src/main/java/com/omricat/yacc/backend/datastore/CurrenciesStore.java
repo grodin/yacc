@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Helper class to abstract over the storage of the currency data
  */
-public class CurrenciesStore extends DataStore {
+public class CurrenciesStore extends DefaultDataStore {
 
     private CurrenciesStore() {
         super(new GcsFilename(Config.BUCKET, Config.LATEST_CURRENCY_FILENAME),

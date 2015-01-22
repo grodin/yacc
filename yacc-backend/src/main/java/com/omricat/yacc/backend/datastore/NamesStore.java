@@ -21,7 +21,7 @@ import com.omricat.yacc.backend.Config;
 
 import org.jetbrains.annotations.NotNull;
 
-public class NamesStore extends DataStore {
+public class NamesStore extends DefaultDataStore {
 
     protected NamesStore() {
         super(new GcsFilename(Config.BUCKET, Config.CURRENCY_NAMES),
