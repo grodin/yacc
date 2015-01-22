@@ -18,6 +18,7 @@ package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
+import com.google.common.base.Optional;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.datastore.CurrenciesStore;
 import com.omricat.yacc.backend.datastore.NamesStore;
@@ -73,14 +74,23 @@ class CurrenciesProcessor {
             names = NamesHelper.getInstance(mapper).getAndStoreCurrencyNames();
         }
 
+        DataConsistencyProcessor dataConsistencyProcessor = new
+                DataConsistencyProcessor(names);
+
         for (Map.Entry<String, String> entry : rawDataMap.entrySet()) {
             // The currency service gives currency values which end
             //   with "\r" so we remove it from each
-            final String currencyValue = entry.getValue().replace("\r", "");
-            final String name = names.get(new CurrencyCode(entry.getKey()));
-
-            currencySet.add(new Currency(currencyValue, entry.getKey(),
-                    name == null ? "" : name));
+            String currencyValue = entry.getValue().replace("\r", "");
+            String name = names.get(new CurrencyCode(entry.getKey()));
+            if (name == null) {
+                name = "";
+            }
+            final Optional<Currency> currency =
+                    dataConsistencyProcessor.fixData(new Currency(currencyValue,
+                        entry.getKey(), name));
+            if (currency.isPresent()) {
+                currencySet.add(currency.get());
+            }
         }
 
         return new CurrencyDataset(currencySet, timeStamp);
