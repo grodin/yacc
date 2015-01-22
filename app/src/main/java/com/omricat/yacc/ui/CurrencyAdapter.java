@@ -90,7 +90,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
                                  final int i) {
         final Currency currency = cachedCurrencyList.get(i);
         viewHolder.vSelected.setChecked(selectedCurrencies.contains(currency.getCode()));
-        viewHolder.vCode.setText(currency.getCode().key);
+        viewHolder.vCode.setText(currency.getCode().getKey());
         viewHolder.vName.setText(currency.getName());
         viewHolder.vValue.setText(currency.getValueInUSD().toPlainString());
     }

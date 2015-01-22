@@ -16,6 +16,7 @@
 
 package com.omricat.yacc.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.CharMatcher;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class CurrencyKey {
 
-    @NotNull public final String key;
+    @NotNull
+    private final String key;
 
     /**
      * Creates a new instance with the passed {@code String} as key.
@@ -61,18 +63,22 @@ public final class CurrencyKey {
 
         final CurrencyKey that = (CurrencyKey) o;
 
-        return key.equals(that.key);
+        return getKey().equals(that.getKey());
 
     }
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return getKey().hashCode();
     }
 
     @Override public String toString() {
         return "CurrencyKey{" +
-                "key='" + key + '\'' +
+                "key='" + getKey() + '\'' +
                 '}';
+    }
+
+    @JsonValue @NotNull public String getKey() {
+        return key;
     }
 }
