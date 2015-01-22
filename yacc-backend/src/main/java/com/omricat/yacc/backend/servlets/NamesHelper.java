@@ -18,7 +18,7 @@ package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omricat.yacc.backend.api.NamesService;
-import com.omricat.yacc.backend.datastore.NamesStore;
+import com.omricat.yacc.backend.datastore.DataStore;
 import com.omricat.yacc.model.CurrencyCode;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ class NamesHelper implements Serializable {
         return new NamesHelper(mapper, namesService);
     }
 
-    Map<CurrencyCode, String> getAndStoreCurrencyNames(@NotNull final NamesStore
+    Map<CurrencyCode, String> getAndStoreCurrencyNames(@NotNull final DataStore
                                                                namesStore)
             throws IOException {
 
