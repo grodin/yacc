@@ -71,7 +71,7 @@ public class DebugCurrenciesService implements CurrenciesService {
             "\"name\":\"Indian Rupee\"},{\"code\":\"CLF\"," +
             "\"value\":\"0.0247\",\"name\":\"Chilean Unit of Account (UF)\"}," +
             "{\"code\":\"EUR\",\"value\":\"0.8617\",\"name\":\"Euro\"}," +
-            "{\"code\":\"IEP\",\"value\":\"0.6795\",\"name\":null}," +
+            "{\"code\":\"IEP\",\"value\":\"0.6795\",\"name\":\"\"}," +
             "{\"code\":\"CZK\",\"value\":\"24.078\",\"name\":\"Czech Republic" +
             " Koruna\"},{\"code\":\"AMD\",\"value\":\"477.91\"," +
             "\"name\":\"Armenian Dram\"},{\"code\":\"XCD\"," +
