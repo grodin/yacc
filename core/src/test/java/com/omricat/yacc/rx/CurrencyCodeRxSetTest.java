@@ -48,19 +48,19 @@ public class CurrencyCodeRxSetTest {
     private final CurrencyCode eur = new CurrencyCode("EUR");
     private final CurrencyCode jpy = new CurrencyCode("JPY");
     private final Set<CurrencyCode> testKeySet = Sets.newHashSet(usd, eur, gbp);
-    private final String persistenceKey = CurrencyKeyRxSet.PERSISTENCE_KEY;
+    private final String persistenceKey = CurrencyCodeRxSet.PERSISTENCE_KEY;
 
     @Test( expected = NullPointerException.class )
     public void testCreateWithNull() throws Exception {
-        CurrencyKeyRxSet.create(null);
+        CurrencyCodeRxSet.create(null);
     }
 
     @Test
     public void testJustCreatedIsEmpty() throws Exception {
-        when(mockPersister.get(CurrencyKeyRxSet.PERSISTENCE_KEY))
+        when(mockPersister.get(CurrencyCodeRxSet.PERSISTENCE_KEY))
                 .thenReturn(Observable.<Set<CurrencyCode>>empty());
 
-        Set<?> set = CurrencyKeyRxSet.create(mockPersister).get()
+        Set<?> set = CurrencyCodeRxSet.create(mockPersister).get()
                 .toBlocking().single();
 
         assertThat(set).isEmpty();
@@ -71,12 +71,12 @@ public class CurrencyCodeRxSetTest {
         when(mockPersister.get(persistenceKey))
                 .thenReturn(Observable.<Set<CurrencyCode>>empty());
 
-        Set<?> ret = CurrencyKeyRxSet.create(mockPersister).get()
+        Set<?> ret = CurrencyCodeRxSet.create(mockPersister).get()
                 .toBlocking().single();
 
         assertThat(ret).isEmpty();
 
-        verify(mockPersister).get(CurrencyKeyRxSet.PERSISTENCE_KEY);
+        verify(mockPersister).get(CurrencyCodeRxSet.PERSISTENCE_KEY);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class CurrencyCodeRxSetTest {
         when(mockPersister.get(persistenceKey))
                 .thenReturn(Observable.just(testKeySet));
 
-        Set<CurrencyCode> ret = CurrencyKeyRxSet.create(mockPersister).get()
+        Set<CurrencyCode> ret = CurrencyCodeRxSet.create(mockPersister).get()
                 .toBlocking().single();
 
         assertThat(ret).containsAll(testKeySet);
@@ -93,7 +93,7 @@ public class CurrencyCodeRxSetTest {
 
     @Test(expected = NullPointerException.class)
     public void testAdd_NullParam() throws Exception {
-        CurrencyKeyRxSet.create(mockPersister).add(null);
+        CurrencyCodeRxSet.create(mockPersister).add(null);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class CurrencyCodeRxSetTest {
                 TestPersister<>();
         testPersister.put(persistenceKey, testKeySet);
 
-        final Set<CurrencyCode> ret2 = CurrencyKeyRxSet.create(testPersister)
+        final Set<CurrencyCode> ret2 = CurrencyCodeRxSet.create(testPersister)
                 .add(eur)
                 .toBlocking().single();
 
@@ -116,7 +116,7 @@ public class CurrencyCodeRxSetTest {
         final Persister<String, Set<CurrencyCode>> testPersister = new
                 TestPersister<>();
 
-        CurrencyKeyRxSet keySet = CurrencyKeyRxSet.create(testPersister);
+        CurrencyCodeRxSet keySet = CurrencyCodeRxSet.create(testPersister);
 
         keySet.add(usd).toBlocking().single();
 
@@ -127,7 +127,7 @@ public class CurrencyCodeRxSetTest {
 
     @Test(expected = NullPointerException.class)
     public void testAddAll_NullParam() throws Exception {
-        CurrencyKeyRxSet.create(mockPersister).addAll(null);
+        CurrencyCodeRxSet.create(mockPersister).addAll(null);
     }
 
     @Test
@@ -136,10 +136,10 @@ public class CurrencyCodeRxSetTest {
         final TestPersister<Set<CurrencyCode>> testPersister = new
                 TestPersister<>();
 
-        final CurrencyKeyRxSet currencyKeyRxSet =
-                CurrencyKeyRxSet.create(testPersister);
+        final CurrencyCodeRxSet currencyCodeRxSet =
+                CurrencyCodeRxSet.create(testPersister);
 
-        Set<CurrencyCode> set = currencyKeyRxSet
+        Set<CurrencyCode> set = currencyCodeRxSet
                 .add(jpy)
                 .flatMap(new Func1<Set<CurrencyCode>,
                                     Observable<? extends Set<CurrencyCode>>>() {
@@ -149,7 +149,7 @@ public class CurrencyCodeRxSetTest {
                     public Observable<? extends Set<CurrencyCode>> call(final
                                                               Set<CurrencyCode>
                                                                      currencyKeys) {
-                        return currencyKeyRxSet.addAll(testKeySet);
+                        return currencyCodeRxSet.addAll(testKeySet);
                     }
                  })
                 .toBlocking().single();
@@ -163,7 +163,7 @@ public class CurrencyCodeRxSetTest {
 
     @Test(expected = NullPointerException.class)
     public void testRemove_NullParam() throws Exception {
-        CurrencyKeyRxSet.create(mockPersister).remove(null);
+        CurrencyCodeRxSet.create(mockPersister).remove(null);
     }
 
     @Test
@@ -172,7 +172,7 @@ public class CurrencyCodeRxSetTest {
                 TestPersister<>();
         testPersister.put(persistenceKey, testKeySet);
 
-        final Set<CurrencyCode> ret = CurrencyKeyRxSet.create(testPersister)
+        final Set<CurrencyCode> ret = CurrencyCodeRxSet.create(testPersister)
                 .remove(usd)
                 .toBlocking().single();
 
@@ -184,7 +184,7 @@ public class CurrencyCodeRxSetTest {
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAll_NullParam() throws Exception {
-        CurrencyKeyRxSet.create(mockPersister).removeAll(null);
+        CurrencyCodeRxSet.create(mockPersister).removeAll(null);
     }
 
 
@@ -194,7 +194,7 @@ public class CurrencyCodeRxSetTest {
                 TestPersister<>();
         testPersister.put(persistenceKey, testKeySet);
 
-        final Set<CurrencyCode> ret = CurrencyKeyRxSet.create(testPersister)
+        final Set<CurrencyCode> ret = CurrencyCodeRxSet.create(testPersister)
                 .removeAll(Sets.newHashSet(usd, jpy))
                 .toBlocking().single();
 

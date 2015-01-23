@@ -31,7 +31,7 @@ import com.omricat.yacc.debug.TestPersister;
 import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.rx.CurrencyDataRequester;
-import com.omricat.yacc.rx.CurrencyKeyRxSet;
+import com.omricat.yacc.rx.CurrencyCodeRxSet;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
 
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class CurrencyListFragment extends Fragment {
     RecyclerView mCardRecyclerView;
 
     private CurrencyDataRequester currencyDataRequester;
-    private CurrencyKeyRxSet selectedKeySet;
+    private CurrencyCodeRxSet selectedKeySet;
 
     private Observable<CurrencyDataset> allCurrencies;
     private Observable<? extends Set<CurrencyCode>> selectedCurrencies;
@@ -95,7 +95,7 @@ public class CurrencyListFragment extends Fragment {
                 service,
                 IsDataStalePredicate.createDefault());
 
-        selectedKeySet = CurrencyKeyRxSet.create(
+        selectedKeySet = CurrencyCodeRxSet.create(
                 new TestPersister<Set<CurrencyCode>>());
 
         allCurrencies = bindFragment(this, currencyDataRequester.request());

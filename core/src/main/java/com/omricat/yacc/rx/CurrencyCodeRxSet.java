@@ -33,7 +33,7 @@ import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CurrencyKeyRxSet implements RxSet<CurrencyCode> {
+public class CurrencyCodeRxSet implements RxSet<CurrencyCode> {
 
     final static String PERSISTENCE_KEY = "selected-currencies";
     private final Set<CurrencyCode> keySet = new HashSet<>();
@@ -77,17 +77,17 @@ public class CurrencyKeyRxSet implements RxSet<CurrencyCode> {
             Observable.just(Collections
                     .<CurrencyCode>emptySet()));
 
-    private CurrencyKeyRxSet(@NotNull final
-                             Persister<String, Set<CurrencyCode>>
-                                     persister) {
+    private CurrencyCodeRxSet(@NotNull final
+                              Persister<String, Set<CurrencyCode>>
+                                      persister) {
         this.persister = checkNotNull(persister);
     }
 
-    public static CurrencyKeyRxSet create(@NotNull final
+    public static CurrencyCodeRxSet create(@NotNull final
                                           Persister<String,
                                                   Set<CurrencyCode>>
                                                   diskPersister) {
-        return new CurrencyKeyRxSet(diskPersister);
+        return new CurrencyCodeRxSet(diskPersister);
     }
 
     @Override @NotNull public Observable<? extends Set<CurrencyCode>> get() {
