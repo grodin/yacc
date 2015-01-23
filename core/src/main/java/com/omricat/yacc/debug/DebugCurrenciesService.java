@@ -16,8 +16,6 @@
 
 package com.omricat.yacc.debug;
 
-import android.util.Log;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.model.CurrencyDataset;
@@ -98,7 +96,7 @@ public class DebugCurrenciesService implements CurrenciesService {
             set = mapper.readValue(currencyJson,
                     CurrencyDataset.class);
         } catch (IOException e) {
-            Log.e(this.getClass().getSimpleName(), e.getMessage());
+            // Don't have access to logger so don't do anything here
         }
         if (set == null) {
             set = CurrencyDataset.EMPTY;
