@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
+import com.omricat.yacc.backend.api.NamesService;
+import com.omricat.yacc.backend.datastore.CurrenciesStore;
 import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.model.CurrencyDataset;
 
@@ -56,16 +58,23 @@ class UpdateLatestCurrenciesHelper {
     void init() throws ServletException {
         mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
 
-        final RestAdapter restAdapter = new RestAdapter.Builder()
+        final RestAdapter.Builder builder = new RestAdapter.Builder();
+        RestAdapter restAdapter = builder
                 .setEndpoint(Config.CURRENCY_DATA_ENDPOINT)
                 .setClient(new UrlFetchClient())
                 .setConverter(new JacksonConverter(mapper))
                 .build();
+        final CurrencyService currencyService = restAdapter.create
+                (CurrencyService.class);
 
-        final CurrencyService service =
-                restAdapter.create(CurrencyService.class);
+        restAdapter = builder.setEndpoint(Config.CURRENCY_NAMES_ENDPOINT)
+                .build();
+        final NamesService namesService = restAdapter.create(NamesService
+                .class);
 
-        currenciesProcessor = new CurrenciesProcessor(service, mapper,
+        currenciesProcessor = new CurrenciesProcessor(
+                currencyService, namesService, mapper,
+                CurrenciesStore.getInstance(),
                 NamesStore.getInstance());
     }
 

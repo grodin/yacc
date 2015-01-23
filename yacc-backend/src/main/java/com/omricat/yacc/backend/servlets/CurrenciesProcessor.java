@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.google.common.base.Optional;
 import com.omricat.yacc.backend.api.CurrencyService;
-import com.omricat.yacc.backend.datastore.CurrenciesStore;
-import com.omricat.yacc.backend.datastore.NamesStore;
+import com.omricat.yacc.backend.api.NamesService;
+import com.omricat.yacc.backend.datastore.DataStore;
 import com.omricat.yacc.model.Currency;
 import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.model.CurrencyDataset;
@@ -42,18 +42,26 @@ class CurrenciesProcessor {
 
     private final ObjectMapper mapper;
 
-    private final CurrencyService service;
+    private final CurrencyService currencyService;
+    private final NamesService namesService;
 
     private final MapType mapType;
 
-    private final NamesStore namesStore;
+    private final DataStore namesStore;
+    private final DataStore currenciesStore;
 
 
-    CurrenciesProcessor(@NotNull final CurrencyService service,
+    CurrenciesProcessor(@NotNull final CurrencyService currencyService,
+                        @NotNull final NamesService namesService,
                         @NotNull final ObjectMapper mapper,
-                        @NotNull final NamesStore namesStore) {
+                        @NotNull final DataStore currenciesStore,
+                        @NotNull final DataStore namesStore) {
+
+
+        this.namesService = checkNotNull(namesService);
+        this.currenciesStore = checkNotNull(currenciesStore);
         this.namesStore = checkNotNull(namesStore);
-        this.service = checkNotNull(service);
+        this.currencyService = checkNotNull(currencyService);
         this.mapper = checkNotNull(mapper);
 
         mapType = mapper.getTypeFactory().constructMapType(Map.class,
@@ -62,7 +70,7 @@ class CurrenciesProcessor {
     }
 
     @NotNull CurrencyDataset download() throws IOException {
-        final Map<String, String> rawDataMap = service.getLatestCurrencies()
+        final Map<String, String> rawDataMap = currencyService.getLatestCurrencies()
                 .get(0); // Should only be one element in the array
         final long timeStamp = Long.parseLong(rawDataMap.remove("DateTime"));
         final Set<Currency> currencySet = new HashSet<>();
@@ -71,7 +79,8 @@ class CurrenciesProcessor {
         try (Reader in = namesStore.getReader()) {
             names = mapper.readValue(in, mapType);
         } catch (FileNotFoundException e) {
-            names = NamesHelper.getInstance(mapper).getAndStoreCurrencyNames();
+            names = NamesHelper.getInstance(mapper,namesService
+                    ).getAndStoreCurrencyNames(namesStore);
         }
 
         DataConsistencyProcessor dataConsistencyProcessor = new
@@ -103,7 +112,7 @@ class CurrenciesProcessor {
     public void writeToStore(@NotNull final CurrencyDataset currencyDataset)
             throws IOException {
 
-        final Writer stream = CurrenciesStore.getInstance()
+        final Writer stream = currenciesStore
                 .getWriter();
         mapper.writeValue(stream, currencyDataset);
         stream.close();
