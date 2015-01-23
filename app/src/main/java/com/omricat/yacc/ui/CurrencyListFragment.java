@@ -16,6 +16,7 @@
 
 package com.omricat.yacc.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,16 +26,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
-import com.omricat.yacc.api.CurrenciesService;
-import com.omricat.yacc.debug.DebugCurrenciesService;
-import com.omricat.yacc.debug.TestPersister;
-import com.omricat.yacc.model.CurrencyDataset;
+import com.omricat.yacc.YaccApp;
 import com.omricat.yacc.model.CurrencyCode;
-import com.omricat.yacc.rx.CurrencyDataRequester;
+import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.rx.CurrencyCodeRxSet;
+import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -51,7 +49,7 @@ import static rx.android.observables.AndroidObservable.bindFragment;
 public class CurrencyListFragment extends Fragment {
 
     // Debug Log tag
-    private static final String TAG = "CurrencyListFragment";
+    private static final String TAG = CurrencyListFragment.class.getSimpleName();
 
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
@@ -76,27 +74,21 @@ public class CurrencyListFragment extends Fragment {
         setRetainInstance(true);
     }
 
+    @Override public void onAttach(final Activity activity) {
+        super.onAttach(activity);
+        currencyDataRequester = YaccApp.from(activity)
+                .getCurrencyDataRequester(IsDataStalePredicate.createDefault());
+
+        selectedKeySet = YaccApp.from(activity).getCurrencyCodeRxSet();
+    }
+
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final CurrenciesService service;
-        try {
-            service = new DebugCurrenciesService();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY
                 .getCurrencies(), Collections.<CurrencyCode>emptySet());
-
-        currencyDataRequester = CurrencyDataRequester.create(
-                new TestPersister<CurrencyDataset>(),
-                service,
-                IsDataStalePredicate.createDefault());
-
-        selectedKeySet = CurrencyCodeRxSet.create(
-                new TestPersister<Set<CurrencyCode>>());
 
         allCurrencies = bindFragment(this, currencyDataRequester.request());
 

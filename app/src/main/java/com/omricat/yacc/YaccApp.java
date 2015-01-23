@@ -17,6 +17,7 @@
 package com.omricat.yacc;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.debug.DebugCurrenciesService;
@@ -85,5 +86,9 @@ public class YaccApp extends Application {
         return currencyCodeRxSet;
     }
 
+    @NotNull
+    public static YaccApp from(Context context) {
+        return (YaccApp) context.getApplicationContext();
+    }
 
 }
