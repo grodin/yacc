@@ -17,106 +17,87 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalFileServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
+import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
+import com.omricat.yacc.backend.api.NamesService;
+import com.omricat.yacc.backend.datastore.DataStore;
 import com.omricat.yacc.backend.datastore.NamesStore;
-import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencyDataset;
+import com.omricat.yacc.backend.utils.MockUtils;
+import com.omricat.yacc.model.CurrencyCode;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
-import retrofit.MockRestAdapter;
-import retrofit.RestAdapter;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class CurrenciesProcessorTest {
 
-    private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-            new LocalTaskQueueTestConfig(), new LocalFileServiceTestConfig(),
-            new LocalBlobstoreServiceTestConfig(),
-            new LocalDatastoreServiceTestConfig());
+    static final Map<String, String> RAW_CURRENCY_DATA =
+            ImmutableMap.of("DateTime", "1417390802", "USD",
+            "1\r", "GBP", "1.5\r", "EUR", "0.893\r");
+
+    static final Map<CurrencyCode, String> NAMES_DATA = ImmutableMap.of(
+            new CurrencyCode("EUR"), "Euro", new CurrencyCode("GBP"),
+            "British Pound Sterling", new CurrencyCode("USD"), "US Dollar");
 
     private ObjectMapper mapper = new ObjectMapper();
-    private GcsFilename gcsFilename = new GcsFilename(Config.BUCKET,
-            Config.LATEST_CURRENCY_FILENAME);
-
-    private final Logger log = Logger.getLogger
-            (DownloadLatestCurrenciesServlet.class
-                    .getName());
 
     private CurrenciesProcessor currenciesProcessorUnderTest;
 
+    @Mock
+    private CurrencyService mockCurrencyService;
+
+    @Mock
+    private NamesService mockNamesService;
+
+    @Mock
+    private DataStore currencyStore;
+
+    @Mock
+    private DataStore namesStore;
 
     @Before
     public void setup() throws IOException {
-        helper.setUp();
 
-        final GcsService gcsService = GcsServiceFactory.createGcsService();
+        when(this.mockCurrencyService.getLatestCurrencies()).thenReturn
+                (ImmutableList.of(RAW_CURRENCY_DATA));
 
-        final RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint
-                (Config.CURRENCY_DATA_ENDPOINT).build();
-        final MockRestAdapter mockRestAdapter = MockRestAdapter.from
-                (restAdapter);
-        final CurrencyService mockCurrencyService = mockRestAdapter.create
-                (CurrencyService.class,
-                        new MockCurrencyService());
-        final NamesStore mockNamesStore = MockNamesStore.getInstance();
+        when(this.mockNamesService.getCurrencyNames()).thenReturn(NAMES_DATA);
+
+        final CurrencyService mockCurrencyService =
+                MockUtils.getMockService(CurrencyService.class,
+                        Config.CURRENCY_DATA_ENDPOINT, this.mockCurrencyService);
+
+        final NamesService mockNamesService =
+                MockUtils.getMockService(NamesService.class,
+                        Config.CURRENCY_NAMES_ENDPOINT, this.mockNamesService);
+
 
         currenciesProcessorUnderTest = new CurrenciesProcessor(
-                mockCurrencyService, mapper, mockNamesStore);
+                mockCurrencyService, mockNamesService, mapper, currencyStore,
+                namesStore);
     }
 
     @After
     public void tearDown() {
-        helper.tearDown();
-
         currenciesProcessorUnderTest = null;
     }
 
-    @Test
-    public void testTimestamp() {
-        CurrencyDataset currs = null;
-        try {
-            currs = currenciesProcessorUnderTest.download();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        assertEquals(currs.getLastUpdatedTimestamp(), 1417390802);
-    }
 
     @Test
-    public void testCurrencyData() throws Exception {
-        CurrencyDataset currs = currenciesProcessorUnderTest.download();
-        Set<Currency> currSet = new HashSet<>();
-        currSet.add(new Currency("1", "USD", "US Dollars"));
-        currSet.add(new Currency("1.5", "GBP", "UK Pounds"));
-        assertTrue(currs.getCurrencies().containsAll(currSet));
-    }
+    public void test() throws Exception {
 
+    }
 
     private static class MockNamesStore extends NamesStore {
 
@@ -132,28 +113,6 @@ public class CurrenciesProcessorTest {
             return new StringReader("{\"USD\":\"US " +
                     "Dollars\"," +
                     "\"EUR\":\"Euros\",\"GBP\":\"UK Pounds\"}");
-        }
-    }
-
-    private static class MockCurrencyService implements CurrencyService {
-
-        private final Map<String, String> currencyMap;
-
-        MockCurrencyService() {
-            currencyMap = new HashMap<>();
-            currencyMap.put("DateTime", "1417390802");
-            currencyMap.put("USD", "1\r");
-            currencyMap.put("GBP", "1.5\r");
-            currencyMap.put("EUR", "0.893\r");
-
-        }
-
-
-        @Override
-        public List<Map<String, String>> getLatestCurrencies() {
-            final ArrayList<Map<String, String>> list = new ArrayList<>();
-            list.add(0, currencyMap);
-            return list;
         }
     }
 
