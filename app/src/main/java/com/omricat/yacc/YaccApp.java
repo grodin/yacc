@@ -21,7 +21,7 @@ import android.content.Context;
 
 import com.omricat.yacc.api.CurrenciesService;
 import com.omricat.yacc.debug.DebugCurrenciesService;
-import com.omricat.yacc.debug.TestPersister;
+import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.rx.CurrencyCodeRxSet;
@@ -44,7 +44,7 @@ public class YaccApp extends Application {
     @NotNull
     public Persister<String, CurrencyDataset> getCurrencyDataPersister() {
         if (currencyDatasetPersister == null) {
-            currencyDatasetPersister = new TestPersister<>();
+            currencyDatasetPersister = new InMemoryPersister<>();
         }
         return currencyDatasetPersister;
     }
@@ -53,7 +53,7 @@ public class YaccApp extends Application {
     public Persister<String, Set<CurrencyCode>> getSelectedCurrenciesPersister
             () {
         if (selectedCurrenciesPersister == null) {
-            selectedCurrenciesPersister = new TestPersister<>();
+            selectedCurrenciesPersister = new InMemoryPersister<>();
         }
         return selectedCurrenciesPersister;
     }

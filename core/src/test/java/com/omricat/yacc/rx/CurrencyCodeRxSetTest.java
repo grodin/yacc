@@ -17,7 +17,7 @@
 package com.omricat.yacc.rx;
 
 import com.google.common.collect.Sets;
-import com.omricat.yacc.debug.TestPersister;
+import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.rx.persistence.Persister;
 
@@ -100,7 +100,7 @@ public class CurrencyCodeRxSetTest {
     public void testAdd_NonemptyPersister() throws Exception {
 
         final Persister<String, Set<CurrencyCode>> testPersister = new
-                TestPersister<>();
+                InMemoryPersister<>();
         testPersister.put(persistenceKey, testKeySet);
 
         final Set<CurrencyCode> ret2 = CurrencyCodeRxSet.create(testPersister)
@@ -114,7 +114,7 @@ public class CurrencyCodeRxSetTest {
     public void testAddThenGet() throws Exception {
 
         final Persister<String, Set<CurrencyCode>> testPersister = new
-                TestPersister<>();
+                InMemoryPersister<>();
 
         CurrencyCodeRxSet keySet = CurrencyCodeRxSet.create(testPersister);
 
@@ -133,11 +133,11 @@ public class CurrencyCodeRxSetTest {
     @Test
     public void testAddAll() throws Exception {
 
-        final TestPersister<Set<CurrencyCode>> testPersister = new
-                TestPersister<>();
+        final InMemoryPersister<Set<CurrencyCode>> inMemoryPersister = new
+                InMemoryPersister<>();
 
         final CurrencyCodeRxSet currencyCodeRxSet =
-                CurrencyCodeRxSet.create(testPersister);
+                CurrencyCodeRxSet.create(inMemoryPersister);
 
         Set<CurrencyCode> set = currencyCodeRxSet
                 .add(jpy)
@@ -156,7 +156,7 @@ public class CurrencyCodeRxSetTest {
 
         assertThat(set).containsAll(testKeySet).contains(jpy);
 
-        assertThat(testPersister.get(persistenceKey)
+        assertThat(inMemoryPersister.get(persistenceKey)
                 .toBlocking().single())
                 .containsAll(testKeySet).contains(jpy);
     }
@@ -169,7 +169,7 @@ public class CurrencyCodeRxSetTest {
     @Test
     public void testRemove_EltPresentInPersister() throws Exception {
         final Persister<String, Set<CurrencyCode>> testPersister = new
-                TestPersister<>();
+                InMemoryPersister<>();
         testPersister.put(persistenceKey, testKeySet);
 
         final Set<CurrencyCode> ret = CurrencyCodeRxSet.create(testPersister)
@@ -191,7 +191,7 @@ public class CurrencyCodeRxSetTest {
     @Test
     public void testRemoveAll() throws Exception {
         final Persister<String, Set<CurrencyCode>> testPersister = new
-                TestPersister<>();
+                InMemoryPersister<>();
         testPersister.put(persistenceKey, testKeySet);
 
         final Set<CurrencyCode> ret = CurrencyCodeRxSet.create(testPersister)

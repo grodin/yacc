@@ -27,7 +27,7 @@ import rx.Observable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TestPersister<V> implements Persister<String,V> {
+public class InMemoryPersister<V> implements Persister<String,V> {
 
     protected Map<String,V> dataMap = new HashMap<>();
 
