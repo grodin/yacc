@@ -16,11 +16,13 @@
 
 package com.omricat.yacc.ui;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
@@ -28,17 +30,20 @@ import com.google.common.collect.ImmutableSet;
 import com.omricat.yacc.R;
 import com.omricat.yacc.model.Currency;
 import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.rx.persistence.Operation;
 
 import org.jetbrains.annotations.NotNull;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**
- * Immutable(?) instance of a {@link android.support.v7.widget.RecyclerView
+ * Mutable instance of a {@link android.support.v7.widget.RecyclerView
  * .Adapter}
  */
 public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
@@ -46,6 +51,8 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
 
     private ImmutableList<Currency> cachedCurrencyList;
     private ImmutableSet<CurrencyCode> selectedCurrencies;
+    private final PublishSubject<Operation<CurrencyCode>> publishSubject =
+            PublishSubject.create();
 
     public CurrencyAdapter(@NotNull final Iterable<Currency> currencyDataset,
                            @NotNull final Iterable<CurrencyCode>
@@ -77,6 +84,11 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
                 checkNotNull(selectedCurrencies));
     }
 
+    @NotNull
+    public Observable<Operation<CurrencyCode>> selectionChanges() {
+        return publishSubject.asObservable();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup viewGroup,
                                          final int i) {
@@ -89,8 +101,23 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
     public void onBindViewHolder(final ViewHolder viewHolder,
                                  final int i) {
         final Currency currency = cachedCurrencyList.get(i);
-        viewHolder.vSelected.setChecked(selectedCurrencies.contains(currency.getCode()));
-        viewHolder.vCode.setText(currency.getCode().getCode());
+        final CurrencyCode code = currency.getCode();
+        final boolean selected = selectedCurrencies.contains(code);
+        viewHolder.vSelected.setChecked(selected);
+        viewHolder.vSelected.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(final View v) {
+                if (((Checkable) v).isChecked()) {
+                    publishSubject.onNext(Operation.add(code));
+                } else {
+                    publishSubject.onNext(Operation.remove(code));
+                }
+            }
+        });
+
+        viewHolder.vCode.setText(code.getCode());
+
+        viewHolder.vCode.setTextColor(selected ? Color.GREEN: Color.LTGRAY);
+
         viewHolder.vName.setText(currency.getName());
         viewHolder.vValue.setText(currency.getValueInUSD().toPlainString());
     }
@@ -108,7 +135,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
         TextView vName;
         @InjectView( R.id.value )
         TextView vValue;
-        @InjectView( R.id.selected)
+        @InjectView( R.id.selected )
         CheckBox vSelected;
 
         public ViewHolder(final View itemView) {

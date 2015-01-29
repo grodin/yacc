@@ -32,6 +32,8 @@ import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.rx.CurrencyCodeRxSet;
 import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
+import com.omricat.yacc.rx.persistence.OpToCurrencyCode;
+import com.omricat.yacc.rx.persistence.Operation;
 
 import java.util.Collections;
 import java.util.Set;
@@ -39,17 +41,17 @@ import java.util.Set;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
+import rx.functions.Action1;
+import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
-
-import static rx.android.observables.AndroidObservable.bindFragment;
 
 public class CurrencyListFragment extends Fragment {
 
     // Debug Log tag
-    private static final String TAG = CurrencyListFragment.class.getSimpleName();
+    private static final String TAG = CurrencyListFragment.class
+            .getSimpleName();
 
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
@@ -59,6 +61,10 @@ public class CurrencyListFragment extends Fragment {
 
     private Observable<CurrencyDataset> allCurrencies;
     private Observable<? extends Set<CurrencyCode>> selectedCurrencies;
+    private Observable<Operation<CurrencyCode>> currencyOperationsFromView;
+    private final BehaviorSubject<Operation<CurrencyCode>> getSubject =
+            BehaviorSubject.create();
+
     private Subscription subscription = Subscriptions.empty();
 
     private CurrencyAdapter currencyAdapter;
@@ -90,9 +96,19 @@ public class CurrencyListFragment extends Fragment {
         currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY
                 .getCurrencies(), Collections.<CurrencyCode>emptySet());
 
-        allCurrencies = bindFragment(this, currencyDataRequester.request());
+        currencyOperationsFromView = currencyAdapter.selectionChanges();
 
-        selectedCurrencies = bindFragment(this, selectedKeySet.get());
+        allCurrencies = RxUtils.bindFragmentOnIO(this,
+                currencyDataRequester.request());
+
+        selectedCurrencies = RxUtils.bindFragmentOnIO(this,
+                selectedKeySetObservable());
+    }
+
+    private Observable<? extends Set<CurrencyCode>> selectedKeySetObservable() {
+        return Observable.merge(currencyOperationsFromView, getSubject)
+                .flatMap(new OpToCurrencyCode(selectedKeySet));
+
     }
 
     @Override
@@ -121,36 +137,35 @@ public class CurrencyListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        subscription = new CompositeSubscription(
-                allCurrencies.subscribe(new Subscriber<CurrencyDataset>
-                () {
+        getSubject.onNext(Operation.<CurrencyCode>get());
+        subscription = new
+                CompositeSubscription(
+                allCurrencies.subscribe(new Action1<CurrencyDataset>() {
                     @Override
-                    public void onCompleted() { }
+                    public void call(final CurrencyDataset currencyDataset) {
+                        currencyAdapter.swapCurrencyList
+                                (currencyDataset.getCurrencies());
 
-                    @Override
-                    public void onError(final Throwable e) {
-                        throw new RuntimeException(e);
                     }
-
-                    @Override
-                    public void onNext(final CurrencyDataset currencyDataset) {
-                                currencyAdapter.swapCurrencyList
-                                        (currencyDataset.getCurrencies());
-                        }
+                }, new Action1<Throwable>() {
+                    @Override public void call(final Throwable throwable) {
+                        throw new RuntimeException(throwable);
+                    }
                 }),
-                selectedCurrencies.subscribe(new Subscriber<Set<CurrencyCode>>() {
-
-
-                    @Override public void onCompleted() { }
-
-                    @Override public void onError(final Throwable e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    @Override public void onNext(final Set<CurrencyCode> keys) {
+                selectedCurrencies
+                        .subscribe(new Action1<Set<CurrencyCode>>() {
+                            @Override public void call(final
+                                                       Set<CurrencyCode> keys) {
                                 currencyAdapter.swapSelectedCurrencies(keys);
-                    }
-                }));
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(final Throwable throwable) {
+                                throw new RuntimeException(throwable);
+
+                            }
+                        }));
+
     }
 
     @Override
@@ -159,4 +174,5 @@ public class CurrencyListFragment extends Fragment {
         ButterKnife.reset(this);
         super.onDestroyView();
     }
+
 }
