@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Omricat Software
+ * Copyright 2015 Omricat Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,28 @@
 
 package com.omricat.yacc.backend.util;
 
-import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.mockito.Mockito.verify;
 
-public class HttpUtils {
+public class HttpUtilsTest {
 
-    private HttpUtils() {
-        throw new AssertionError("No instances");
+    @Test(expected = NullPointerException.class)
+    public void testSetJsonUTF8ContentType_NullParam() throws Exception {
+        HttpUtils.setJsonUTF8ContentType(null);
     }
 
-    public static void setJsonUTF8ContentType(@NotNull final
-                                              HttpServletResponse resp) {
-        checkNotNull(resp).setContentType("application/json; charset=UTF-8");
+    @Test
+    public void testSetJsonUTF8ContentType() throws Exception {
+
+        HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
+
+        HttpUtils.setJsonUTF8ContentType(resp);
+
+        verify(resp).setContentType("application/json; charset=UTF-8");
+
     }
 }

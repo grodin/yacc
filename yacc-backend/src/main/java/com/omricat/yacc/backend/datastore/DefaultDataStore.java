@@ -21,6 +21,8 @@ import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsInputChannel;
 import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
 import com.google.common.base.Preconditions;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +34,19 @@ import java.nio.channels.Channels;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class DefaultDataStore implements DataStore {
+public class DefaultDataStore implements DataStore {
 
+    public static final GcsService DEFAULT_GCS_SERVICE = GcsServiceFactory
+            .createGcsService(new RetryParams.Builder()
+                    .initialRetryDelayMillis(10)
+                    .retryMaxAttempts(10)
+                    .totalRetryPeriodMillis(15000)
+                    .build());
+    public static final int DEFAULT_BUFFER_SIZE = 2 * 1024 * 1024;
+    public static final GcsFileOptions DEFAULT_FILE_OPTIONS = new GcsFileOptions
+                            .Builder()
+                            .mimeType("application/json")
+                            .build();
     protected final GcsFilename gcsFilename;
     protected final GcsService gcsService;
     protected final int bufferSize;

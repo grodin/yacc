@@ -17,12 +17,15 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableMap;
+import com.google.appengine.labs.repackaged.com.google.common.collect
+        .ImmutableMap;
+import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.DataStore;
 import com.omricat.yacc.data.model.CurrencyCode;
 
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.io.StringWriter;
@@ -65,7 +68,7 @@ public class NamesHelperTest {
         when(namesService.getCurrencyNames()).thenReturn(NAMES_DATA);
 
         final StringWriter stringWriter = new StringWriter();
-        when(store.getWriter()).thenReturn(stringWriter);
+        when(store.getWriter(Matchers.<GcsFileOptions>any())).thenReturn(stringWriter);
 
         Map<CurrencyCode,String> ret = NamesHelper.getInstance(mapper,namesService)
                 .getAndStoreCurrencyNames(store);
