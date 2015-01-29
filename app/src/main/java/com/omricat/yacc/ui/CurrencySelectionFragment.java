@@ -47,10 +47,10 @@ import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
-public class CurrencyListFragment extends Fragment {
+public class CurrencySelectionFragment extends Fragment {
 
     // Debug Log tag
-    private static final String TAG = CurrencyListFragment.class
+    private static final String TAG = CurrencySelectionFragment.class
             .getSimpleName();
 
     @InjectView( R.id.cardRecyclerView )
@@ -61,7 +61,6 @@ public class CurrencyListFragment extends Fragment {
 
     private Observable<CurrencyDataset> allCurrencies;
     private Observable<? extends Set<CurrencyCode>> selectedCurrencies;
-    private Observable<Operation<CurrencyCode>> currencyOperationsFromView;
     private final BehaviorSubject<Operation<CurrencyCode>> getSubject =
             BehaviorSubject.create();
 
@@ -70,13 +69,13 @@ public class CurrencyListFragment extends Fragment {
     private CurrencyAdapter currencyAdapter;
 
     /**
-     * Returns a new instance of this fragment for the given section number.
+     * Returns a new instance of this fragment.
      */
-    public static CurrencyListFragment newInstance() {
-        return new CurrencyListFragment();
+    public static CurrencySelectionFragment newInstance() {
+        return new CurrencySelectionFragment();
     }
 
-    public CurrencyListFragment() {
+    public CurrencySelectionFragment() {
         setRetainInstance(true);
     }
 
@@ -96,8 +95,6 @@ public class CurrencyListFragment extends Fragment {
         currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY
                 .getCurrencies(), Collections.<CurrencyCode>emptySet());
 
-        currencyOperationsFromView = currencyAdapter.selectionChanges();
-
         allCurrencies = RxUtils.bindFragmentOnIO(this,
                 currencyDataRequester.request());
 
@@ -106,7 +103,7 @@ public class CurrencyListFragment extends Fragment {
     }
 
     private Observable<? extends Set<CurrencyCode>> selectedKeySetObservable() {
-        return Observable.merge(currencyOperationsFromView, getSubject)
+        return Observable.merge(currencyAdapter.selectionChanges(), getSubject)
                 .flatMap(new OpToCurrencyCode(selectedKeySet));
 
     }
