@@ -50,7 +50,7 @@ public class CurrencyCodeTest {
 
     @Test
     public void testConstruction() throws Exception {
-        String ret = new CurrencyCode("USD").getCode();
+        String ret = new CurrencyCode("USD").toString();
         assertThat(ret).isEqualTo("USD");
     }
 
@@ -59,12 +59,6 @@ public class CurrencyCodeTest {
         EqualsVerifier.forClass(CurrencyCode.class)
                 .usingGetClass()
                 .suppress(Warning.NULL_FIELDS);
-    }
-
-    @Test
-    public void testToString() throws Exception {
-        String ret = new CurrencyCode("EUR").toString();
-        assertThat(ret).isEqualTo("CurrencyKey{key='EUR'}");
     }
 
     @Test

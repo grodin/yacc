@@ -63,22 +63,18 @@ public final class CurrencyCode {
 
         final CurrencyCode that = (CurrencyCode) o;
 
-        return getCode().equals(that.getCode());
+        return toString().equals(that.toString());
 
     }
 
     @Override
     public int hashCode() {
-        return getCode().hashCode();
+        return toString().hashCode();
     }
 
+    @JsonValue
     @Override public String toString() {
-        return "CurrencyKey{" +
-                "key='" + getCode() + '\'' +
-                '}';
-    }
-
-    @JsonValue @NotNull public String getCode() {
         return key;
     }
+
 }

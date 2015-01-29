@@ -99,13 +99,13 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder,
+    public void onBindViewHolder(final ViewHolder holder,
                                  final int i) {
         final Currency currency = cachedCurrencyList.get(i);
         final CurrencyCode code = currency.getCode();
         final boolean selected = selectedCurrencies.contains(code);
-        viewHolder.vSelected.setChecked(selected);
-        viewHolder.vSelected.setOnClickListener(new View.OnClickListener() {
+        holder.vSelected.setChecked(selected);
+        holder.vSelected.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(final View v) {
                 if (((Checkable) v).isChecked()) {
                     publishSubject.onNext(Operation.add(code));
@@ -115,12 +115,12 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
             }
         });
 
-        viewHolder.vCode.setText(code.getCode());
+        holder.vCode.setText(code.toString());
 
-        viewHolder.vCode.setTextColor(selected ? Color.GREEN: Color.LTGRAY);
+        holder.vCode.setTextColor(selected ? Color.GREEN: Color.LTGRAY);
 
-        viewHolder.vName.setText(currency.getName());
-        viewHolder.vValue.setText(currency.getValueInUSD().toPlainString());
+        holder.vName.setText(currency.getName());
+        holder.vValue.setText(currency.getValueInUSD().toPlainString());
     }
 
     @Override
