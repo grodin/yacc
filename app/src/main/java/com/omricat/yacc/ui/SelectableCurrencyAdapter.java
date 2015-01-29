@@ -46,7 +46,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Mutable instance of a {@link android.support.v7.widget.RecyclerView
  * .Adapter}
  */
-public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
+public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCurrencyAdapter
         .ViewHolder> {
 
     private ImmutableList<Currency> cachedCurrencyList;
@@ -54,9 +54,10 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter
     private final PublishSubject<Operation<CurrencyCode>> publishSubject =
             PublishSubject.create();
 
-    public CurrencyAdapter(@NotNull final Iterable<Currency> currencyDataset,
-                           @NotNull final Iterable<CurrencyCode>
-                                   selectedCurrencies) {
+    public SelectableCurrencyAdapter(@NotNull final Iterable<Currency>
+                                             currencyDataset,
+                                     @NotNull final Iterable<CurrencyCode>
+                                             selectedCurrencies) {
         swapSelected(selectedCurrencies);
         swapCurrencies(currencyDataset);
         notifyDataSetChanged();

@@ -66,7 +66,7 @@ public class CurrencySelectionFragment extends Fragment {
 
     private Subscription subscription = Subscriptions.empty();
 
-    private CurrencyAdapter currencyAdapter;
+    private SelectableCurrencyAdapter selectableCurrencyAdapter;
 
     /**
      * Returns a new instance of this fragment.
@@ -92,7 +92,8 @@ public class CurrencySelectionFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-        currencyAdapter = new CurrencyAdapter(CurrencyDataset.EMPTY
+        selectableCurrencyAdapter = new SelectableCurrencyAdapter
+                (CurrencyDataset.EMPTY
                 .getCurrencies(), Collections.<CurrencyCode>emptySet());
 
         allCurrencies = RxUtils.bindFragmentOnIO(this,
@@ -103,7 +104,8 @@ public class CurrencySelectionFragment extends Fragment {
     }
 
     private Observable<? extends Set<CurrencyCode>> selectedKeySetObservable() {
-        return Observable.merge(currencyAdapter.selectionChanges(), getSubject)
+        return Observable.merge(selectableCurrencyAdapter.selectionChanges(),
+                getSubject)
                 .flatMap(new OpToCurrencyCode(selectedKeySet));
 
     }
@@ -120,7 +122,7 @@ public class CurrencySelectionFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mCardRecyclerView.setLayoutManager(llm);
-        mCardRecyclerView.setAdapter(currencyAdapter);
+        mCardRecyclerView.setAdapter(selectableCurrencyAdapter);
         return rootView;
     }
 
@@ -140,7 +142,7 @@ public class CurrencySelectionFragment extends Fragment {
                 allCurrencies.subscribe(new Action1<CurrencyDataset>() {
                     @Override
                     public void call(final CurrencyDataset currencyDataset) {
-                        currencyAdapter.swapCurrencyList
+                        selectableCurrencyAdapter.swapCurrencyList
                                 (currencyDataset.getCurrencies());
 
                     }
@@ -153,7 +155,8 @@ public class CurrencySelectionFragment extends Fragment {
                         .subscribe(new Action1<Set<CurrencyCode>>() {
                             @Override public void call(final
                                                        Set<CurrencyCode> keys) {
-                                currencyAdapter.swapSelectedCurrencies(keys);
+                                selectableCurrencyAdapter
+                                        .swapSelectedCurrencies(keys);
                             }
                         }, new Action1<Throwable>() {
                             @Override
