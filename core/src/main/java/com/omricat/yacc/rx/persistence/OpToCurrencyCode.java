@@ -42,11 +42,11 @@ public class OpToCurrencyCode implements
     @Override
     public Observable<? extends Set<CurrencyCode>> call(final
                                                         Operation<CurrencyCode> op) {
-        return new OpVisitor().call(op);
+        return new OpMatcher().call(op);
     }
 
-    private final class OpVisitor implements Operation
-            .Visitor<CurrencyCode> {
+    private final class OpMatcher implements Operation
+            .Matcher<CurrencyCode> {
 
         private Observable<? extends Set<CurrencyCode>> returnObservable;
 
@@ -57,13 +57,18 @@ public class OpToCurrencyCode implements
         }
 
         @Override
-        public void visit(final Operation.Add<CurrencyCode> addOp) {
-            returnObservable = rxSet.add(addOp.value);
+        public void matchAdd(@NotNull final Operation.Add<CurrencyCode> op) {
+            returnObservable = rxSet.add(op.value);
         }
 
         @Override
-        public void visit(final Operation.Remove<CurrencyCode> removeOp) {
-            returnObservable = rxSet.remove(removeOp.value);
+        public void matchRemove(@NotNull final Operation.Remove<CurrencyCode> op) {
+            returnObservable = rxSet.remove(op.value);
+        }
+
+        @Override
+        public void matchGet(@NotNull final Operation.Get<CurrencyCode> op) {
+            returnObservable = rxSet.get();
         }
 
 

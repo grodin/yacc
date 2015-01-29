@@ -22,58 +22,56 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 import static org.mockito.Mockito.verify;
 
-@RunWith( MockitoJUnitRunner.class)
+@RunWith( MockitoJUnitRunner.class )
 public class OperationTest {
 
     @Mock
-    Operation.Visitor<String> mockVisitor;
+    Operation.Matcher<String> mockMatcher;
 
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void testAdd_NullParam() throws Exception {
         Operation.add(null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void testRemove_NullParam() throws Exception {
         Operation.remove(null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void testAddAccept_NullParam() throws Exception {
         Operation.add("test").accept(null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void testRemoveAccept_NullParam() throws Exception {
         Operation.remove("test").accept(null);
     }
 
     @Test
-    public void testAddAccept() throws Exception {
-        Operation.add("add test").accept(mockVisitor);
+    public void testAddMatch() throws Exception {
+        Operation.match(
+                Operation.add("add test"), mockMatcher);
 
-        verify(mockVisitor).visit(Matchers.<Operation.Add<String>>any());
+        verify(mockMatcher).matchAdd(Matchers.<Operation.Add<String>>any());
     }
 
     @Test
-    public void testRemoveAccept() throws Exception {
-        Operation.remove("remove test").accept(mockVisitor);
+    public void testRemoveMatch() throws Exception {
+        Operation.match(
+                Operation.remove("remove test"), mockMatcher);
 
-        verify(mockVisitor).visit(Matchers.<Operation.Remove<String>>any());
+        verify(mockMatcher).matchRemove(Matchers.<Operation
+                .Remove<String>>any());
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testGetMatch() throws Exception {
+        Operation.match(Operation.<String>get(), mockMatcher);
 
-        EqualsVerifier.forClass(Operation.class)
-                .usingGetClass()
-                .suppress(Warning.NULL_FIELDS)
-                .verify();
+        verify(mockMatcher).matchGet(Matchers.<Operation.Get<String>>any());
 
     }
 }

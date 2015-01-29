@@ -22,71 +22,65 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class Operation<T> {
 
-    public final T value;
+    abstract void accept(@NotNull final Matcher<T> matcher);
 
-    public abstract void accept(@NotNull final Visitor<T> visitor);
+    private Operation() {
+    }
 
-    private Operation(final T value) {
-        this.value = value;
+    public static <T> void match(@NotNull final Operation<T> op,
+                                 @NotNull final Matcher<T> matcher) {
+        op.accept(matcher);
+    }
+
+    public interface Matcher<T> {
+        public void matchAdd(@NotNull Add<T> op);
+        public void matchRemove(@NotNull Remove<T> op);
+        public void matchGet(@NotNull Get<T> op);
     }
 
     public static <T> Operation<T> add(@NotNull T value) {
-        return Add.of(value);
-    }
-
-    public static <T> Operation<T> remove(@NotNull T value) {
-        return Remove.of(value);
+        return new Add<>(value);
     }
 
     public final static class Add<T> extends Operation<T> {
 
+        public final T value;
+
         private Add(@NotNull final T value) {
-            super(checkNotNull(value));
+            this.value = checkNotNull(value);
         }
 
-        static <T> Add<T> of(@NotNull final T value) {
-            return new Add<>(value);
+        @Override void accept(@NotNull final Matcher<T> matcher) {
+            checkNotNull(matcher).matchAdd(this);
         }
+    }
 
-        @Override public void accept(@NotNull final Visitor<T> visitor) {
-            checkNotNull(visitor).visit(this);
-        }
+    public static <T> Operation<T> remove(@NotNull T value) {
+        return new Remove<>(value);
     }
 
     public final static class Remove<T> extends Operation<T> {
 
+        public final T value;
+
         private Remove(@NotNull final T value) {
-            super(checkNotNull(value));
+            this.value = checkNotNull(value);
         }
-
-        static <T> Remove<T> of(@NotNull final T value) {
-            return new Remove<>(value);
-        }
-
-        @Override public void accept(@NotNull final Visitor<T> visitor) {
-            checkNotNull(visitor).visit(this);
+        @Override void accept(@NotNull final Matcher<T> matcher) {
+            checkNotNull(matcher).matchRemove(this);
         }
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final Operation operation = (Operation) o;
-
-        if (!value.equals(operation.value)) return false;
-
-        return true;
+    public static <T> Operation<T> get() {
+        return new Get<>();
     }
 
-    @Override
-    public int hashCode() {
-        return value.hashCode();
+    public final static class Get<T> extends Operation<T> {
+
+        @Override void accept(@NotNull final Matcher<T> matcher) {
+            checkNotNull(matcher).matchGet(this);
+        }
     }
 
-    public interface Visitor<T> {
-        public void visit(Add<T> add);
-        public void visit(Remove<T> remove);
-    }
+
 }

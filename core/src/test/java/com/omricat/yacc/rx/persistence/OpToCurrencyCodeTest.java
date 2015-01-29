@@ -53,4 +53,11 @@ public class OpToCurrencyCodeTest {
 
         verify(rxSet).remove(usd);
     }
+
+    @Test
+    public void testCall_GetOp() throws Exception {
+        new OpToCurrencyCode(rxSet).call(Operation.<CurrencyCode>get());
+
+        verify(rxSet).get();
+    }
 }
