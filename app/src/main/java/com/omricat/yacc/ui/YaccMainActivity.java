@@ -16,32 +16,31 @@
 
 package com.omricat.yacc.ui;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.omricat.yacc.R;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
-public class YaccMainActivity extends Activity
-        {
 
-    /**
-     * Used to store the last screen title. For use in {@link
-     * #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
+public class YaccMainActivity extends ActionBarActivity {
+
+    @InjectView(R.id.appbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_currencies);
 
-        mTitle = getTitle();
+        ButterKnife.inject(this);
 
-        // Set up the drawer.
+        setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(R.id.container,
@@ -50,31 +49,33 @@ public class YaccMainActivity extends Activity
     }
 
 
-    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.currencies, menu);
-            restoreActionBar();
-            return true;
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_edit:
+                return actionEdit();
+            case R.id.action_settings:
+                return actionSettings();
+            default:
+                return  super.onOptionsItemSelected(item);
+
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    private boolean actionSettings() {
+        // TODO: implement settings screen
+        return true;
+    }
+
+    private boolean actionEdit() {
+
+        return false;
     }
 
 }
