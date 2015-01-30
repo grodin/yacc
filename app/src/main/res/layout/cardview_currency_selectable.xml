@@ -32,23 +32,31 @@
         android:layout_marginRight="8dp"
         android:layout_marginEnd="8dp">
 
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/code"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-
+            android:layout_toRightOf="@id/selected"
+            android:layout_toEndOf="@id/selected"
             />
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_toRightOf="@id/selected"
+            android:layout_toEndOf="@id/selected"
             android:layout_below="@id/code"
             android:textAppearance="?android:attr/textAppearance"
             />

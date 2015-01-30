@@ -113,7 +113,7 @@ public class CurrencySelectionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_currencies,
+        View rootView = inflater.inflate(R.layout.fragment_currencies_selection,
                 container, false);
         setRetainInstance(true);
         ButterKnife.inject(this, rootView);
@@ -124,13 +124,6 @@ public class CurrencySelectionFragment extends Fragment {
         mCardRecyclerView.setLayoutManager(llm);
         mCardRecyclerView.setAdapter(selectableCurrencyAdapter);
         return rootView;
-    }
-
-    @Override
-    public void onViewCreated(final View view,
-                              final Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override

@@ -93,8 +93,8 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup viewGroup,
                                          final int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.cardview_currency, viewGroup, false);
+        final View v = LayoutInflater.from(viewGroup.getContext()).inflate(
+                R.layout.cardview_currency_selectable, viewGroup, false);
         return new ViewHolder(v);
     }
 
