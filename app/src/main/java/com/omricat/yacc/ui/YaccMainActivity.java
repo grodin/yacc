@@ -17,6 +17,7 @@
 package com.omricat.yacc.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -30,6 +31,9 @@ import butterknife.InjectView;
 
 public class YaccMainActivity extends ActionBarActivity {
 
+    public static final String MAIN_CURRENCY_FRAGMENT = "MainCurrencyFragment";
+    public static final String CURRENCY_SELECTION_FRAGMENT =
+            "CurrencySelectionFragment";
     @InjectView(R.id.appbar)
     Toolbar toolbar;
 
@@ -43,8 +47,8 @@ public class YaccMainActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().add(R.id.container,
-                    new CurrencySelectionFragment()).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.container,
+                    new MainCurrencyFragment(), MAIN_CURRENCY_FRAGMENT).commit();
         }
     }
 
@@ -74,8 +78,17 @@ public class YaccMainActivity extends ActionBarActivity {
     }
 
     private boolean actionEdit() {
-
-        return false;
+        Fragment editFragment = getSupportFragmentManager()
+                .findFragmentByTag(CURRENCY_SELECTION_FRAGMENT);
+        if (editFragment == null) {
+            editFragment = new CurrencySelectionFragment();
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, editFragment,
+                        CURRENCY_SELECTION_FRAGMENT)
+                .addToBackStack(null)
+                .commit();
+        return true;
     }
 
 }

@@ -16,7 +16,8 @@
 
 package com.omricat.yacc.ui;
 
-import android.app.Fragment;
+
+import android.support.v4.app.Fragment;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;

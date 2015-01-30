@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Omricat Software
+ * Copyright 2015 Omricat Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@ import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.YaccApp;
+import com.omricat.yacc.model.Currency;
 import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.rx.CurrencyCodeRxSet;
 import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
-import com.omricat.yacc.rx.persistence.OpToCurrencyCode;
-import com.omricat.yacc.rx.persistence.Operation;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -43,15 +43,11 @@ import butterknife.InjectView;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
-import rx.subjects.BehaviorSubject;
+import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
-public class CurrencySelectionFragment extends Fragment {
-
-    // Debug Log tag
-    private static final String TAG = CurrencySelectionFragment.class
-            .getSimpleName();
+public class MainCurrencyFragment extends Fragment {
 
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
@@ -59,25 +55,12 @@ public class CurrencySelectionFragment extends Fragment {
     private CurrencyDataRequester currencyDataRequester;
     private CurrencyCodeRxSet selectedKeySet;
 
-    private Observable<CurrencyDataset> allCurrencies;
-    private Observable<? extends Set<CurrencyCode>> selectedCurrencies;
-    private final BehaviorSubject<Operation<CurrencyCode>> getSubject =
-            BehaviorSubject.create();
+    private Observable<? extends Collection<Currency>> currenciesObs;
+    private Observable<? extends Set<CurrencyCode>> selectedCurrenciesObs;
 
     private Subscription subscription = Subscriptions.empty();
 
-    private SelectableCurrencyAdapter selectableCurrencyAdapter;
-
-    /**
-     * Returns a new instance of this fragment.
-     */
-    public static CurrencySelectionFragment newInstance() {
-        return new CurrencySelectionFragment();
-    }
-
-    public CurrencySelectionFragment() {
-        setRetainInstance(true);
-    }
+    private CurrencyAdapter adapter;
 
     @Override public void onAttach(final Activity activity) {
         super.onAttach(activity);
@@ -87,33 +70,57 @@ public class CurrencySelectionFragment extends Fragment {
         selectedKeySet = YaccApp.from(activity).getCurrencyCodeRxSet();
     }
 
-    @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    @Override public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        adapter = new CurrencyAdapter(Collections.<Currency>emptySet());
 
-        selectableCurrencyAdapter = new SelectableCurrencyAdapter
-                (CurrencyDataset.EMPTY
-                .getCurrencies(), Collections.<CurrencyCode>emptySet());
+        selectedCurrenciesObs = RxUtils.bindFragmentOnIO(this,
+                selectedKeySet.get());
 
-        allCurrencies = RxUtils.bindFragmentOnIO(this,
-                currencyDataRequester.request());
-
-        selectedCurrencies = RxUtils.bindFragmentOnIO(this,
-                selectedKeySetObservable());
+        currenciesObs = RxUtils.bindFragmentOnIO(this,
+                getCurrencyData());
     }
 
-    private Observable<? extends Set<CurrencyCode>> selectedKeySetObservable() {
-        return Observable.merge(selectableCurrencyAdapter.selectionChanges(),
-                getSubject)
-                .flatMap(new OpToCurrencyCode(selectedKeySet));
 
+    private Observable<? extends Collection<Currency>> getCurrencyData() {
+        return selectedCurrenciesObs.flatMap(new Func1<Set<CurrencyCode>,
+                Observable<? extends Collection<Currency>>>() {
+
+
+            @Override
+            public Observable<? extends Collection<Currency>> call(final
+                                                              Set<CurrencyCode> keys) {
+                return currencyDataRequester.request()
+                        .flatMap(filterCurrencyData(keys));
+            }
+        });
+    }
+
+    private Func1<CurrencyDataset, Observable<? extends Collection<Currency>>>
+    filterCurrencyData(final Set<CurrencyCode> keys) {
+        return new Func1<CurrencyDataset, Observable<? extends
+                Collection<Currency>>>() {
+
+
+            @Override
+            public Observable<? extends Collection<Currency>>
+            call(final CurrencyDataset currencyDataset) {
+                return Observable.from(currencyDataset.getCurrencies())
+                        .filter(new Func1<Currency, Boolean>() {
+                            @Override
+                            public Boolean call(final Currency currency) {
+                                return keys.contains(currency.getCode());
+                            }
+                        }).toList();
+            }
+        };
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_currencies_selection,
+        View rootView = inflater.inflate(R.layout.fragment_currencies,
                 container, false);
         setRetainInstance(true);
         ButterKnife.inject(this, rootView);
@@ -122,43 +129,26 @@ public class CurrencySelectionFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mCardRecyclerView.setLayoutManager(llm);
-        mCardRecyclerView.setAdapter(selectableCurrencyAdapter);
+        mCardRecyclerView.setAdapter(adapter);
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getSubject.onNext(Operation.<CurrencyCode>get());
-        subscription = new
-                CompositeSubscription(
-                allCurrencies.subscribe(new Action1<CurrencyDataset>() {
-                    @Override
-                    public void call(final CurrencyDataset currencyDataset) {
-                        selectableCurrencyAdapter.swapCurrencyList
-                                (currencyDataset.getCurrencies());
 
+    @Override public void onResume() {
+        super.onResume();
+        subscription = new CompositeSubscription(currenciesObs.subscribe(
+                new Action1<Collection<Currency>>() {
+
+
+                    @Override
+                    public void call(final Collection<Currency> currencies) {
+                        adapter.swapCurrencyData(currencies);
                     }
                 }, new Action1<Throwable>() {
                     @Override public void call(final Throwable throwable) {
                         throw new RuntimeException(throwable);
                     }
-                }),
-                selectedCurrencies
-                        .subscribe(new Action1<Set<CurrencyCode>>() {
-                            @Override public void call(final
-                                                       Set<CurrencyCode> keys) {
-                                selectableCurrencyAdapter
-                                        .swapSelectedCurrencies(keys);
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(final Throwable throwable) {
-                                throw new RuntimeException(throwable);
-
-                            }
-                        }));
-
+                }));
     }
 
     @Override
@@ -167,5 +157,4 @@ public class CurrencySelectionFragment extends Fragment {
         ButterKnife.reset(this);
         super.onDestroyView();
     }
-
 }
