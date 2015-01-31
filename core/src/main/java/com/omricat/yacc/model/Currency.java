@@ -26,6 +26,7 @@ import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -35,9 +36,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Joseph Cooper
  *         <p/>
- *         A class to represent a currency, and it's conversionRate. The conversionRate is always
- *         given relative to USD (i.e. conversionRate(USD)==1.0) and must be
- *         non-negative.
+ *         A class to represent a currency, and it's conversionRate. The
+ *         conversionRate is always given relative to USD (i.e.
+ *         conversionRate(USD)==1.0) and must be non-negative.
  */
 @JsonSerialize(using = CurrencySerializer.class)
 public class Currency {
@@ -45,6 +46,19 @@ public class Currency {
     static final String VALUE = "value";
     static final String CODE = "code";
     static final String NAME = "name";
+
+    /**
+     * Constant specifying the scale used in divisions which occur in
+     * currency conversions.
+     */
+    public static final int DIVISION_SCALE = 8;
+
+    /**
+     * Constant specifying the rounding mode used in divisions which occur in
+     * currency conversions.
+     */
+    public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
+
     private final BigDecimal conversionRate;
     private final CurrencyCode code;
     private final String name;
@@ -52,27 +66,26 @@ public class Currency {
 
     /**
      * Constructs an instance of a currency, using the given parameters. The
-     * conversionRate parameter must be non-negative, and the three string parameters
-     * must be non-null.
+     * conversionRate parameter must be non-negative, and the three string
+     * parameters must be non-null.
      * <p/>
      * It is strongly suggested that the code and name parameters should be
      * non-empty and actually match the intended use. The code parameter is
      * <i>not</i> checked for validity.
      *
-     * @param conversionRate       the conversionRate of the currency, relative to USD. Must be
-     *                    non-negative and non-null.
-     * @param code        {@link CurrencyCode} representing the ISO 4217 code for
-     *                    this currency, not null.
-     * @param name        the name of this currency, not null.
-     * @param description an optional short description of the currency (e.g.
-     *                    "The currency used in the USA"). Cannot be null.
+     * @param conversionRate the conversionRate of the currency, relative to
+     *                       USD. Must be non-negative and non-null.
+     * @param code           {@link CurrencyCode} representing the ISO 4217 code
+     *                       for this currency, not null.
+     * @param name           the name of this currency, not null.
+     * @param description    an optional short description of the currency (e.g.
+     *                       "The currency used in the USA"). Cannot be null.
      */
     public Currency(@NotNull final BigDecimal conversionRate,
                     @NotNull final CurrencyCode code,
                     @NotNull final String name,
                     @NotNull final String description) {
-        checkArgument(checkNotNull(conversionRate).compareTo(BigDecimal
-                .ZERO) >= 0);
+        checkArgument(checkNotNull(conversionRate).signum() >= 0);
         this.conversionRate = conversionRate;
         this.code = checkNotNull(code);
         this.name = checkNotNull(name);
@@ -81,43 +94,45 @@ public class Currency {
 
     /**
      * Constructs an instance of a currency, using the given parameters. The
-     * conversionRate parameter must be non-negative, and the three string parameters
-     * must be non-null. Value will be converted to a {@link java.math
-     * .BigDecimal}.
+     * conversionRate parameter must be non-negative, and the three string
+     * parameters must be non-null. Value will be converted to a {@link
+     * java.math .BigDecimal}.
      * <p/>
      * It is strongly suggested that the code and name parameters should be
      * non-empty and actually match the intended use. The code parameter is
      * <i>not</i> checked for validity.
      *
-     * @param conversionRate       the conversionRate of the currency, relative to USD. Must be
-     *                    non-negative
-     * @param code        the standard three letter code for this currency (e.g.
-     *                    USD, GBP, EUR, etc.) Cannot be null
-     * @param name        the name of this currency. Cannot be null
-     * @param description an optional short description of the currency (e.g.
-     *                    "The currency used in the USA"). Cannot be null
+     * @param conversionRate the conversionRate of the currency, relative to
+     *                       USD. Must be non-negative
+     * @param code           the standard three letter code for this currency
+     *                       (e.g. USD, GBP, EUR, etc.) Cannot be null
+     * @param name           the name of this currency. Cannot be null
+     * @param description    an optional short description of the currency (e.g.
+     *                       "The currency used in the USA"). Cannot be null
      */
     public Currency(@NotNull final String conversionRate,
                     @NotNull final String code,
                     @NotNull final String name,
                     @NotNull final String description) {
-        this(new BigDecimal(conversionRate), new CurrencyCode(code), name, description);
+        this(new BigDecimal(conversionRate), new CurrencyCode(code), name,
+                description);
     }
 
     /**
      * Constructs an instance of a currency, using the given parameters. The
-     * conversionRate parameter must be a string representation of a non-negative
-     * decimal, and the code parameter must be non-null. Value will be converted
-     * to a {@link java.math .BigDecimal}.
+     * conversionRate parameter must be a string representation of a
+     * non-negative decimal, and the code parameter must be non-null. Value will
+     * be converted to a {@link java.math .BigDecimal}.
      * <p/>
      * It is strongly suggested that the code and name parameters should be
      * non-empty and actually match the intended use. The code parameter is
      * <i>not</i> checked for validity.
      *
-     * @param conversionRate the conversionRate of the currency, relative to USD. Must be
-     *              non-negative
-     * @param code  the standard three letter code for this currency (e.g. USD,
-     * @param name  the name of this currency. Cannot be null
+     * @param conversionRate the conversionRate of the currency, relative to
+     *                       USD. Must be non-negative
+     * @param code           the standard three letter code for this currency
+     *                       (e.g. USD,
+     * @param name           the name of this currency. Cannot be null
      */
     @JsonCreator // This constructor will be used by Jackson for deserialisation
     public Currency(@NotNull @JsonProperty(VALUE) final String conversionRate,
@@ -127,8 +142,8 @@ public class Currency {
     }
 
     /**
-     * Get the conversionRate of this currency. The conversionRate is given by a ratio relative to
-     * US Dollars (USD).
+     * Get the conversionRate of this currency. The conversionRate is given by a
+     * ratio relative to US Dollars (USD).
      * <p/>
      * E.g. If this currency represents UK pounds (GBP) and one pound is worth 2
      * US dollars, then getRateInUSD() will return 0.5.
@@ -176,24 +191,33 @@ public class Currency {
     }
 
     /**
-     * Converts a conversionRate in the source currency to a conversionRate in the target
-     * currency
+     * Converts a conversionRate in the source currency to a conversionRate in
+     * the target currency
      *
      * @param source the source currency. Must be non-null.
      * @param target the target currency. Must be non-null.
-     * @param value  the conversionRate to be converted. This is a conversionRate in the source
-     *               currency. It should be non-negative.
+     * @param value  the conversionRate to be converted. This is a
+     *               conversionRate in the source currency. It should be
+     *               non-negative.
      * @return the conversionRate converted into the target currency
      */
     @NotNull
     public static BigDecimal convert(@NotNull final Currency source,
                                      @NotNull final Currency target,
                                      @NotNull final BigDecimal value) {
-        checkArgument(value.compareTo(BigDecimal.ZERO) >= 0
+        checkArgument(checkNotNull(value).compareTo(BigDecimal.ZERO) >= 0
                 , "Value parameter must be non-negative");
 
-        return value.multiply(source.getRateInUSD()).divide(target
-                .getRateInUSD());
+        return value.multiply(conversionRatio(checkNotNull(source),
+                checkNotNull(target)));
+    }
+
+    @NotNull
+    public static BigDecimal conversionRatio(@NotNull final Currency source,
+                                             @NotNull final Currency target) {
+        return source.getRateInUSD().divide(target.getRateInUSD(), DIVISION_SCALE,
+
+                ROUNDING_MODE);
     }
 
     @Override
@@ -213,7 +237,7 @@ public class Currency {
 
     @Override
     public final int hashCode() {
-        return Objects.hashCode(conversionRate,code,name,description);
+        return Objects.hashCode(conversionRate, code, name, description);
     }
 
     @Override public String toString() {
