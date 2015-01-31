@@ -95,7 +95,7 @@
             android:gravity="end"
             android:paddingLeft="4sp"
             android:paddingRight="4sp"
-            android:text="rate:"
+            android:text="@string/label_rate"
             />
 
     </RelativeLayout>

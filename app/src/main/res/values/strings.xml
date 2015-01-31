@@ -19,5 +19,6 @@
     <string name="app_name">Yacc</string>
     <string name="action_edit">Edit</string>
     <string name="action_settings">Settings</string>
+    <string name="label_rate">rate:</string>
 
 </resources>
