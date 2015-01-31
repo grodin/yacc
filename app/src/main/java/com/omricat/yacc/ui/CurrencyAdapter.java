@@ -81,7 +81,7 @@ public class CurrencyAdapter extends
         TextView vCode;
         @InjectView( R.id.name )
         TextView vName;
-        @InjectView( R.id.value )
+        @InjectView( R.id.rate)
         TextView vValue;
 
         public ViewHolder(final View itemView) {

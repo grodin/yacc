@@ -18,39 +18,32 @@
 <android.support.v7.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp"
-    android:layout_margin="8dp" >
+    android:layout_marginTop="8dp"
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        >
 
         <TextView
+            android:id="@+id/code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/code"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-
-            />
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@id/code"
-            android:textAppearance="?android:attr/textAppearance"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="GBP"
             />
 
         <TextView
@@ -60,8 +53,49 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@id/code"
+            android:layout_toEndOf="@id/code"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:gravity="end"
+            tools:text="13.131 EUR"
+            />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/value"
+            android:textAppearance="?android:attr/textAppearance"
+            tools:text="British Pound Sterling"
+            />
+
+        <TextView
+            android:id="@+id/rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="end"
+            tools:text="1.13 EUR"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/name"
+            android:layout_toEndOf="@id/name"
+            android:layout_toLeftOf="@id/rate"
+            android:layout_toStartOf="@id/rate"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="end"
+            android:paddingLeft="4sp"
+            android:paddingRight="4sp"
+            android:text="rate:"
             />
 
     </RelativeLayout>

@@ -118,7 +118,7 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
         TextView vCode;
         @InjectView( R.id.name )
         TextView vName;
-        @InjectView( R.id.value )
+        @InjectView( R.id.rate)
         TextView vValue;
         @InjectView( R.id.selected )
         CheckBox vSelected;
