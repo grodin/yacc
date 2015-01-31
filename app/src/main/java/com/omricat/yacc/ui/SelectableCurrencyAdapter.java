@@ -26,10 +26,9 @@ import android.widget.Checkable;
 import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.omricat.yacc.R;
-import com.omricat.yacc.model.Currency;
 import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.model.SelectableCurrency;
 import com.omricat.yacc.rx.persistence.Operation;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,40 +48,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCurrencyAdapter
         .ViewHolder> {
 
-    private ImmutableList<Currency> cachedCurrencyList;
-    private ImmutableSet<CurrencyCode> selectedCurrencies;
+    private ImmutableList<SelectableCurrency> cachedCurrencyList;
     private final PublishSubject<Operation<CurrencyCode>> publishSubject =
             PublishSubject.create();
 
-    public SelectableCurrencyAdapter(@NotNull final Iterable<Currency>
-                                             currencyDataset,
-                                     @NotNull final Iterable<CurrencyCode>
+    public SelectableCurrencyAdapter(@NotNull final Iterable<SelectableCurrency>
                                              selectedCurrencies) {
-        swapSelected(selectedCurrencies);
-        swapCurrencies(currencyDataset);
+        swapCurrencies(selectedCurrencies);
         notifyDataSetChanged();
     }
 
-    public void swapCurrencyList(@NotNull final Iterable<Currency>
-                                         currencyDataset) {
-        swapCurrencies(currencyDataset);
+    public void swapCurrencyList(@NotNull final Iterable<SelectableCurrency>
+                                         selectableCurrencies) {
+        swapCurrencies(checkNotNull(selectableCurrencies));
         notifyDataSetChanged();
     }
 
-    private void swapCurrencies(final Iterable<Currency> currencyDataset) {
-        cachedCurrencyList = ImmutableList.copyOf(
-                checkNotNull(currencyDataset));
-    }
-
-    public void swapSelectedCurrencies(@NotNull final Iterable<CurrencyCode>
-                                               selectedCurrencies) {
-        swapSelected(selectedCurrencies);
-        notifyDataSetChanged();
-    }
-
-    private void swapSelected(final Iterable<CurrencyCode> selectedCurrencies) {
-        this.selectedCurrencies = ImmutableSet.copyOf(
-                checkNotNull(selectedCurrencies));
+    private void swapCurrencies(final Iterable<SelectableCurrency>
+                                        currencyDataset) {
+        cachedCurrencyList = ImmutableList.copyOf(currencyDataset);
     }
 
     @NotNull
@@ -101,9 +85,9 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
     @Override
     public void onBindViewHolder(final ViewHolder holder,
                                  final int i) {
-        final Currency currency = cachedCurrencyList.get(i);
+        final SelectableCurrency currency = cachedCurrencyList.get(i);
         final CurrencyCode code = currency.getCode();
-        final boolean selected = selectedCurrencies.contains(code);
+        final boolean selected = currency.isSelected();
         holder.vSelected.setChecked(selected);
         holder.vSelected.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(final View v) {
