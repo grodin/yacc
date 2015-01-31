@@ -120,7 +120,7 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
         holder.vCode.setTextColor(selected ? Color.GREEN: Color.LTGRAY);
 
         holder.vName.setText(currency.getName());
-        holder.vValue.setText(currency.getValueInUSD().toPlainString());
+        holder.vValue.setText(currency.getRateInUSD().toPlainString());
     }
 
     @Override

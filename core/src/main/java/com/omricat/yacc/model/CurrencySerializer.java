@@ -32,7 +32,7 @@ public class CurrencySerializer extends JsonSerializer<Currency> {
         jgen.writeStartObject();
         jgen.writeStringField(Currency.CODE, value.getCode().toString());
         jgen.writeStringField(Currency.VALUE,
-                value.getValueInUSD().toPlainString());
+                value.getRateInUSD().toPlainString());
         jgen.writeStringField(Currency.NAME, value.getName());
         jgen.writeEndObject();
     }

@@ -68,7 +68,7 @@ public class CurrencyAdapter extends
         final Currency currency = cachedCurrencyList.get(position);
         holder.vCode.setText(currency.getCode().toString());
         holder.vName.setText(currency.getName());
-        holder.vValue.setText(currency.getValueInUSD().toPlainString());
+        holder.vValue.setText(currency.getRateInUSD().toPlainString());
     }
 
     @Override public int getItemCount() {

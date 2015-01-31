@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,31 +35,31 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Joseph Cooper
  *         <p/>
- *         A class to represent a currency, and it's value. The value is always
- *         given relative to USD (i.e. value(USD)==1.0) and must be
+ *         A class to represent a currency, and it's conversionRate. The conversionRate is always
+ *         given relative to USD (i.e. conversionRate(USD)==1.0) and must be
  *         non-negative.
  */
 @JsonSerialize(using = CurrencySerializer.class)
 public class Currency {
 
-    public static final String VALUE = "value";
-    public static final String CODE = "code";
-    public static final String NAME = "name";
-    final BigDecimal value;
-    final CurrencyCode code;
-    final String name;
-    final String description;
+    static final String VALUE = "value";
+    static final String CODE = "code";
+    static final String NAME = "name";
+    private final BigDecimal conversionRate;
+    private final CurrencyCode code;
+    private final String name;
+    private final String description;
 
     /**
      * Constructs an instance of a currency, using the given parameters. The
-     * value parameter must be non-negative, and the three string parameters
+     * conversionRate parameter must be non-negative, and the three string parameters
      * must be non-null.
      * <p/>
      * It is strongly suggested that the code and name parameters should be
      * non-empty and actually match the intended use. The code parameter is
      * <i>not</i> checked for validity.
      *
-     * @param value       the value of the currency, relative to USD. Must be
+     * @param conversionRate       the conversionRate of the currency, relative to USD. Must be
      *                    non-negative and non-null.
      * @param code        {@link CurrencyCode} representing the ISO 4217 code for
      *                    this currency, not null.
@@ -66,13 +67,13 @@ public class Currency {
      * @param description an optional short description of the currency (e.g.
      *                    "The currency used in the USA"). Cannot be null.
      */
-    public Currency(@NotNull final BigDecimal value,
+    public Currency(@NotNull final BigDecimal conversionRate,
                     @NotNull final CurrencyCode code,
                     @NotNull final String name,
                     @NotNull final String description) {
-        checkArgument(checkNotNull(value).compareTo(BigDecimal
+        checkArgument(checkNotNull(conversionRate).compareTo(BigDecimal
                 .ZERO) >= 0);
-        this.value = value;
+        this.conversionRate = conversionRate;
         this.code = checkNotNull(code);
         this.name = checkNotNull(name);
         this.description = checkNotNull(description);
@@ -80,7 +81,7 @@ public class Currency {
 
     /**
      * Constructs an instance of a currency, using the given parameters. The
-     * value parameter must be non-negative, and the three string parameters
+     * conversionRate parameter must be non-negative, and the three string parameters
      * must be non-null. Value will be converted to a {@link java.math
      * .BigDecimal}.
      * <p/>
@@ -88,7 +89,7 @@ public class Currency {
      * non-empty and actually match the intended use. The code parameter is
      * <i>not</i> checked for validity.
      *
-     * @param value       the value of the currency, relative to USD. Must be
+     * @param conversionRate       the conversionRate of the currency, relative to USD. Must be
      *                    non-negative
      * @param code        the standard three letter code for this currency (e.g.
      *                    USD, GBP, EUR, etc.) Cannot be null
@@ -96,16 +97,16 @@ public class Currency {
      * @param description an optional short description of the currency (e.g.
      *                    "The currency used in the USA"). Cannot be null
      */
-    public Currency(@NotNull final String value,
+    public Currency(@NotNull final String conversionRate,
                     @NotNull final String code,
                     @NotNull final String name,
                     @NotNull final String description) {
-        this(new BigDecimal(value), new CurrencyCode(code), name, description);
+        this(new BigDecimal(conversionRate), new CurrencyCode(code), name, description);
     }
 
     /**
      * Constructs an instance of a currency, using the given parameters. The
-     * value parameter must be a string representation of a non-negative
+     * conversionRate parameter must be a string representation of a non-negative
      * decimal, and the code parameter must be non-null. Value will be converted
      * to a {@link java.math .BigDecimal}.
      * <p/>
@@ -113,31 +114,30 @@ public class Currency {
      * non-empty and actually match the intended use. The code parameter is
      * <i>not</i> checked for validity.
      *
-     * @param value the value of the currency, relative to USD. Must be
+     * @param conversionRate the conversionRate of the currency, relative to USD. Must be
      *              non-negative
      * @param code  the standard three letter code for this currency (e.g. USD,
      * @param name  the name of this currency. Cannot be null
      */
     @JsonCreator // This constructor will be used by Jackson for deserialisation
-    public Currency(@NotNull @JsonProperty(VALUE) final String value,
+    public Currency(@NotNull @JsonProperty(VALUE) final String conversionRate,
                     @NotNull @JsonProperty(CODE) final String code,
-                    @NotNull @JsonProperty(NAME) final String
-                            name) {
-        this(value, code, name, "");
+                    @NotNull @JsonProperty(NAME) final String name) {
+        this(conversionRate, code, name, "");
     }
 
     /**
-     * Get the value of this currency. The value is given by a ratio relative to
+     * Get the conversionRate of this currency. The conversionRate is given by a ratio relative to
      * US Dollars (USD).
      * <p/>
      * E.g. If this currency represents UK pounds (GBP) and one pound is worth 2
-     * US dollars, then getValueInUSD() will return 0.5.
+     * US dollars, then getRateInUSD() will return 0.5.
      *
-     * @return the value of this currency as a float relative to USD
+     * @return the conversionRate of this currency as a float relative to USD
      */
     @NotNull
-    public BigDecimal getValueInUSD() {
-        return value;
+    public BigDecimal getRateInUSD() {
+        return conversionRate;
     }
 
     /**
@@ -176,14 +176,14 @@ public class Currency {
     }
 
     /**
-     * Converts a value in the source currency to a value in the target
+     * Converts a conversionRate in the source currency to a conversionRate in the target
      * currency
      *
      * @param source the source currency. Must be non-null.
      * @param target the target currency. Must be non-null.
-     * @param value  the value to be converted. This is a value in the source
+     * @param value  the conversionRate to be converted. This is a conversionRate in the source
      *               currency. It should be non-negative.
-     * @return the value converted into the target currency
+     * @return the conversionRate converted into the target currency
      */
     @NotNull
     public static BigDecimal convert(@NotNull final Currency source,
@@ -192,8 +192,8 @@ public class Currency {
         checkArgument(value.compareTo(BigDecimal.ZERO) >= 0
                 , "Value parameter must be non-negative");
 
-        return value.multiply(source.getValueInUSD()).divide(target
-                .getValueInUSD());
+        return value.multiply(source.getRateInUSD()).divide(target
+                .getRateInUSD());
     }
 
     @Override
@@ -206,23 +206,19 @@ public class Currency {
         if (!code.equals(currency.code)) return false;
         if (!description.equals(currency.description)) return false;
         if (!name.equals(currency.name)) return false;
-        if (!value.equals(currency.value)) return false;
+        if (!conversionRate.equals(currency.conversionRate)) return false;
 
         return true;
     }
 
     @Override
     public final int hashCode() {
-        int result = value.hashCode();
-        result = 31 * result + code.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + description.hashCode();
-        return result;
+        return Objects.hashCode(conversionRate,code,name,description);
     }
 
     @Override public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("value", value)
+                .add("conversionRate", conversionRate)
                 .add("code", code)
                 .add("name", name)
                 .add("description", description.isEmpty() ? null : description)

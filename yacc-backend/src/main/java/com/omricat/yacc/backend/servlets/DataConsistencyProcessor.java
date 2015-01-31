@@ -61,7 +61,7 @@ class DataConsistencyProcessor {
             // really has the ISO 4217 code ALL. This means the name lookup
             // will have also failed and needs to be looked up again.
             final String newName = names.get(ALL);
-            return Optional.of(new Currency(curr.getValueInUSD(),ALL,
+            return Optional.of(new Currency(curr.getRateInUSD(),ALL,
                     newName,curr.getDescription()));
 
         } else if (curr.getCode().equals(IEP)) {

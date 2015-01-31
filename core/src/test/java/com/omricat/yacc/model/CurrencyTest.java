@@ -32,8 +32,8 @@ public class CurrencyTest {
     @Test
     public void testConstructFromString() {
         Currency curr = new Currency("13.3", "CUR", "", "");
-        assertTrue("Value in USD is " + curr.getValueInUSD(),
-                curr.getValueInUSD().compareTo
+        assertTrue("Value in USD is " + curr.getRateInUSD(),
+                curr.getRateInUSD().compareTo
                         (new BigDecimal("13.3")) == 0);
     }
 
