@@ -136,8 +136,7 @@ public class CurrencySelectionFragment extends Fragment {
             public Observable<? extends
                     Collection<SelectableCurrency>> call
                     (final CurrencyDataset currencyDataset) {
-                return Observable.from(currencyDataset
-                    .getCurrencies())
+                return currencyDataset.asObservable()
                     .map(new Func1<Currency,
                             SelectableCurrency>() {
 

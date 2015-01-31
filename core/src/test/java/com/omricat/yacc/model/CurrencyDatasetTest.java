@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -30,6 +31,16 @@ import nl.jqno.equalsverifier.Warning;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CurrencyDatasetTest {
+
+    private final Currency usd = new Currency("1", "USD", "US Dollars");
+    private final Currency gbp = new Currency("3.6732", "GBP", "UK Pound");
+    private final Currency eur = new Currency("57.34", "EUR", "Euro");
+    private final Currency yen = new Currency("111.42", "YEN", "Japanese Yen");
+    private final Set<Currency> currencies = Sets.newHashSet(usd, gbp, eur, yen);
+
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     @Test
     public void testEqualsContract() {
@@ -50,41 +61,45 @@ public class CurrencyDatasetTest {
     }
 
     @Test
+    public void testToObservable() throws Exception {
+        Collection<Currency> ret = new CurrencyDataset(currencies, 1L)
+                .asObservable()
+                .toList()
+                .toBlocking().single();
+
+        assertThat(ret).containsExactlyElementsOf(currencies);
+    }
+
+    @Test
     public void testJSONDeserialization() throws Exception {
-        final Set<Currency> currencies = Sets.newHashSet(new Currency("1",
-                "USD", "US Dollars")
-                , new Currency("3.6732", "GBP", "UK Pound")
-                , new Currency("57.34", "EUR", "Euro")
-                , new Currency("111.42", "YEN", "Japanese Yen"));
         final String json = "{\"currencies\":[{\"code\":\"GBP\"," +
                 "\"value\":\"3.6732\",\"name\":\"UK Pound\"}," +
                 "{\"code\":\"USD\",\"value\":\"1\",\"name\":\"US Dollars\"}," +
                 "{\"code\":\"EUR\",\"value\":\"57.34\",\"name\":\"Euro\"}," +
                 "{\"code\":\"YEN\",\"value\":\"111.42\"," +
                 "\"name\":\"Japanese Yen\"}],\"timestamp\":1415210401}";
-        final CurrencyDataset expectedCurrencyDataset = new CurrencyDataset(currencies,
-                1415210401L);
-        ObjectMapper objectMapper = new ObjectMapper();
-        final CurrencyDataset currencyDatasetFromJSON = objectMapper.readValue(json,
-                CurrencyDataset
-                        .class);
+        final CurrencyDataset expectedCurrencyDataset =
+                new CurrencyDataset(currencies, 1415210401L);
+
+        final CurrencyDataset currencyDatasetFromJSON =
+                objectMapper.readValue(json, CurrencyDataset.class);
+
         assertThat(currencyDatasetFromJSON).isEqualTo(expectedCurrencyDataset);
     }
 
     @Test
     public void testJSONSerializeThenDeserialize() throws Exception {
-        final Set<Currency> currencies = Sets.newHashSet(new Currency("1",
-                "USD", "US Dollars")
-                , new Currency("3.6732", "GBP", "UK Pound")
-                , new Currency("57.34", "EUR", "Euro")
-                , new Currency("111.42", "YEN", "Japanese Yen"));
         final CurrencyDataset expectedCurrencyDataset = new CurrencyDataset(currencies,
                 1415210401L);
+
         ObjectMapper objectMapper = new ObjectMapper();
+
         final String serializedJSON = objectMapper.writeValueAsString
                 (expectedCurrencyDataset);
+
         final CurrencyDataset currencyDatasetFromJSON = objectMapper.readValue
                 (serializedJSON, CurrencyDataset.class);
+
         assertThat(currencyDatasetFromJSON).isEqualTo(expectedCurrencyDataset);
     }
 }

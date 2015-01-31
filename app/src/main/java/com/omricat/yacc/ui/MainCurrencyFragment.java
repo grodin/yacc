@@ -106,7 +106,7 @@ public class MainCurrencyFragment extends Fragment {
             @Override
             public Observable<? extends Collection<Currency>>
             call(final CurrencyDataset currencyDataset) {
-                return Observable.from(currencyDataset.getCurrencies())
+                return currencyDataset.asObservable()
                         .filter(new Func1<Currency, Boolean>() {
                             @Override
                             public Boolean call(final Currency currency) {

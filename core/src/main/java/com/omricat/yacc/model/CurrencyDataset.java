@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Set;
 
+import rx.Observable;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -74,6 +76,10 @@ public class CurrencyDataset {
 
     public long getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
+    }
+
+    public Observable<Currency> asObservable() {
+        return Observable.from(getCurrencies());
     }
 
     @Override
