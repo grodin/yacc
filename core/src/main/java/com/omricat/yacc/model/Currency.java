@@ -58,6 +58,8 @@ public class Currency {
      * currency conversions.
      */
     public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
+    public static final Currency USD =
+            new Currency("1.0", "USD", "United States Dollar", "");
 
     private final BigDecimal conversionRate;
     private final CurrencyCode code;

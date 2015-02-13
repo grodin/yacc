@@ -21,9 +21,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.YaccApp;
@@ -33,7 +35,9 @@ import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.rx.CurrencyCodeRxSet;
 import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
+import com.omricat.yacc.ui.rx.RxUtils;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -42,6 +46,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.events.OnTextChangeEvent;
+import rx.android.observables.ViewObservable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
@@ -52,15 +58,19 @@ public class MainCurrencyFragment extends Fragment {
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
 
+    @InjectView(R.id.user_value)
+    EditText vUserValue;
+
     private CurrencyDataRequester currencyDataRequester;
     private CurrencyCodeRxSet selectedKeySet;
 
     private Observable<? extends Collection<Currency>> currenciesObs;
     private Observable<? extends Set<CurrencyCode>> selectedCurrenciesObs;
+    private Observable<? extends OnTextChangeEvent> userValueObs;
 
     private Subscription subscription = Subscriptions.empty();
 
-    private CurrencyAdapter adapter;
+    private ConvertedCurrencyAdapter adapter;
 
     @Override public void onAttach(final Activity activity) {
         super.onAttach(activity);
@@ -73,7 +83,7 @@ public class MainCurrencyFragment extends Fragment {
     @Override public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adapter = new CurrencyAdapter(Collections.<Currency>emptySet());
+        adapter = new ConvertedCurrencyAdapter(Collections.<Currency>emptySet(), BigDecimal.ZERO);
 
         selectedCurrenciesObs = RxUtils.bindFragmentOnIO(this,
                 selectedKeySet.get());
@@ -130,6 +140,9 @@ public class MainCurrencyFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mCardRecyclerView.setLayoutManager(llm);
         mCardRecyclerView.setAdapter(adapter);
+
+        userValueObs = ViewObservable.text(vUserValue);
+
         return rootView;
     }
 
@@ -147,6 +160,15 @@ public class MainCurrencyFragment extends Fragment {
                 }, new Action1<Throwable>() {
                     @Override public void call(final Throwable throwable) {
                         throw new RuntimeException(throwable);
+                    }
+                }),
+                userValueObs.subscribe(new Action1<OnTextChangeEvent>() {
+
+                    @Override
+                    public void call(final OnTextChangeEvent e) {
+                        final String val = TextUtils.isEmpty(e.text) ? "0" :
+                                e.text.toString();
+                        adapter.setValueInUSD(new BigDecimal(val));
                     }
                 }));
     }

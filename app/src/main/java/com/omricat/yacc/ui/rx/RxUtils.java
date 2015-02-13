@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui;
+package com.omricat.yacc.ui.rx;
 
 
 import android.support.v4.app.Fragment;

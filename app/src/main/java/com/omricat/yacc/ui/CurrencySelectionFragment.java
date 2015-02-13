@@ -36,6 +36,7 @@ import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
 import com.omricat.yacc.rx.persistence.OpToCurrencyCode;
 import com.omricat.yacc.rx.persistence.Operation;
+import com.omricat.yacc.ui.rx.RxUtils;
 
 import java.util.Collection;
 import java.util.Collections;
