@@ -18,7 +18,6 @@ package com.omricat.yacc.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class YaccMainActivity extends ActionBarActivity {
+public class YaccMainActivity extends YaccActivity {
 
     public static final String MAIN_CURRENCY_FRAGMENT = "MainCurrencyFragment";
     public static final String CURRENCY_SELECTION_FRAGMENT =
