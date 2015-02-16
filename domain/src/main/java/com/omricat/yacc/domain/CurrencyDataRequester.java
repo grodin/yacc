@@ -17,6 +17,7 @@
 package com.omricat.yacc.domain;
 
 import com.omricat.yacc.common.rx.EmptyFallbackTransformer;
+import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.api.CurrenciesService;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.Persister;
@@ -39,7 +40,7 @@ public class CurrencyDataRequester {
     private CurrencyDataRequester(final Persister<String, CurrencyDataset>
                                           persister,
                                   final CurrenciesService service,
-                                  final IsDataStalePredicate predicate) {
+                                  final Predicate<CurrencyDataset> predicate) {
         this.persister = persister;
         this.service = service;
         this.predicate = predicate;
@@ -51,7 +52,7 @@ public class CurrencyDataRequester {
                                                @NotNull final
                                                CurrenciesService service,
                                                @NotNull final
-                                               IsDataStalePredicate
+                                               Predicate<CurrencyDataset>
                                                        dataStalePredicate) {
         return new CurrencyDataRequester(checkNotNull(datasetPersister),
                 checkNotNull(service), checkNotNull(dataStalePredicate));

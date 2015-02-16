@@ -17,6 +17,7 @@
 package com.omricat.yacc.data.persistence;
 
 import com.omricat.yacc.common.rx.EmptyFallbackTransformer;
+import com.omricat.yacc.common.rx.Predicate;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p/>
  * An optional predicate (an instance of {@link Func1}{@code &lt;V,} {@link
  * Boolean}{@code &gt;}) can be passed to the constructor {@link
- * #FallbackPersister(Persister, Persister, Func1)} which will be called on the
+ * #FallbackPersister(Persister, Persister, Predicate)} which will be called on the
  * value returned in the {@code get()} call on the first {@code Persister}. If
  * it passes, the value will be passed on. If it fails, the call will fall back
  * to the second {@code Persister}.
@@ -50,11 +51,11 @@ public final class FallbackPersister<K, V> implements Persister<K, V> {
 
     private final Persister<K, V> firstPersister;
     private final Persister<K, V> secondPersister;
-    private final Func1<V, Boolean> predicate;
+    private final Predicate<V> predicate;
 
     public FallbackPersister(@NotNull final Persister<K, V> firstPersister,
                              @NotNull final Persister<K, V> secondPersister,
-                             @NotNull final Func1<V, Boolean> predicate) {
+                             @NotNull final Predicate<V> predicate) {
         this.firstPersister = checkNotNull(firstPersister);
         this.secondPersister = checkNotNull(secondPersister);
         this.predicate = checkNotNull(predicate);
@@ -62,7 +63,7 @@ public final class FallbackPersister<K, V> implements Persister<K, V> {
 
     public FallbackPersister(@NotNull final Persister<K, V> firstPersister,
                              @NotNull final Persister<K, V> secondPersister) {
-        this(firstPersister, secondPersister, new Func1<V, Boolean>() {
+        this(firstPersister, secondPersister, new Predicate<V>() {
             @Override public Boolean call(final V v) {
                 return Boolean.TRUE;
             }

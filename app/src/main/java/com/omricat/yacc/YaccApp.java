@@ -19,6 +19,7 @@ package com.omricat.yacc;
 import android.app.Application;
 import android.content.Context;
 
+import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.api.CurrenciesService;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
@@ -27,7 +28,6 @@ import com.omricat.yacc.debug.DebugCurrenciesService;
 import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.domain.CurrencyCodeRxSet;
 import com.omricat.yacc.domain.CurrencyDataRequester;
-import com.omricat.yacc.domain.IsDataStalePredicate;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +68,8 @@ public class YaccApp extends Application {
 
     @NotNull
     public CurrencyDataRequester getCurrencyDataRequester(@NotNull final
-                                                              IsDataStalePredicate predicate) {
+                                                          Predicate<CurrencyDataset>
+                                                                  predicate) {
         if (currencyDataRequester == null) {
             currencyDataRequester = CurrencyDataRequester.create
                     (getCurrencyDataPersister(), getCurrenciesService(),

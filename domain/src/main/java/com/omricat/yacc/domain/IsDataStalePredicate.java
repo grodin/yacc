@@ -17,6 +17,7 @@
 package com.omricat.yacc.domain;
 
 import com.google.common.math.LongMath;
+import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,11 +25,10 @@ import org.jetbrains.annotations.NotNull;
 import java.math.RoundingMode;
 
 import rx.functions.Func0;
-import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.*;
 
-public class IsDataStalePredicate implements Func1<CurrencyDataset, Boolean> {
+public class IsDataStalePredicate implements Predicate<CurrencyDataset> {
 
     public static final long FIVE_MINS = 5 * 60;
 
