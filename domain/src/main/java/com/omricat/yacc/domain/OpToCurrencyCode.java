@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.persistence;
+package com.omricat.yacc.domain;
 
-import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.common.rx.RxSet;
+import com.omricat.yacc.common.rx.RxSetOperation;
+import com.omricat.yacc.data.model.CurrencyCode;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ import rx.functions.Func1;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class OpToCurrencyCode implements
-        Func1<Operation<CurrencyCode>, Observable<? extends
+        Func1<RxSetOperation<CurrencyCode>, Observable<? extends
                 Set<CurrencyCode>>> {
 
     private final RxSet<CurrencyCode> rxSet;
@@ -41,33 +42,33 @@ public class OpToCurrencyCode implements
     @NotNull
     @Override
     public Observable<? extends Set<CurrencyCode>> call(final
-                                                        Operation<CurrencyCode> op) {
+                                                            RxSetOperation<CurrencyCode> op) {
         return new OpMatcher().call(op);
     }
 
-    private final class OpMatcher implements Operation
+    private final class OpMatcher implements RxSetOperation
             .Matcher<CurrencyCode> {
 
         private Observable<? extends Set<CurrencyCode>> returnObservable;
 
         private Observable<? extends Set<CurrencyCode>> call
-                (Operation<CurrencyCode> op) {
+                (RxSetOperation<CurrencyCode> op) {
             op.accept(this);
             return returnObservable;
         }
 
         @Override
-        public void matchAdd(@NotNull final Operation.Add<CurrencyCode> op) {
+        public void matchAdd(@NotNull final RxSetOperation.Add<CurrencyCode> op) {
             returnObservable = rxSet.add(op.value);
         }
 
         @Override
-        public void matchRemove(@NotNull final Operation.Remove<CurrencyCode> op) {
+        public void matchRemove(@NotNull final RxSetOperation.Remove<CurrencyCode> op) {
             returnObservable = rxSet.remove(op.value);
         }
 
         @Override
-        public void matchGet(@NotNull final Operation.Get<CurrencyCode> op) {
+        public void matchGet(@NotNull final RxSetOperation.Get<CurrencyCode> op) {
             returnObservable = rxSet.get();
         }
 

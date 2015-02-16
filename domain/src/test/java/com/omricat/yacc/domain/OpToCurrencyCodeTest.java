@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.persistence;
+package com.omricat.yacc.domain;
 
+import com.omricat.yacc.common.rx.RxSet;
+import com.omricat.yacc.common.rx.RxSetOperation;
 import com.omricat.yacc.data.model.CurrencyCode;
-import com.omricat.yacc.rx.RxSet;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class OpToCurrencyCodeTest {
 
     @Test
     public void testCall_AddOp() throws Exception {
-        new OpToCurrencyCode(rxSet).call(Operation.add(usd));
+        new OpToCurrencyCode(rxSet).call(RxSetOperation.add(usd));
 
         verify(rxSet).add(usd);
 
@@ -49,14 +50,14 @@ public class OpToCurrencyCodeTest {
 
     @Test
     public void testCall_RemoveOp() throws Exception {
-        new OpToCurrencyCode(rxSet).call(Operation.remove(usd));
+        new OpToCurrencyCode(rxSet).call(RxSetOperation.remove(usd));
 
         verify(rxSet).remove(usd);
     }
 
     @Test
     public void testCall_GetOp() throws Exception {
-        new OpToCurrencyCode(rxSet).call(Operation.<CurrencyCode>get());
+        new OpToCurrencyCode(rxSet).call(RxSetOperation.<CurrencyCode>get());
 
         verify(rxSet).get();
     }

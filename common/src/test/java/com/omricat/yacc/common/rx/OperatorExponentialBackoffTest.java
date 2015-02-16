@@ -73,27 +73,27 @@ public class OperatorExponentialBackoffTest {
         // the first time
         scheduler.triggerActions();
 
-        Assertions.assertThat(timesSubscribed).isEqualTo(1);
-        Assertions.assertThat(retries).isEqualTo(0);
+        assertThat(timesSubscribed).isEqualTo(1);
+        assertThat(retries).isEqualTo(0);
 
         scheduler.advanceTimeBy(1, TimeUnit.SECONDS);
 
-        Assertions.assertThat(retries).isEqualTo(1);
-        Assertions.assertThat(onNextCalls).hasSize(0);
-        Assertions.assertThat(onErrorCalls).hasSize(0);
+        assertThat(retries).isEqualTo(1);
+        assertThat(onNextCalls).hasSize(0);
+        assertThat(onErrorCalls).hasSize(0);
 
         scheduler.advanceTimeBy(2, TimeUnit.SECONDS);
 
-        Assertions.assertThat(retries).isEqualTo(2);
-        Assertions.assertThat(onNextCalls).hasSize(0);
-        Assertions.assertThat(onErrorCalls).hasSize(0);
+        assertThat(retries).isEqualTo(2);
+        assertThat(onNextCalls).hasSize(0);
+        assertThat(onErrorCalls).hasSize(0);
 
         scheduler.advanceTimeBy(4, TimeUnit.SECONDS);
 
-        Assertions.assertThat(retries).isEqualTo(3);
-        Assertions.assertThat(onNextCalls).hasSize(0);
-        Assertions.assertThat(onErrorCalls).hasSize(1);
-        Assertions.assertThat(onErrorCalls).containsOnly(runtimeException);
+        assertThat(retries).isEqualTo(3);
+        assertThat(onNextCalls).hasSize(0);
+        assertThat(onErrorCalls).hasSize(1);
+        assertThat(onErrorCalls).containsOnly(runtimeException);
     }
 
     private class AlwaysErrorsOnSubscribe implements Observable.OnSubscribe<Object> {

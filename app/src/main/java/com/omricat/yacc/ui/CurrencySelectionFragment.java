@@ -31,9 +31,6 @@ import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.model.SelectableCurrency;
-import com.omricat.yacc.data.persistence.IsDataStalePredicate;
-import com.omricat.yacc.data.persistence.OpToCurrencyCode;
-import com.omricat.yacc.data.persistence.Operation;
 import com.omricat.yacc.domain.CurrencyCodeRxSet;
 import com.omricat.yacc.domain.CurrencyDataRequester;
 import com.omricat.yacc.ui.rx.RxUtils;
@@ -68,7 +65,7 @@ public class CurrencySelectionFragment extends Fragment {
     private Observable<? extends Collection<SelectableCurrency>>
             selectedCurrencies;
 
-    private final BehaviorSubject<Operation<CurrencyCode>> getSubject =
+    private final BehaviorSubject<RxSetOperation<CurrencyCode>> getSubject =
             BehaviorSubject.create();
 
     private Subscription subscription = Subscriptions.empty();
@@ -172,7 +169,7 @@ public class CurrencySelectionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getSubject.onNext(Operation.<CurrencyCode>get());
+        getSubject.onNext(RxSetOperation.<CurrencyCode>get());
         subscription = new
                 CompositeSubscription(
                 selectedCurrencies

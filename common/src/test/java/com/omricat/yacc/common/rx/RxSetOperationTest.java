@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.persistence;
+package com.omricat.yacc.common.rx;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,53 +25,53 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.verify;
 
 @RunWith( MockitoJUnitRunner.class )
-public class OperationTest {
+public class RxSetOperationTest {
 
     @Mock
-    Operation.Matcher<String> mockMatcher;
+    RxSetOperation.Matcher<String> mockMatcher;
 
     @Test( expected = NullPointerException.class )
     public void testAdd_NullParam() throws Exception {
-        Operation.add(null);
+        RxSetOperation.add(null);
     }
 
     @Test( expected = NullPointerException.class )
     public void testRemove_NullParam() throws Exception {
-        Operation.remove(null);
+        RxSetOperation.remove(null);
     }
 
     @Test( expected = NullPointerException.class )
     public void testAddAccept_NullParam() throws Exception {
-        Operation.add("test").accept(null);
+        RxSetOperation.add("test").accept(null);
     }
 
     @Test( expected = NullPointerException.class )
     public void testRemoveAccept_NullParam() throws Exception {
-        Operation.remove("test").accept(null);
+        RxSetOperation.remove("test").accept(null);
     }
 
     @Test
     public void testAddMatch() throws Exception {
-        Operation.match(
-                Operation.add("add test"), mockMatcher);
+        RxSetOperation.match(
+                RxSetOperation.add("add test"), mockMatcher);
 
-        verify(mockMatcher).matchAdd(Matchers.<Operation.Add<String>>any());
+        verify(mockMatcher).matchAdd(Matchers.<RxSetOperation.Add<String>>any());
     }
 
     @Test
     public void testRemoveMatch() throws Exception {
-        Operation.match(
-                Operation.remove("remove test"), mockMatcher);
+        RxSetOperation.match(
+                RxSetOperation.remove("remove test"), mockMatcher);
 
-        verify(mockMatcher).matchRemove(Matchers.<Operation
+        verify(mockMatcher).matchRemove(Matchers.<RxSetOperation
                 .Remove<String>>any());
     }
 
     @Test
     public void testGetMatch() throws Exception {
-        Operation.match(Operation.<String>get(), mockMatcher);
+        RxSetOperation.match(RxSetOperation.<String>get(), mockMatcher);
 
-        verify(mockMatcher).matchGet(Matchers.<Operation.Get<String>>any());
+        verify(mockMatcher).matchGet(Matchers.<RxSetOperation.Get<String>>any());
 
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.persistence;
+package com.omricat.yacc.common.rx;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

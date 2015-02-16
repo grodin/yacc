@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.omricat.yacc.data.api.CurrenciesService;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyDataset;
-import com.omricat.yacc.data.persistence.IsDataStalePredicate;
 import com.omricat.yacc.data.persistence.Persister;
 
 import org.junit.Before;
@@ -63,18 +62,18 @@ public class CurrencyDataRequesterTest {
 
     @Test(expected = NullPointerException.class)
     public void testCreation_1stParamNull() throws Exception {
-        com.omricat.yacc.rx.CurrencyDataRequester.create(null,
+        CurrencyDataRequester.create(null,
                 networkService, predicate);
     }
 
     @Test(expected = NullPointerException.class)
     public void testCreation_2ndParamNull() throws Exception {
-        com.omricat.yacc.rx.CurrencyDataRequester.create(persister, null, predicate);
+        CurrencyDataRequester.create(persister, null, predicate);
     }
 
     @Test(expected = NullPointerException.class)
     public void testCreation_3rdParamNull() throws Exception {
-        com.omricat.yacc.rx.CurrencyDataRequester.create(persister, networkService, null);
+        CurrencyDataRequester.create(persister, networkService, null);
     }
 
     @Test
@@ -84,7 +83,7 @@ public class CurrencyDataRequesterTest {
 
         when(predicate.call(any(CurrencyDataset.class))).thenReturn(true);
 
-        final CurrencyDataset ret = com.omricat.yacc.rx.CurrencyDataRequester
+        final CurrencyDataset ret = CurrencyDataRequester
                 .create(persister,
                         networkService, predicate)
             .request()
@@ -106,7 +105,7 @@ public class CurrencyDataRequesterTest {
         when(networkService.getAllCurrencies())
                 .thenReturn(Observable.just(currencyDataset));
 
-        final CurrencyDataset ret = com.omricat.yacc.rx.CurrencyDataRequester
+        final CurrencyDataset ret = CurrencyDataRequester
                 .create(persister,
                         networkService, predicate)
                 .request()
@@ -127,7 +126,7 @@ public class CurrencyDataRequesterTest {
         when(networkService.getAllCurrencies())
                 .thenReturn(Observable.just(currencyDataset));
 
-        final CurrencyDataset ret = com.omricat.yacc.rx.CurrencyDataRequester
+        final CurrencyDataset ret = CurrencyDataRequester
                 .create(persister,
                         networkService, IsDataStalePredicate.createDefault())
                 .request()
@@ -148,7 +147,7 @@ public class CurrencyDataRequesterTest {
         when(networkService.getAllCurrencies())
                 .thenReturn(Observable.just(currencyDataset));
 
-        final CurrencyDataset ret = com.omricat.yacc.rx.CurrencyDataRequester
+        final CurrencyDataset ret = CurrencyDataRequester
                 .create(persister,
                         networkService, IsDataStalePredicate.createDefault())
                 .request()

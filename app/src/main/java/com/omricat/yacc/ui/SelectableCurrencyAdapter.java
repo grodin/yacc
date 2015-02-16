@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableList;
 import com.omricat.yacc.R;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.SelectableCurrency;
-import com.omricat.yacc.data.persistence.Operation;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +48,7 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
         .ViewHolder> {
 
     private ImmutableList<SelectableCurrency> cachedCurrencyList;
-    private final PublishSubject<Operation<CurrencyCode>> publishSubject =
+    private final PublishSubject<RxSetOperation<CurrencyCode>> publishSubject =
             PublishSubject.create();
 
     public SelectableCurrencyAdapter(@NotNull final Iterable<SelectableCurrency>
@@ -70,7 +69,7 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
     }
 
     @NotNull
-    public Observable<Operation<CurrencyCode>> selectionChanges() {
+    public Observable<RxSetOperation<CurrencyCode>> selectionChanges() {
         return publishSubject.asObservable();
     }
 
@@ -92,9 +91,9 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
         holder.vSelected.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(final View v) {
                 if (((Checkable) v).isChecked()) {
-                    publishSubject.onNext(Operation.add(code));
+                    publishSubject.onNext(RxSetOperation.add(code));
                 } else {
-                    publishSubject.onNext(Operation.remove(code));
+                    publishSubject.onNext(RxSetOperation.remove(code));
                 }
             }
         });

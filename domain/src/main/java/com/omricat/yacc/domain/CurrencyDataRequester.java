@@ -16,10 +16,9 @@
 
 package com.omricat.yacc.domain;
 
+import com.omricat.yacc.common.rx.EmptyFallbackTransformer;
 import com.omricat.yacc.data.api.CurrenciesService;
 import com.omricat.yacc.data.model.CurrencyDataset;
-import com.omricat.yacc.data.persistence.EmptyFallbackTransformer;
-import com.omricat.yacc.data.persistence.IsDataStalePredicate;
 import com.omricat.yacc.data.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,18 +66,23 @@ public class CurrencyDataRequester {
                 .compose(EmptyFallbackTransformer.getLazyInstance(
                         new Func0<Observable<CurrencyDataset>>() {
 
-                            @Override public Observable<CurrencyDataset> call() {
+                            @Override
+                            public Observable<CurrencyDataset> call() {
                                 return service
                                         .getAllCurrencies()
-                                        .flatMap(new Func1<CurrencyDataset, Observable<? extends
+                                        .flatMap(new Func1<CurrencyDataset,
+                                                Observable<? extends
                                                 CurrencyDataset>>() {
 
 
                                             @Override
-                                            public Observable<? extends CurrencyDataset> call(final
+                                            public Observable<? extends
+                                                    CurrencyDataset> call(final
                                                                                               CurrencyDataset
                                                                                                       currencySet) {
-                                                return persister.put(PERSISTENCE_KEY, currencySet);
+                                                return persister.put
+                                                        (PERSISTENCE_KEY,
+                                                                currencySet);
                                             }
                                         });
                             }

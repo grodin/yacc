@@ -17,9 +17,9 @@
 package com.omricat.yacc.domain;
 
 import com.google.common.collect.ImmutableSet;
+import com.omricat.yacc.common.rx.EmptyFallbackTransformer;
 import com.omricat.yacc.common.rx.RxSet;
 import com.omricat.yacc.data.model.CurrencyCode;
-import com.omricat.yacc.data.persistence.EmptyFallbackTransformer;
 import com.omricat.yacc.data.persistence.Persister;
 
 import org.jetbrains.annotations.NotNull;

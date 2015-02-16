@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.persistence;
+package com.omricat.yacc.common.rx;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,8 @@ public class EmptyFallbackTransformer<T>
     private final Observable<? extends T> fallbackObservable;
     private final Func0<Observable<T>> fallbackObservableFactory;
 
-    private EmptyFallbackTransformer(final Observable<? extends T> fallbackObservable,
+    private EmptyFallbackTransformer(final Observable<? extends T>
+                                             fallbackObservable,
                                      final Func0<Observable<T>>
                                              fallbackObservableFactory) {
         this.fallbackObservable = fallbackObservable;

@@ -22,7 +22,6 @@ import android.content.Context;
 import com.omricat.yacc.data.api.CurrenciesService;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
-import com.omricat.yacc.data.persistence.IsDataStalePredicate;
 import com.omricat.yacc.data.persistence.Persister;
 import com.omricat.yacc.debug.DebugCurrenciesService;
 import com.omricat.yacc.debug.InMemoryPersister;

@@ -16,6 +16,8 @@
 
 package com.omricat.yacc.data.persistence;
 
+import com.omricat.yacc.common.rx.EmptyFallbackTransformer;
+
 import org.jetbrains.annotations.NotNull;
 
 import rx.Observable;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Omricat Software
+ * Copyright 2015 Omricat Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.persistence;
+package com.omricat.yacc.domain;
 
 import com.google.common.math.LongMath;
 import com.omricat.yacc.data.model.CurrencyDataset;
@@ -26,9 +26,7 @@ import java.math.RoundingMode;
 import rx.functions.Func0;
 import rx.functions.Func1;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public class IsDataStalePredicate implements Func1<CurrencyDataset, Boolean> {
 

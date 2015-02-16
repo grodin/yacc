@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.persistence;
+package com.omricat.yacc.common.rx;
 
 import org.jetbrains.annotations.NotNull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class Operation<T> {
+public abstract class RxSetOperation<T> {
 
-    abstract void accept(@NotNull final Matcher<T> matcher);
+    public abstract void accept(@NotNull final Matcher<T> matcher);
 
-    private Operation() {
+    private RxSetOperation() {
     }
 
-    public static <T> void match(@NotNull final Operation<T> op,
+    public static <T> void match(@NotNull final RxSetOperation<T> op,
                                  @NotNull final Matcher<T> matcher) {
         op.accept(matcher);
     }
@@ -38,11 +38,11 @@ public abstract class Operation<T> {
         public void matchGet(@NotNull Get<T> op);
     }
 
-    public static <T> Operation<T> add(@NotNull T value) {
+    public static <T> RxSetOperation<T> add(@NotNull T value) {
         return new Add<>(value);
     }
 
-    public final static class Add<T> extends Operation<T> {
+    public final static class Add<T> extends RxSetOperation<T> {
 
         public final T value;
 
@@ -50,34 +50,34 @@ public abstract class Operation<T> {
             this.value = checkNotNull(value);
         }
 
-        @Override void accept(@NotNull final Matcher<T> matcher) {
+        @Override public void accept(@NotNull final Matcher<T> matcher) {
             checkNotNull(matcher).matchAdd(this);
         }
     }
 
-    public static <T> Operation<T> remove(@NotNull T value) {
+    public static <T> RxSetOperation<T> remove(@NotNull T value) {
         return new Remove<>(value);
     }
 
-    public final static class Remove<T> extends Operation<T> {
+    public final static class Remove<T> extends RxSetOperation<T> {
 
         public final T value;
 
         private Remove(@NotNull final T value) {
             this.value = checkNotNull(value);
         }
-        @Override void accept(@NotNull final Matcher<T> matcher) {
+        @Override public void accept(@NotNull final Matcher<T> matcher) {
             checkNotNull(matcher).matchRemove(this);
         }
     }
 
-    public static <T> Operation<T> get() {
+    public static <T> RxSetOperation<T> get() {
         return new Get<>();
     }
 
-    public final static class Get<T> extends Operation<T> {
+    public final static class Get<T> extends RxSetOperation<T> {
 
-        @Override void accept(@NotNull final Matcher<T> matcher) {
+        @Override public void accept(@NotNull final Matcher<T> matcher) {
             checkNotNull(matcher).matchGet(this);
         }
     }
