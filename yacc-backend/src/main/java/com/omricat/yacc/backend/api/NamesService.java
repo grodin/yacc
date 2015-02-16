@@ -17,7 +17,7 @@
 package com.omricat.yacc.backend.api;
 
 import com.omricat.yacc.backend.Config;
-import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyCode;
 
 import java.util.Map;
 

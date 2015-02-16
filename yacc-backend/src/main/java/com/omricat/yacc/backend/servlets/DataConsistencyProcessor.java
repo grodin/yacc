@@ -17,8 +17,8 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.google.common.base.Optional;
-import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.data.model.CurrencyCode;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -27,9 +27,9 @@ import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
 import com.omricat.yacc.R;
-import com.omricat.yacc.model.CurrencyCode;
-import com.omricat.yacc.model.SelectableCurrency;
-import com.omricat.yacc.rx.persistence.Operation;
+import com.omricat.yacc.data.model.CurrencyCode;
+import com.omricat.yacc.data.model.SelectableCurrency;
+import com.omricat.yacc.data.persistence.Operation;
 
 import org.jetbrains.annotations.NotNull;
 

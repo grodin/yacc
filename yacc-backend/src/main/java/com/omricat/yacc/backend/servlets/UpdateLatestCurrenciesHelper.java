@@ -24,7 +24,7 @@ import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.CurrenciesStore;
 import com.omricat.yacc.backend.datastore.NamesStore;
-import com.omricat.yacc.model.CurrencyDataset;
+import com.omricat.yacc.data.model.CurrencyDataset;
 
 import java.io.IOException;
 import java.io.Writer;

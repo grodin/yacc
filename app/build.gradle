@@ -1,7 +1,11 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile project(':core')
+
+    compile project(':common')
+    compile project(':data')
+    compile project(':domain')
+
     def supportVersion = '21.0.3'
 
     compile "com.android.support:support-v4:$supportVersion"

@@ -19,15 +19,15 @@ package com.omricat.yacc;
 import android.app.Application;
 import android.content.Context;
 
-import com.omricat.yacc.api.CurrenciesService;
+import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyDataset;
+import com.omricat.yacc.data.persistence.IsDataStalePredicate;
+import com.omricat.yacc.data.persistence.Persister;
 import com.omricat.yacc.debug.DebugCurrenciesService;
 import com.omricat.yacc.debug.InMemoryPersister;
-import com.omricat.yacc.model.CurrencyCode;
-import com.omricat.yacc.model.CurrencyDataset;
-import com.omricat.yacc.model.CurrencyCodeRxSet;
-import com.omricat.yacc.rx.CurrencyDataRequester;
-import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
-import com.omricat.yacc.rx.persistence.Persister;
+import com.omricat.yacc.domain.CurrencyCodeRxSet;
+import com.omricat.yacc.domain.CurrencyDataRequester;
 
 import org.jetbrains.annotations.NotNull;
 

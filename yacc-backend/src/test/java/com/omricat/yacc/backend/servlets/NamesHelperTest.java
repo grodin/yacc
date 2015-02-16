@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableMap;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.DataStore;
-import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyCode;
 
 import org.junit.Test;
 import org.mockito.Mockito;

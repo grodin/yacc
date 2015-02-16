@@ -18,7 +18,7 @@ apply plugin: 'appengine'
 
 
 dependencies {
-    compile project(':core')
+    compile project(':data')
 
     compile 'javax.servlet:servlet-api:2.5'
 

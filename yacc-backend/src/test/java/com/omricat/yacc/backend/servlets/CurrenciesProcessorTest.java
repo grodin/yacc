@@ -25,7 +25,7 @@ import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.DataStore;
 import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.backend.utils.MockUtils;
-import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyCode;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;

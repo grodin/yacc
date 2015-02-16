@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
 import com.omricat.yacc.R;
-import com.omricat.yacc.model.Currency;
+import com.omricat.yacc.data.model.Currency;
 
 import org.jetbrains.annotations.NotNull;
 

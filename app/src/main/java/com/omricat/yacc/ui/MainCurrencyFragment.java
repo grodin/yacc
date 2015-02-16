@@ -29,12 +29,12 @@ import android.widget.EditText;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.YaccApp;
-import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencyCode;
-import com.omricat.yacc.model.CurrencyDataset;
-import com.omricat.yacc.model.CurrencyCodeRxSet;
-import com.omricat.yacc.rx.CurrencyDataRequester;
-import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
+import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.data.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyDataset;
+import com.omricat.yacc.data.persistence.IsDataStalePredicate;
+import com.omricat.yacc.domain.CurrencyCodeRxSet;
+import com.omricat.yacc.domain.CurrencyDataRequester;
 import com.omricat.yacc.ui.rx.RxUtils;
 
 import java.math.BigDecimal;

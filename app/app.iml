@@ -104,7 +104,9 @@
     <orderEntry type="library" exported="" name="okio-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="jackson-annotations-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="okhttp-urlconnection-2.0.0" level="project" />
-    <orderEntry type="module" module-name="core" exported="" />
+    <orderEntry type="module" module-name="domain" exported="" />
+    <orderEntry type="module" module-name="data" exported="" />
+    <orderEntry type="module" module-name="common" exported="" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

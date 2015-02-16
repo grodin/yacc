@@ -22,9 +22,9 @@ import com.google.common.base.Optional;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.DataStore;
-import com.omricat.yacc.model.Currency;
-import com.omricat.yacc.model.CurrencyCode;
-import com.omricat.yacc.model.CurrencyDataset;
+import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.data.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
 

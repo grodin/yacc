@@ -21,7 +21,7 @@ import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.NamesStore;
 import com.omricat.yacc.backend.util.HttpUtils;
-import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyCode;
 
 import java.io.IOException;
 import java.util.Map;

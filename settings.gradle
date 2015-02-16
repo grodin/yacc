@@ -1,1 +1,1 @@
-include ':app', ':core', ':yacc-backend'
+include ':app', ':data', ':yacc-backend', ':domain', ':common'
