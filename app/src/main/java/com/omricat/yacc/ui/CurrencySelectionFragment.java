@@ -27,12 +27,15 @@ import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.YaccApp;
+import com.omricat.yacc.common.rx.RxSetOperation;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.model.SelectableCurrency;
 import com.omricat.yacc.domain.CurrencyCodeRxSet;
 import com.omricat.yacc.domain.CurrencyDataRequester;
+import com.omricat.yacc.domain.IsDataStalePredicate;
+import com.omricat.yacc.domain.OpToCurrencyCode;
 import com.omricat.yacc.ui.rx.RxUtils;
 
 import java.util.Collection;
