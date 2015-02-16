@@ -6,6 +6,11 @@ dependencies {
     compile project(':data')
     compile project(':domain')
 
+    debugCompile project(':debug')
+
+    // TODO: remove release dependency on debug project
+    releaseCompile project(':debug')
+
     def supportVersion = '21.0.3'
 
     compile "com.android.support:support-v4:$supportVersion"

@@ -42,7 +42,7 @@ public class InMemoryPersister<V> implements Persister<String,V> {
     }
 
     @NotNull @Override
-    public Observable<V> put(@NotNull final java.lang.String key, @NotNull
+    public Observable<V> put(@NotNull final String key, @NotNull
     final V data) {
         dataMap.put(checkNotNull(key), checkNotNull(data));
         return Observable.just(data);

@@ -36,10 +36,10 @@ public class CurrencyDataRequester {
     private final CurrenciesService service;
     private final Func1<CurrencyDataset,Boolean> predicate;
 
-    private CurrencyDataRequester(final Persister<String,
-            CurrencyDataset> persister,
-                                  final CurrenciesService service, final
-    IsDataStalePredicate predicate) {
+    private CurrencyDataRequester(final Persister<String, CurrencyDataset>
+                                          persister,
+                                  final CurrenciesService service,
+                                  final IsDataStalePredicate predicate) {
         this.persister = persister;
         this.service = service;
         this.predicate = predicate;

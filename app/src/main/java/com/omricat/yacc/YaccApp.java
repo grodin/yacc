@@ -27,6 +27,7 @@ import com.omricat.yacc.debug.DebugCurrenciesService;
 import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.domain.CurrencyCodeRxSet;
 import com.omricat.yacc.domain.CurrencyDataRequester;
+import com.omricat.yacc.domain.IsDataStalePredicate;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +68,7 @@ public class YaccApp extends Application {
 
     @NotNull
     public CurrencyDataRequester getCurrencyDataRequester(@NotNull final
-                                                          IsDataStalePredicate predicate) {
+                                                              IsDataStalePredicate predicate) {
         if (currencyDataRequester == null) {
             currencyDataRequester = CurrencyDataRequester.create
                     (getCurrencyDataPersister(), getCurrenciesService(),
