@@ -31,7 +31,7 @@ import com.omricat.yacc.model.Currency;
 import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.model.CurrencyDataset;
 import com.omricat.yacc.model.SelectableCurrency;
-import com.omricat.yacc.rx.CurrencyCodeRxSet;
+import com.omricat.yacc.model.CurrencyCodeRxSet;
 import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
 import com.omricat.yacc.rx.persistence.OpToCurrencyCode;

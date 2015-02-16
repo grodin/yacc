@@ -24,7 +24,7 @@ import com.omricat.yacc.debug.DebugCurrenciesService;
 import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.model.CurrencyCode;
 import com.omricat.yacc.model.CurrencyDataset;
-import com.omricat.yacc.rx.CurrencyCodeRxSet;
+import com.omricat.yacc.model.CurrencyCodeRxSet;
 import com.omricat.yacc.rx.CurrencyDataRequester;
 import com.omricat.yacc.rx.persistence.IsDataStalePredicate;
 import com.omricat.yacc.rx.persistence.Persister;

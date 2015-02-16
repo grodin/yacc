@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.rx;
+package com.omricat.yacc.model;
 
 import com.google.common.collect.Sets;
 import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.model.CurrencyCodeRxSet;
 import com.omricat.yacc.rx.persistence.Persister;
 
 import org.junit.Test;

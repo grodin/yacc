@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.rx;
+package com.omricat.yacc.model;
 
 import com.google.common.collect.ImmutableSet;
-import com.omricat.yacc.model.CurrencyCode;
+import com.omricat.yacc.rx.RxSet;
 import com.omricat.yacc.rx.persistence.EmptyFallbackTransformer;
 import com.omricat.yacc.rx.persistence.Persister;
 
