@@ -1,4 +1,14 @@
-apply plugin: 'com.android.application'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // annotation processing
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+
+    }
+}
+        apply plugin: 'com.android.application'
 
 dependencies {
 
