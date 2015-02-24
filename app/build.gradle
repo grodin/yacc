@@ -8,16 +8,20 @@ buildscript {
 
     }
 }
-        apply plugin: 'com.android.application'
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+repositories {
+    maven { url "file://${rootProject.projectDir}/libs"}
+}
+
 
 dependencies {
-
     compile project(':common')
     compile project(':data')
     compile project(':domain')
-
     debugCompile project(':debug')
-
     // TODO: remove release dependency on debug project
     releaseCompile project(':debug')
 
@@ -35,22 +39,25 @@ dependencies {
 
     compile "${rootProject.ext.retrofit}"
     compile "${rootProject.ext.retrofitJackson}"
+
     compile "${rootProject.ext.jackson}"
 
     compile "${rootProject.ext.okhttpUrlConnection}"
     compile "${rootProject.ext.okhttp}"
-
 
     compile "${rootProject.ext.rxJava}"
     compile 'io.reactivex:rxandroid:0.23.0'
 
     compile 'com.jakewharton:butterknife:6.0.0'
 
+    compile "${rootProject.ext.dagger}"
+    apt "${rootProject.ext.daggerCompiler}"
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
     testCompile "${rootProject.ext.junit}"
     testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
     testCompile "${rootProject.ext.assertJ}"
     testCompile "${rootProject.ext.mockito}"
-
 }
 
 
@@ -67,7 +74,7 @@ android {
                 "${rootProject.ext.versionPatch}"
     }
 
-    lintOptions{
+    lintOptions {
         abortOnError false
     }
 

@@ -48,6 +48,11 @@ ext {
 
     jackson = 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
 
+    daggerVersion = '2.0-SNAPSHOT'
+
+    dagger = "com.google.dagger:dagger:$daggerVersion"
+    daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
+
     junit = 'junit:junit:4.11'
     assertJ = 'org.assertj:assertj-core:1.7.0'
 
