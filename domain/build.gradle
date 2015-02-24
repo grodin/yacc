@@ -42,6 +42,8 @@ dependencies {
 
     compile "${rootProject.ext.jackson}"
 
+    testCompile project(':debug')
+
     testCompile "${rootProject.ext.junit}"
     testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
     testCompile "${rootProject.ext.assertJ}"
