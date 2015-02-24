@@ -37,19 +37,18 @@ public class IsDataStalePredicateTest {
 
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullFirstParam() throws Exception {
-        com.omricat.yacc.data.persistence.IsDataStalePredicate.create(null);
+        IsDataStalePredicate.create(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructWithNonPositiveStaleInterval() throws Exception {
-        com.omricat.yacc.data.persistence.IsDataStalePredicate.create(com
-                .omricat.yacc.data.persistence.IsDataStalePredicate
+        IsDataStalePredicate.create(IsDataStalePredicate
                 .CURRENT_EPOCH_FUNC, -1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCallWithInvalidEpochFunc() throws Exception {
-        com.omricat.yacc.data.persistence.IsDataStalePredicate.create(new Func0<Long>() {
+        IsDataStalePredicate.create(new Func0<Long>() {
             @Override public Long call() {
                 return -1L;
             }
@@ -59,7 +58,7 @@ public class IsDataStalePredicateTest {
 
     @Test
     public void testStaleData() throws Exception {
-        boolean ret = com.omricat.yacc.data.persistence.IsDataStalePredicate
+        boolean ret = IsDataStalePredicate
                 .create(new Func0<Long>() {
                     @Override public Long call() {
                         return 10L * 24L * 60L * 60L; // 10 days

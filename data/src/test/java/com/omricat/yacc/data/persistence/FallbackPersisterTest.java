@@ -16,13 +16,14 @@
 
 package com.omricat.yacc.data.persistence;
 
+import com.omricat.yacc.common.rx.Predicate;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import rx.Observable;
-import rx.functions.Func1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -45,7 +46,7 @@ public class FallbackPersisterTest {
     Persister<String, Integer> mockSecondPersister;
 
     @Mock
-    Func1<Integer, Boolean> mockPredicate;
+    Predicate<Integer> mockPredicate;
 
     @Test( expected = NullPointerException.class )
     public void testConstructor_FirstArgNull() throws Exception {
