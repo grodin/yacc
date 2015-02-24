@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.omricat.yacc.R;
+import com.omricat.yacc.ui.converter.MainCurrencyFragment;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

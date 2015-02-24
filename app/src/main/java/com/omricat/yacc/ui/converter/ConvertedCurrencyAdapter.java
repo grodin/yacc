@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui;
+package com.omricat.yacc.ui.converter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,45 +24,34 @@ import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
 import com.omricat.yacc.R;
-import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.data.model.ConvertedCurrency;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.math.BigDecimal;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ConvertedCurrencyAdapter extends
         RecyclerView.Adapter<ConvertedCurrencyAdapter.ViewHolder> {
 
-    private ImmutableList<Currency> cachedCurrencyList;
-    private BigDecimal valueToConvert;
-    public ConvertedCurrencyAdapter(@NotNull final Iterable<Currency>
-                                            currencies,
-                                    @NotNull final BigDecimal valueToConvert) {
+    private ImmutableList<ConvertedCurrency> cachedCurrencyList;
 
-        setValueInUSD(valueToConvert);
+    public ConvertedCurrencyAdapter(@NotNull final Iterable<ConvertedCurrency>
+                                            currencies) {
+
         setCurrencyList(checkNotNull(currencies));
     }
 
-    public void setValueInUSD(@NotNull final BigDecimal valueToConvert) {
-        checkArgument(valueToConvert.signum() >= 0, "No negative values");
-        this.valueToConvert = checkNotNull(valueToConvert);
-        notifyDataSetChanged();
-    }
-
-    public void swapCurrencyData(@NotNull final Iterable<Currency>
+    public void swapCurrencyData(@NotNull final Iterable<ConvertedCurrency>
                                          currencies) {
         setCurrencyList(checkNotNull(currencies));
     }
 
-    private void setCurrencyList(final Iterable<Currency> currencyList) {
-        this.cachedCurrencyList =
-                ImmutableList.copyOf(currencyList);
+    private void setCurrencyList(final Iterable<ConvertedCurrency>
+                                         currencyList) {
+        this.cachedCurrencyList = ImmutableList.copyOf(currencyList);
         notifyDataSetChanged();
     }
 
@@ -77,12 +66,11 @@ public class ConvertedCurrencyAdapter extends
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final Currency currency = cachedCurrencyList.get(position);
-        holder.vValue.setText(Currency.convert(Currency.USD,
-                currency, valueToConvert).toPlainString());
+        final ConvertedCurrency currency = cachedCurrencyList.get(position);
+        holder.vValue.setText(currency.getConvertedValue().toPlainString());
         holder.vCode.setText(currency.getCode().toString());
         holder.vName.setText(currency.getName());
-        holder.vRate.setText(currency.getRateInUSD().toPlainString());
+        holder.vRate.setText(currency.getConversionRate().toPlainString());
     }
 
     @Override public int getItemCount() {
