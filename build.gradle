@@ -36,7 +36,7 @@ ext {
 
     guava = 'com.google.guava:guava:18.0@jar'
 
-    rxJava = 'io.reactivex:rxjava:1.0.1'
+    rxJava = 'io.reactivex:rxjava:1.0.5'
 
     okhttpUrlConnection = 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     okhttp = 'com.squareup.okhttp:okhttp:2.0.0'
