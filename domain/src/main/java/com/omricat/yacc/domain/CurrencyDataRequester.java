@@ -30,6 +30,9 @@ import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Class which encapsulates getting the complete list of currencies.
+ */
 public class CurrencyDataRequester {
 
     final static String PERSISTENCE_KEY = "currency-data";

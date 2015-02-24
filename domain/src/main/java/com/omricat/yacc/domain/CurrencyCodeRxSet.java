@@ -34,6 +34,11 @@ import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+
+/**
+ * Class which encapsulates the set of currency codes which have been
+ * selected to be displayed.
+ */
 public class CurrencyCodeRxSet implements RxSet<CurrencyCode> {
 
     final static String PERSISTENCE_KEY = "selected-currencies";
