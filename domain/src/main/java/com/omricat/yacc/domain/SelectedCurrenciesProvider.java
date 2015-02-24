@@ -35,11 +35,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class SelectedCurrenciesProvider {
 
-    private final Observable<Set<CurrencyCode>> selectedCurrenciesObs;
+    private final Observable<? extends Set<CurrencyCode>> selectedCurrenciesObs;
     private final CurrencyDataRequester currencyDataRequester;
 
     public SelectedCurrenciesProvider(@NotNull final
-                                      Observable<Set<CurrencyCode>>
+                                      Observable<? extends Set<CurrencyCode>>
                                               selectedCurrenciesObs,
                                       @NotNull final CurrencyDataRequester
                                               currencyDataRequester) {

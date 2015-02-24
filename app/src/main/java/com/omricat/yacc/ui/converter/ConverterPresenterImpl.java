@@ -16,10 +16,10 @@
 
 package com.omricat.yacc.ui.converter;
 
-import com.omricat.yacc.YaccApp;
 import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.persistence.Persister;
+import com.omricat.yacc.domain.SourceCurrency;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
 import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
@@ -38,16 +38,15 @@ import static com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent.*
 
 public class ConverterPresenterImpl implements ConverterPresenter {
 
-    public static final String PERSISTENCE_KEY = "last-currency-to-convert-from";
-
-
-
     private final Persister<String, Currency> sourceCurrencyPersister;
+
+    // Domain layer objects
+
+    private SourceCurrency sourceCurrency;
 
     // Observables from the domain layer
 
     private Observable<? extends Collection<Currency>> currencies;
-    private Observable<Currency> lastSourceCurrency;
 
     // Observables from the view
 
@@ -57,13 +56,11 @@ public class ConverterPresenterImpl implements ConverterPresenter {
     // Subscriptions
 
     private Subscription lifecycleSubscription;
-    private Subscription subscription;
 
     private final ConverterViewLifecycleEvent.Matcher lifecycleEventMatcher =
             new ConverterViewLifecycleEvent.Matcher() {
                 @Override
                 public void matchOnAttach(@NotNull final OnAttachEvent e) {
-                    YaccApp.from(e.context);
                 }
 
                 @Override
@@ -72,7 +69,6 @@ public class ConverterPresenterImpl implements ConverterPresenter {
 
                 @Override
                 public void matchOnDetach(@NotNull final OnDetachEvent e) {
-                    subscription.unsubscribe();
                     lifecycleSubscription.unsubscribe();
                 }
             };
@@ -107,12 +103,11 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                         return e.chosenCurrency;
                         }
                     })
-                .mergeWith(lastSourceCurrency)
+                .mergeWith(sourceCurrency.getLatestSourceCurrency())
                 .flatMap(new Func1<Currency, Observable<Currency>>() {
                     @Override
                     public Observable<Currency> call(final Currency currency) {
-                        return sourceCurrencyPersister
-                                .put(PERSISTENCE_KEY, currency);
+                        return sourceCurrency.persist(currency);
                     }
                 });
     }
