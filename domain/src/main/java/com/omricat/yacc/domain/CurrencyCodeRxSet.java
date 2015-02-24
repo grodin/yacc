@@ -173,7 +173,17 @@ public class CurrencyCodeRxSet implements RxSet<CurrencyCode> {
 
     @Override @NotNull
     public Observable<CurrencyCode> asObservable() {
-        return Observable.from(keySet);
+        return get().flatMap(new Func1<Set<CurrencyCode>, Observable<? extends CurrencyCode>>() {
+
+
+
+            @Override
+            public Observable<? extends CurrencyCode> call(final
+                                                           Set<CurrencyCode>
+                                                                   currencyCodes) {
+                return Observable.from(currencyCodes);
+            }
+        });
     }
 
     private Observable<? extends Set<CurrencyCode>> keySetObservable(final

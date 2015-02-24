@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -202,5 +203,20 @@ public class CurrencyCodeRxSetTest {
 
         assertThat(testPersister.get(persistenceKey).toBlocking().single())
                 .contains(eur,gbp).doesNotContain(usd);
+    }
+
+    @Test
+    public void testAsObservable() throws Exception {
+        final Persister<String, Set<CurrencyCode>> testPersister = new
+                InMemoryPersister<>();
+        testPersister.put(persistenceKey, testKeySet);
+
+        final Collection<CurrencyCode> ret =
+                CurrencyCodeRxSet.create(testPersister)
+                .asObservable()
+                .toList()
+                .toBlocking().single();
+
+        assertThat(ret).containsAll(testKeySet);
     }
 }
