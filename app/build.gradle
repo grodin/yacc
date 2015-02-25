@@ -12,11 +12,6 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
-repositories {
-    maven { url "file://${rootProject.projectDir}/libs"}
-}
-
-
 dependencies {
     compile project(':common')
     compile project(':data')

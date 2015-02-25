@@ -1,5 +1,5 @@
 apply plugin: 'java'
-
+apply plugin: 'provided-base'
 
 sourceCompatibility = rootProject.ext.sourceCompatibility
 targetCompatibility = rootProject.ext.targetCompatibility
@@ -23,6 +23,9 @@ dependencies {
     compile "${rootProject.ext.okhttp}"
 
     compile "${rootProject.ext.jackson}"
+
+    compile "${rootProject.ext.dagger}"
+    provided "${rootProject.ext.daggerCompiler}"
 
     testCompile "${rootProject.ext.junit}"
     testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
