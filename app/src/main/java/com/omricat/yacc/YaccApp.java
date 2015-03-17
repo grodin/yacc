@@ -21,6 +21,7 @@ import android.content.Context;
 
 import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.Persister;
@@ -28,18 +29,32 @@ import com.omricat.yacc.debug.DebugCurrenciesService;
 import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.domain.CurrencyCodeRxSet;
 import com.omricat.yacc.domain.CurrencyDataRequester;
+import com.omricat.yacc.domain.SelectedCurrenciesProvider;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Set;
+
+import rx.Observable;
 
 public class YaccApp extends Application {
 
     private Persister<String, CurrencyDataset> currencyDatasetPersister;
     private Persister<String, Set<CurrencyCode>> selectedCurrenciesPersister;
+    private Persister<String, Currency> sourceCurrencyPersister;
     private CurrenciesService currenciesService;
     private CurrencyDataRequester currencyDataRequester;
     private CurrencyCodeRxSet currencyCodeRxSet;
+
+    private YaccAppComponent component;
+
+    @Override public void onCreate() {
+        super.onCreate();
+
+        component = YaccAppComponent.Initializer.init(this);
+        component.inject(this);
+    }
 
     @NotNull
     public Persister<String, CurrencyDataset> getCurrencyDataPersister() {
@@ -56,6 +71,14 @@ public class YaccApp extends Application {
             selectedCurrenciesPersister = new InMemoryPersister<>();
         }
         return selectedCurrenciesPersister;
+    }
+
+    @NotNull
+    public Persister<String, Currency> getSourceCurrencyPersister() {
+        if (sourceCurrencyPersister == null) {
+            sourceCurrencyPersister = new InMemoryPersister<>();
+        }
+        return sourceCurrencyPersister;
     }
 
     @NotNull
@@ -85,6 +108,19 @@ public class YaccApp extends Application {
                     .create(getSelectedCurrenciesPersister());
         }
         return currencyCodeRxSet;
+    }
+
+    public Observable<? extends Collection<Currency>>
+    getDisplayedCurrencies(@NotNull final Predicate<CurrencyDataset>
+                                   predicate) {
+        return new SelectedCurrenciesProvider(getCurrencyCodeRxSet().get(),
+                getCurrencyDataRequester(predicate))
+                .getCurrencyData();
+    }
+
+    @NotNull
+    public YaccAppComponent component() {
+        return component;
     }
 
     @NotNull

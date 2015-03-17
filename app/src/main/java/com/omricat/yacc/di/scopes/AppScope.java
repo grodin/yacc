@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter;
+package com.omricat.yacc.di.scopes;
 
-import com.omricat.yacc.data.model.ConvertedCurrency;
-import com.omricat.yacc.data.model.Currency;
+import javax.inject.Scope;
 
-import java.util.Collection;
-
-import rx.Observable;
-
-public interface ConverterPresenter {
-
-    public Observable<? extends Collection<ConvertedCurrency>>
-    convertedCurrencies();
-
-    public Observable<Currency> sourceCurrency();
-
+@Scope
+public @interface AppScope {
 }

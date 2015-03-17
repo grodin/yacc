@@ -17,7 +17,9 @@
 package com.omricat.yacc.ui.converter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,9 +29,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.omricat.yacc.R;
+import com.omricat.yacc.YaccApp;
 import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
-import com.omricat.yacc.debug.InMemoryPersister;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
 import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
@@ -38,6 +40,8 @@ import com.omricat.yacc.ui.rx.RxUtils;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -51,35 +55,52 @@ import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
-public class MainCurrencyFragment extends Fragment implements ConverterView {
+public class ConverterFragment extends Fragment implements ConverterView {
 
-    @InjectView(R.id.cardRecyclerView)
-    RecyclerView mCardRecyclerView;
+    @Inject
+    ConverterPresenter presenter;
 
-    @InjectView(R.id.user_value)
-    EditText vUserValue;
-
-    private ConverterPresenter presenter;
+    // Observables provided by the presenter
 
     private Observable<? extends Collection<ConvertedCurrency>> currencies;
+
+    private Observable<Currency> sourceCurrency;
+
+    // Observables provided by this class to the presenter;
+
     private Observable<CurrencyValueChangeEvent> userValueObs;
 
     private PublishSubject<ConverterViewLifecycleEvent> lifeCycleEvents =
             PublishSubject.create();
 
+    // Subscriptions
+
     private Subscription subscription = Subscriptions.empty();
+
+    // UI objects
+
+    @InjectView(R.id.user_value)
+    EditText vUserValue;
+
+    @InjectView(R.id.cardRecyclerView)
+    RecyclerView mCardRecyclerView;
 
     private ConvertedCurrencyAdapter adapter;
 
-    private void inject() {
-        presenter = ConverterPresenter.Factory.create(this,
-                new InMemoryPersister<Currency>());
+    /*
+     * This method is used to inject the presenter.
+     */
+    private void inject(Context context) {
+        Dagger_ConverterComponent.builder()
+                .yaccAppComponent(YaccApp.from(context).component())
+                .converterModule(new ConverterModule(this))
+                .build().inject(this);
     }
 
     @Override public void onAttach(final Activity activity) {
         super.onAttach(activity);
 
-        inject();
+        inject(activity);
 
         lifeCycleEvents.onNext(ConverterViewLifecycleEvent.onAttach(activity));
     }
@@ -92,6 +113,9 @@ public class MainCurrencyFragment extends Fragment implements ConverterView {
 
         currencies = RxUtils.bindFragmentOnIO(this,
                 presenter.convertedCurrencies());
+
+        sourceCurrency = RxUtils.bindFragmentOnIO(this,
+                presenter.sourceCurrency());
     }
 
 
@@ -101,7 +125,15 @@ public class MainCurrencyFragment extends Fragment implements ConverterView {
         View rootView = inflater.inflate(R.layout.fragment_currencies,
                 container, false);
         setRetainInstance(true);
-        ButterKnife.inject(this, rootView);
+
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(final View view, @Nullable final Bundle
+            savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.inject(this, view);
 
         mCardRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -110,21 +142,19 @@ public class MainCurrencyFragment extends Fragment implements ConverterView {
         mCardRecyclerView.setAdapter(adapter);
 
         userValueObs = ViewObservable.text(vUserValue)
-            .map(new Func1<OnTextChangeEvent, CurrencyValueChangeEvent>() {
+                .map(new Func1<OnTextChangeEvent, CurrencyValueChangeEvent>() {
 
 
 
-                @Override
-                public CurrencyValueChangeEvent call(final OnTextChangeEvent
-                                                             e) {
-                    return CurrencyValueChangeEvent.of(new BigDecimal(e.text
-                            .toString()));
-                }
-            });
+                    @Override
+                    public CurrencyValueChangeEvent call(final OnTextChangeEvent
+                                                                 e) {
+                        return CurrencyValueChangeEvent.of(new BigDecimal(e.text
+                                .toString()));
+                    }
+                });
 
-        return rootView;
     }
-
 
     @Override public void onResume() {
         super.onResume();
@@ -143,6 +173,11 @@ public class MainCurrencyFragment extends Fragment implements ConverterView {
                     @Override public void call(final Throwable throwable) {
                         throw new RuntimeException(throwable);
                     }
+                }),
+                sourceCurrency.subscribe(new Action1<Currency>() {
+                    @Override public void call(final Currency currency) {
+                        // TODO: implement displaying the chosen currency
+                    }
                 }));
     }
 
@@ -158,7 +193,8 @@ public class MainCurrencyFragment extends Fragment implements ConverterView {
     }
 
     @Override public Observable<ChooseCurrencyEvent> chooseCurrencyEvents() {
-        return null;
+        // TODO: implement choose currency events
+        return Observable.empty();
     }
 
     @Override
@@ -167,6 +203,6 @@ public class MainCurrencyFragment extends Fragment implements ConverterView {
     }
 
     @Override public Observable<ConverterViewLifecycleEvent> lifecycleEvents() {
-        return lifeCycleEvents;
+        return lifeCycleEvents.asObservable();
     }
 }

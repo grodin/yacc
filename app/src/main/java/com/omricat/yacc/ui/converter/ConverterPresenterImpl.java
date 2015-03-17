@@ -18,7 +18,6 @@ package com.omricat.yacc.ui.converter;
 
 import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
-import com.omricat.yacc.data.persistence.Persister;
 import com.omricat.yacc.domain.SourceCurrency;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
 import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
@@ -29,33 +28,34 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent.*;
 
 public class ConverterPresenterImpl implements ConverterPresenter {
 
-    private final Persister<String, Currency> sourceCurrencyPersister;
-
     // Domain layer objects
 
-    private SourceCurrency sourceCurrency;
+    private final SourceCurrency sourceCurrency;
 
     // Observables from the domain layer
 
-    private Observable<? extends Collection<Currency>> currencies;
+    private final Observable<? extends Collection<Currency>> currencies;
 
     // Observables from the view
 
-    private Observable<ChooseCurrencyEvent> chooseCurrencyEvents;
-    private Observable<CurrencyValueChangeEvent> valueChangeEvents;
+    private final Observable<ChooseCurrencyEvent> chooseCurrencyEvents;
+    private final Observable<CurrencyValueChangeEvent> valueChangeEvents;
 
     // Subscriptions
 
-    private Subscription lifecycleSubscription;
+    private final Subscription lifecycleSubscription;
 
     private final ConverterViewLifecycleEvent.Matcher lifecycleEventMatcher =
             new ConverterViewLifecycleEvent.Matcher() {
@@ -73,16 +73,19 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                 }
             };
 
-    public ConverterPresenterImpl(final ConverterView view,
-                                  final Persister<String, Currency> sourceCurrencyPersister) {
+    @Inject
+    public ConverterPresenterImpl(@NotNull final ConverterView view,
+                                  @NotNull final SourceCurrency sourceCurrency,
+                                  @NotNull final Observable<? extends
+                                        Collection<Currency>> currencies) {
+        this.sourceCurrency = checkNotNull(sourceCurrency);
+        this.currencies = checkNotNull(currencies);
 
+        final ConverterView v = checkNotNull(view);
+        chooseCurrencyEvents = v.chooseCurrencyEvents();
+        valueChangeEvents = v.convertFromValueChangeEvents();
 
-        this.sourceCurrencyPersister = sourceCurrencyPersister;
-
-        chooseCurrencyEvents = view.chooseCurrencyEvents();
-        valueChangeEvents = view.convertFromValueChangeEvents();
-
-        lifecycleSubscription = view.lifecycleEvents().subscribe(
+        lifecycleSubscription = v.lifecycleEvents().subscribe(
                 new Action1<ConverterViewLifecycleEvent>() {
                     @Override
                     public void call(final ConverterViewLifecycleEvent event) {

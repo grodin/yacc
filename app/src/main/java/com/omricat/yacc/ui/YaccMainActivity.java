@@ -23,7 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.omricat.yacc.R;
-import com.omricat.yacc.ui.converter.MainCurrencyFragment;
+import com.omricat.yacc.ui.converter.ConverterFragment;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -48,7 +48,7 @@ public class YaccMainActivity extends YaccActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container,
-                    new MainCurrencyFragment(), MAIN_CURRENCY_FRAGMENT).commit();
+                    new ConverterFragment(), MAIN_CURRENCY_FRAGMENT).commit();
         }
     }
 

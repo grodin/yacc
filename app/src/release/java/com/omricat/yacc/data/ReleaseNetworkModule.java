@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter;
+package com.omricat.yacc.data;
 
-import com.omricat.yacc.data.model.ConvertedCurrency;
-import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.debug.DebugCurrenciesService;
 
-import java.util.Collection;
+import dagger.Module;
+import dagger.Provides;
 
-import rx.Observable;
+@Module
+public class ReleaseNetworkModule {
 
-public interface ConverterPresenter {
-
-    public Observable<? extends Collection<ConvertedCurrency>>
-    convertedCurrencies();
-
-    public Observable<Currency> sourceCurrency();
-
+    @Provides
+    CurrenciesService provideCurrenciesService() {
+        return new DebugCurrenciesService();
+    }
 }

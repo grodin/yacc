@@ -16,18 +16,32 @@
 
 package com.omricat.yacc.ui.converter;
 
-import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.di.scopes.ConverterScope;
+import com.omricat.yacc.domain.SourceCurrency;
 
 import java.util.Collection;
 
+import dagger.Module;
+import dagger.Provides;
 import rx.Observable;
 
-public interface ConverterPresenter {
+@Module
+public class ConverterModule {
 
-    public Observable<? extends Collection<ConvertedCurrency>>
-    convertedCurrencies();
+    private final ConverterView view;
 
-    public Observable<Currency> sourceCurrency();
+    public ConverterModule(final ConverterView view) {
+        this.view = view;
+    }
+
+    @ConverterScope
+    @Provides
+    ConverterPresenter providePresenter(final SourceCurrency sourceCurrency,
+                                        final Observable<? extends
+                                                Collection<Currency>>
+                                                currencies) {
+        return new ConverterPresenterImpl(view, sourceCurrency, currencies);
+    }
 
 }

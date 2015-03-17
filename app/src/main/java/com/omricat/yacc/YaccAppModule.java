@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter;
+package com.omricat.yacc;
 
-import com.omricat.yacc.data.model.ConvertedCurrency;
-import com.omricat.yacc.data.model.Currency;
+import android.app.Application;
 
-import java.util.Collection;
+import javax.inject.Singleton;
 
-import rx.Observable;
+import dagger.Module;
+import dagger.Provides;
 
-public interface ConverterPresenter {
+@Module
+public class YaccAppModule {
 
-    public Observable<? extends Collection<ConvertedCurrency>>
-    convertedCurrencies();
+    private final YaccApp app;
 
-    public Observable<Currency> sourceCurrency();
 
+    public YaccAppModule(final YaccApp app) {
+        this.app = app;
+    }
+
+    @Provides @Singleton
+    Application provideApplication() {
+        return app;
+    }
 }

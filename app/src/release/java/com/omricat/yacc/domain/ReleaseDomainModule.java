@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter;
+package com.omricat.yacc.domain;
 
-import com.omricat.yacc.data.model.ConvertedCurrency;
-import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.common.rx.Predicate;
+import com.omricat.yacc.data.model.CurrencyDataset;
 
-import java.util.Collection;
+import javax.inject.Singleton;
 
-import rx.Observable;
+import dagger.Module;
+import dagger.Provides;
 
-public interface ConverterPresenter {
+@Module(includes = {DomainModule.class})
+public final class ReleaseDomainModule {
 
-    public Observable<? extends Collection<ConvertedCurrency>>
-    convertedCurrencies();
-
-    public Observable<Currency> sourceCurrency();
-
+    @Singleton @Provides
+    Predicate<CurrencyDataset> provideDataStalePredicate() {
+        return IsDataStalePredicate.createDefault();
+    }
 }
