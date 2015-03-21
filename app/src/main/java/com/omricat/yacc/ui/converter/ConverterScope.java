@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.di.scopes;
+package com.omricat.yacc.ui.converter;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Scope;
 
 @Scope
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
 public @interface ConverterScope {
 }
