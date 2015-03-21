@@ -19,7 +19,7 @@ package com.omricat.yacc.domain;
 import com.google.common.collect.Sets;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.persistence.Persister;
-import com.omricat.yacc.debug.InMemoryPersister;
+import com.omricat.yacc.data.persistence.InMemoryPersister;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

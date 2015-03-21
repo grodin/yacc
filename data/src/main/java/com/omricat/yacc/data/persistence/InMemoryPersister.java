@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.debug;
+package com.omricat.yacc.data.persistence;
 
 import com.omricat.yacc.data.persistence.Persister;
 
