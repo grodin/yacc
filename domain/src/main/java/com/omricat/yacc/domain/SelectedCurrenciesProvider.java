@@ -16,6 +16,7 @@
 
 package com.omricat.yacc.domain;
 
+import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
@@ -23,6 +24,7 @@ import com.omricat.yacc.data.model.CurrencyDataset;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import rx.Observable;
@@ -35,7 +37,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class SelectedCurrenciesProvider {
 
-    private final Observable<? extends Set<CurrencyCode>> selectedCurrenciesObs;
+    private final Observable<? extends Set<CurrencyCode>>
+            selectedCurrenciesObs;
     private final CurrencyDataRequester currencyDataRequester;
 
     public SelectedCurrenciesProvider(@NotNull final
@@ -78,7 +81,13 @@ public class SelectedCurrenciesProvider {
                             public Boolean call(final Currency currency) {
                                 return keys.contains(currency.getCode());
                             }
-                        }).toList();
+                        }).toList()
+                        .filter(new Predicate<List<Currency>>() {
+                            @Override
+                            public Boolean call(final List<Currency> currencies) {
+                                return !currencies.isEmpty();
+                            }
+                        });
             }
         };
     }

@@ -27,12 +27,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import rx.Observable;
 
+import static com.omricat.yacc.data.TestCurrencies.*;
+import static com.omricat.yacc.data.TestCurrencyCodes.GBP_CODE;
+import static com.omricat.yacc.data.TestCurrencyCodes.USD_CODE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,21 +43,11 @@ import static org.mockito.Mockito.when;
 @RunWith( MockitoJUnitRunner.class )
 public class SelectedCurrenciesProviderTest {
 
-    private final CurrencyCode usdCode = new CurrencyCode("USD");
-    private final CurrencyCode gbpCode = new CurrencyCode("GBP");
-
-    private final Currency usd = new Currency(BigDecimal.ONE, usdCode,
-            "US Dollar", "");
-    private final Currency gbp = new Currency(BigDecimal.TEN, gbpCode,
-            "GB Pound","");
-    private final Currency eur = new Currency("1.5", "EUR", "Euro","");
-
     private final CurrencyDataset currencyDataset =
-            new CurrencyDataset(Sets .newHashSet(usd, gbp, eur),10L);
+            new CurrencyDataset(Sets.newHashSet(USD, GBP, EUR), 10L);
 
     Observable<Set<CurrencyCode>> currencyCodes =
-            Observable.<Set<CurrencyCode>>just(ImmutableSet.of(usdCode,
-                    gbpCode));
+            Observable.<Set<CurrencyCode>>just(ImmutableSet.of(USD_CODE, GBP_CODE));
 
     @Mock
     CurrencyDataRequester requester;
@@ -81,6 +74,22 @@ public class SelectedCurrenciesProviderTest {
 
         verify(requester).request();
 
-        assertThat(ret).contains(usd,gbp).doesNotContain(eur);
+        assertThat(ret).contains(USD,GBP).doesNotContain(EUR);
+    }
+
+    @Test
+    public void testGetCurrenciesReturnsEmptyObservable_NoSelectedCurrencies
+            () throws Exception {
+        when(requester.request()).thenReturn(Observable.just(currencyDataset));
+
+        SelectedCurrenciesProvider selectedCurrenciesProvider =
+                new SelectedCurrenciesProvider
+                (Observable.just(Collections.<CurrencyCode>emptySet()), requester);
+
+        Collection<?> ret = selectedCurrenciesProvider.getCurrencyData()
+                .toList()
+                .toBlocking().single();
+
+        assertThat(ret).isEmpty();
     }
 }
