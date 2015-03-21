@@ -16,18 +16,19 @@
 
 package com.omricat.yacc.data;
 
+import com.omricat.yacc.data.PersistenceModule;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.Persister;
-import com.omricat.yacc.debug.InMemoryPersister;
+import com.omricat.yacc.data.persistence.InMemoryPersister;
 
 import java.util.Set;
 
 import dagger.Module;
 
 @Module
-public class ReleasePersistenceModule {
+public class ReleasePersistenceModule implements PersistenceModule {
 
     Persister<String, Currency> provideCurrencyPersister() {
         return new InMemoryPersister<>();

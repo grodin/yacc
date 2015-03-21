@@ -16,7 +16,6 @@
 
 package com.omricat.yacc.data;
 
-import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.InMemoryPersister;
@@ -30,20 +29,20 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class DebugPersistenceModule {
+public class DebugPersistenceModule implements PersistenceModule {
 
-    @Singleton @Provides
-    Persister<String, Currency> provideCurrencyPersister() {
+    @Override @Singleton @Provides
+    public Persister<String, CurrencyCode> provideCurrencyPersister() {
         return new InMemoryPersister<>();
     }
 
-    @Singleton @Provides
-    Persister<String, Set<CurrencyCode>> provideCurrencyCodeSetPersister() {
+    @Override @Singleton @Provides
+    public Persister<String, Set<CurrencyCode>> provideCurrencyCodeSetPersister() {
         return new InMemoryPersister<>();
     }
 
-    @Singleton @Provides
-    Persister<String, CurrencyDataset> provideCurrencyDatasetPersister() {
+    @Override @Singleton @Provides
+    public Persister<String, CurrencyDataset> provideCurrencyDatasetPersister() {
         return new InMemoryPersister<>();
     }
 

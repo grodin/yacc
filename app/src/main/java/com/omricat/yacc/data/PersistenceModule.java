@@ -16,19 +16,26 @@
 
 package com.omricat.yacc.data;
 
-import com.omricat.yacc.data.api.CurrenciesService;
-import com.omricat.yacc.debug.DebugCurrenciesService;
+import com.omricat.yacc.data.model.CurrencyCode;
+import com.omricat.yacc.data.model.CurrencyDataset;
+import com.omricat.yacc.data.persistence.Persister;
+
+import java.util.Set;
 
 import javax.inject.Singleton;
 
-import dagger.Module;
 import dagger.Provides;
 
-@Module
-public class DebugNetworkModule implements NetworkModule {
+/**
+ * Common interface for both debug and release persistence modules
+ */
+public interface PersistenceModule {
+    @Singleton @Provides
+    Persister<String, CurrencyCode> provideCurrencyPersister();
 
-    @Override @Singleton
-    @Provides public CurrenciesService provideCurrenciesService() {
-        return new DebugCurrenciesService();
-    }
+    @Singleton @Provides
+    Persister<String, Set<CurrencyCode>> provideCurrencyCodeSetPersister();
+
+    @Singleton @Provides
+    Persister<String, CurrencyDataset> provideCurrencyDatasetPersister();
 }

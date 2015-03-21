@@ -17,18 +17,15 @@
 package com.omricat.yacc.data;
 
 import com.omricat.yacc.data.api.CurrenciesService;
-import com.omricat.yacc.debug.DebugCurrenciesService;
 
 import javax.inject.Singleton;
 
-import dagger.Module;
 import dagger.Provides;
 
-@Module
-public class DebugNetworkModule implements NetworkModule {
-
-    @Override @Singleton
-    @Provides public CurrenciesService provideCurrenciesService() {
-        return new DebugCurrenciesService();
-    }
+/**
+ * Common Interface to be implemented by both debug and release network modules
+ */
+public interface NetworkModule {
+    @Singleton
+    @Provides CurrenciesService provideCurrenciesService();
 }
