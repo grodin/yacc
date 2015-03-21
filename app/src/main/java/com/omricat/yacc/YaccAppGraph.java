@@ -16,8 +16,12 @@
 
 package com.omricat.yacc;
 
+import com.omricat.yacc.common.rx.RxSet;
 import com.omricat.yacc.data.model.Currency;
-import com.omricat.yacc.domain.SourceCurrency;
+import com.omricat.yacc.data.model.CurrencyCode;
+import com.omricat.yacc.di.qualifiers.AllCurrencies;
+import com.omricat.yacc.di.qualifiers.SelectedCurrencies;
+import com.omricat.yacc.domain.SourceCurrencyProvider;
 
 import java.util.Collection;
 
@@ -25,6 +29,13 @@ import rx.Observable;
 
 public interface YaccAppGraph {
     void inject(YaccApp app);
-    SourceCurrency sourceCurrency();
+    SourceCurrencyProvider sourceCurrency();
+
+    @AllCurrencies
     Observable<? extends Collection<Currency>> allCurrencies();
+
+    @SelectedCurrencies
+    Observable<? extends Collection<Currency>> allCurrencies();
+
+    RxSet<CurrencyCode> currencyCodeRxSet();
 }

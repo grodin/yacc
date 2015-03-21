@@ -26,7 +26,7 @@ public interface ConverterView {
 
     Observable<ChooseCurrencyEvent> chooseCurrencyEvents();
 
-    Observable<CurrencyValueChangeEvent> convertFromValueChangeEvents();
+    Observable<CurrencyValueChangeEvent> valueChangeEvents();
 
     Observable<ConverterViewLifecycleEvent> lifecycleEvents();
 }

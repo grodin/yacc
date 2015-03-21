@@ -17,8 +17,8 @@
 package com.omricat.yacc.ui.converter;
 
 import com.omricat.yacc.data.model.Currency;
-import com.omricat.yacc.di.scopes.ConverterScope;
-import com.omricat.yacc.domain.SourceCurrency;
+import com.omricat.yacc.di.qualifiers.SelectedCurrencies;
+import com.omricat.yacc.domain.SourceCurrencyProvider;
 
 import java.util.Collection;
 
@@ -37,11 +37,12 @@ public class ConverterModule {
 
     @ConverterScope
     @Provides
-    ConverterPresenter providePresenter(final SourceCurrency sourceCurrency,
-                                        final Observable<? extends
+    ConverterPresenter providePresenter(final SourceCurrencyProvider sourceCurrencyProvider,
+                                        @SelectedCurrencies final
+                                        Observable<? extends
                                                 Collection<Currency>>
                                                 currencies) {
-        return new ConverterPresenterImpl(view, sourceCurrency, currencies);
+        return new ConverterPresenterImpl(view, sourceCurrencyProvider, currencies);
     }
 
 }

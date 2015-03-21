@@ -17,7 +17,6 @@
 package com.omricat.yacc.ui.converter;
 
 import com.omricat.yacc.YaccAppComponent;
-import com.omricat.yacc.di.scopes.ConverterScope;
 
 import dagger.Component;
 

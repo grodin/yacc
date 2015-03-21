@@ -194,11 +194,11 @@ public class ConverterFragment extends Fragment implements ConverterView {
 
     @Override public Observable<ChooseCurrencyEvent> chooseCurrencyEvents() {
         // TODO: implement choose currency events
-        return Observable.empty();
+        return Observable.never();
     }
 
     @Override
-    public Observable<CurrencyValueChangeEvent> convertFromValueChangeEvents() {
+    public Observable<CurrencyValueChangeEvent> valueChangeEvents() {
         return userValueObs;
     }
 

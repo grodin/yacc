@@ -16,9 +16,11 @@
 
 package com.omricat.yacc.ui.converter;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
-import com.omricat.yacc.domain.SourceCurrency;
+import com.omricat.yacc.domain.SourceCurrencyProvider;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
 import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
@@ -28,21 +30,20 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-import javax.inject.Inject;
-
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent.*;
+import static com.omricat.yacc.ui.converter.events
+        .ConverterViewLifecycleEvent.*;
 
 public class ConverterPresenterImpl implements ConverterPresenter {
 
     // Domain layer objects
 
-    private final SourceCurrency sourceCurrency;
+    private final SourceCurrencyProvider sourceCurrencyProvider;
 
     // Observables from the domain layer
 
@@ -73,17 +74,17 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                 }
             };
 
-    @Inject
     public ConverterPresenterImpl(@NotNull final ConverterView view,
-                                  @NotNull final SourceCurrency sourceCurrency,
+                                  @NotNull final SourceCurrencyProvider
+                                          sourceCurrencyProvider,
                                   @NotNull final Observable<? extends
-                                        Collection<Currency>> currencies) {
-        this.sourceCurrency = checkNotNull(sourceCurrency);
+                                          Collection<Currency>> currencies) {
+        this.sourceCurrencyProvider = checkNotNull(sourceCurrencyProvider);
         this.currencies = checkNotNull(currencies);
 
         final ConverterView v = checkNotNull(view);
         chooseCurrencyEvents = v.chooseCurrencyEvents();
-        valueChangeEvents = v.convertFromValueChangeEvents();
+        valueChangeEvents = v.valueChangeEvents();
 
         lifecycleSubscription = v.lifecycleEvents().subscribe(
                 new Action1<ConverterViewLifecycleEvent>() {
@@ -104,13 +105,13 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                     @Override
                     public Currency call(final ChooseCurrencyEvent e) {
                         return e.chosenCurrency;
-                        }
-                    })
-                .mergeWith(sourceCurrency.getLatestSourceCurrency())
+                    }
+                })
+                .startWith(sourceCurrencyProvider.getLatestSourceCurrency())
                 .flatMap(new Func1<Currency, Observable<Currency>>() {
                     @Override
                     public Observable<Currency> call(final Currency currency) {
-                        return sourceCurrency.persist(currency);
+                        return sourceCurrencyProvider.persist(currency);
                     }
                 });
     }
@@ -129,60 +130,63 @@ public class ConverterPresenterImpl implements ConverterPresenter {
     getConvertedCurrencies() {
 
         return currencies
-                .flatMap(new Func1<Collection<Currency>,
-                        Observable<? extends Collection<ConvertedCurrency>>>() {
-
-
-
-                    @Override
-                    public Observable<? extends Collection<ConvertedCurrency>>
-                    call
-                            (final Collection<Currency> currencies) {
-                        return Observable.from(currencies)
-                                .flatMap(convertCurrencyFunc)
-                                .toList();
-                    }
-                });
+                .flatMap(convertCurrencyFunc());
     }
 
-    private final Func1<Currency, Observable<? extends ConvertedCurrency>>
-            convertCurrencyFunc = new Func1<Currency, Observable<?
-            extends ConvertedCurrency>>() {
+    private final Func1<Collection<Currency>, Observable<? extends Collection<
+            ConvertedCurrency>>>
+    convertCurrencyFunc() {
+        return new Func1<Collection<Currency>, Observable<?
+                extends Collection<ConvertedCurrency>>>() {
 
+            @Override
+            public Observable<? extends Collection<ConvertedCurrency>> call
+                    (final Collection<Currency> targetCurrencies) {
 
-        @Override
-        public Observable<? extends
-                ConvertedCurrency> call(final
-                                        Currency
-                                                targetCurrency) {
-            return getSourceCurrency()
+                return getSourceCurrency()
                     .flatMap(new Func1<Currency, Observable<? extends
-                            ConvertedCurrency>>() {
-
+                            Collection<ConvertedCurrency>>>() {
 
                         @Override
-                        public Observable<? extends ConvertedCurrency> call
-                                (final Currency sourceCurrency) {
+                        public Observable<? extends Collection <ConvertedCurrency>>
+                        call(final Currency sourceCurrency) {
+
                             return sourceCurrencyValue()
-                                    .map(new Func1<BigDecimal,
-                                            ConvertedCurrency>() {
-
-
-                                        @Override
-                                        public ConvertedCurrency call(final
-                                                                      BigDecimal value) {
-                                            return ConvertedCurrency
-                                                    .convertFromTo
-                                                            (sourceCurrency,
-                                                                    targetCurrency,
-                                                                    value);
-                                        }
-                                    });
+                                .map(convertCurrencyCollection
+                                        (sourceCurrency, targetCurrencies));
                         }
                     });
-        }
-    };
+            }
+        };
+    }
 
+    private Func1<BigDecimal, Collection<ConvertedCurrency>>
+    convertCurrencyCollection(final Currency sourceCurrency,
+                              final Collection<Currency> targetCurrencies) {
+        return new Func1<BigDecimal,
+                Collection<ConvertedCurrency>>() {
+
+            @Override
+            public Collection<ConvertedCurrency>
+            call(final BigDecimal value) {
+                return Collections2.transform
+                        (targetCurrencies, new Function<Currency,
+                                ConvertedCurrency>() {
+
+
+                            @Override
+                            public ConvertedCurrency
+                            apply(final Currency
+                                          targetCurrency) {
+                                return
+                                        ConvertedCurrency.convertFromTo
+                                                (sourceCurrency,
+                                                        targetCurrency, value);
+                            }
+                        });
+            }
+        };
+    }
 
     @Override public Observable<? extends Collection<ConvertedCurrency>>
     convertedCurrencies() {
