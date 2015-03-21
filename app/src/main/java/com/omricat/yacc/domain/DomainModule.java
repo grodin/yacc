@@ -23,6 +23,8 @@ import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.Persister;
+import com.omricat.yacc.di.qualifiers.AllCurrencies;
+import com.omricat.yacc.di.qualifiers.SelectedCurrencies;
 
 import java.util.Collection;
 import java.util.Set;
@@ -32,26 +34,44 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import rx.Observable;
+import rx.functions.Func1;
 
 @Module
 public class DomainModule {
 
-    @Singleton @Provides
-    SourceCurrency provideSourceCurrency(final Persister<String, Currency>
-                                                 sourceCurrencyPersister,
-                                         final RxSet<CurrencyCode>
-                                                 selectedCurrencyCodes) {
-        return new SourceCurrency(sourceCurrencyPersister,
-                selectedCurrencyCodes);
+    @Singleton @Provides SourceCurrencyProvider
+    provideSourceCurrency(final Persister<String, CurrencyCode>
+                                  sourceCurrencyPersister,
+                          @SelectedCurrencies
+                          final Observable<? extends Collection<Currency>>
+                                  selectedCurrencies) {
+
+        return new SourceCurrencyProvider(sourceCurrencyPersister,
+                selectedCurrencies);
     }
 
-    @Singleton @Provides
+    @Singleton @Provides @SelectedCurrencies
     Observable<? extends Collection<Currency>> provideSelectedCurrencies
             (final RxSet<CurrencyCode> currencyCodeRxSet,
              final CurrencyDataRequester currencyDataRequester) {
 
         return new SelectedCurrenciesProvider(currencyCodeRxSet.get(),
                 currencyDataRequester).getCurrencyData();
+    }
+
+    @Singleton @Provides @AllCurrencies
+    Observable<? extends Collection<Currency>>
+    provideAllCurrencies(final CurrencyDataRequester currencyDataRequester){
+
+        return currencyDataRequester.request().map(new Func1<CurrencyDataset, Collection<Currency>>() {
+
+
+            @Override
+            public Collection<Currency> call(final CurrencyDataset
+                                                     currencyDataset) {
+                return currencyDataset.getCurrencies();
+            }
+        });
     }
 
     @Singleton @Provides RxSet<CurrencyCode> provideCurrencyRxSet(
