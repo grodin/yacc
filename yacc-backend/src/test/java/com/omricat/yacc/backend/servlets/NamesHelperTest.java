@@ -17,9 +17,8 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.labs.repackaged.com.google.common.collect
-        .ImmutableMap;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
+import com.google.common.collect.ImmutableMap;
 import com.omricat.yacc.backend.api.NamesService;
 import com.omricat.yacc.backend.datastore.DataStore;
 import com.omricat.yacc.data.model.CurrencyCode;

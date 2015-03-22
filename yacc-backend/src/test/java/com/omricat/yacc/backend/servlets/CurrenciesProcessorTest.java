@@ -17,8 +17,8 @@
 package com.omricat.yacc.backend.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.omricat.yacc.backend.Config;
 import com.omricat.yacc.backend.api.CurrencyService;
 import com.omricat.yacc.backend.api.NamesService;
@@ -44,7 +44,7 @@ public class CurrenciesProcessorTest {
 
     static final Map<String, String> RAW_CURRENCY_DATA =
             ImmutableMap.of("DateTime", "1417390802", "USD",
-            "1\r", "GBP", "1.5\r", "EUR", "0.893\r");
+                    "1\r", "GBP", "1.5\r", "EUR", "0.893\r");
 
     static final Map<CurrencyCode, String> NAMES_DATA = ImmutableMap.of(
             new CurrencyCode("EUR"), "Euro", new CurrencyCode("GBP"),
