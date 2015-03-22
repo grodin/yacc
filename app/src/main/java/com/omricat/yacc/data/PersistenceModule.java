@@ -22,20 +22,16 @@ import com.omricat.yacc.data.persistence.Persister;
 
 import java.util.Set;
 
-import javax.inject.Singleton;
-
-import dagger.Provides;
-
 /**
  * Common interface for both debug and release persistence modules
  */
 public interface PersistenceModule {
-    @Singleton @Provides
+
     Persister<String, CurrencyCode> provideCurrencyPersister();
 
-    @Singleton @Provides
+
     Persister<String, Set<CurrencyCode>> provideCurrencyCodeSetPersister();
 
-    @Singleton @Provides
+
     Persister<String, CurrencyDataset> provideCurrencyDatasetPersister();
 }
