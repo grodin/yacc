@@ -35,7 +35,7 @@ public interface YaccAppGraph {
     Observable<? extends Collection<Currency>> allCurrencies();
 
     @SelectedCurrencies
-    Observable<? extends Collection<Currency>> allCurrencies();
+    Observable<? extends Collection<Currency>> selectedCurrencies();
 
     RxSet<CurrencyCode> currencyCodeRxSet();
 }
