@@ -1,16 +1,18 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
     dependencies {
         // annotation processing
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
-
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.jakewharton.hugo'
 
 dependencies {
     compile project(':common')
@@ -48,6 +50,8 @@ dependencies {
     compile "${rootProject.ext.dagger}"
     apt "${rootProject.ext.daggerCompiler}"
     provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    testCompile project(':debug')
 
     testCompile "${rootProject.ext.junit}"
     testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
