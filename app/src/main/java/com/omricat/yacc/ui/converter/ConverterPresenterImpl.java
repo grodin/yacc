@@ -16,6 +16,8 @@
 
 package com.omricat.yacc.ui.converter;
 
+import android.text.TextUtils;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.omricat.yacc.data.model.ConvertedCurrency;
@@ -51,12 +53,26 @@ public class ConverterPresenterImpl implements ConverterPresenter {
 
     // Observables from the view
 
-    private final Observable<ChooseCurrencyEvent> chooseCurrencyEvents;
-    private final Observable<CurrencyValueChangeEvent> valueChangeEvents;
+    private Observable<ChooseCurrencyEvent> chooseCurrencyEvents =
+            Observable.empty();
+
+    private Observable<CurrencyValueChangeEvent> valueChangeEvents =
+            Observable.empty();
 
     // Subscriptions
 
-    private final Subscription lifecycleSubscription;
+    private Subscription lifecycleSubscription;
+
+    // Attach status
+    private boolean attachedToView = false;
+
+    public ConverterPresenterImpl(@NotNull final SourceCurrencyProvider
+                                          sourceCurrencyProvider,
+                                  @NotNull final Observable<? extends
+                                          Collection<Currency>> currencies) {
+        this.sourceCurrencyProvider = checkNotNull(sourceCurrencyProvider);
+        this.currencies = checkNotNull(currencies);
+    }
 
     private final ConverterViewLifecycleEvent.Matcher lifecycleEventMatcher =
             new ConverterViewLifecycleEvent.Matcher() {
@@ -70,18 +86,11 @@ public class ConverterPresenterImpl implements ConverterPresenter {
 
                 @Override
                 public void matchOnDetach(@NotNull final OnDetachEvent e) {
-                    lifecycleSubscription.unsubscribe();
+                    detachView();
                 }
             };
 
-    public ConverterPresenterImpl(@NotNull final ConverterView view,
-                                  @NotNull final SourceCurrencyProvider
-                                          sourceCurrencyProvider,
-                                  @NotNull final Observable<? extends
-                                          Collection<Currency>> currencies) {
-        this.sourceCurrencyProvider = checkNotNull(sourceCurrencyProvider);
-        this.currencies = checkNotNull(currencies);
-
+    private void attachView(final ConverterView view) {
         final ConverterView v = checkNotNull(view);
         chooseCurrencyEvents = v.chooseCurrencyEvents();
         valueChangeEvents = v.valueChangeEvents();
@@ -95,6 +104,14 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                 }
         );
 
+        attachedToView = true;
+    }
+
+    private void detachView() {
+        lifecycleSubscription.unsubscribe();
+        chooseCurrencyEvents = Observable.empty();
+        valueChangeEvents = Observable.empty();
+        attachedToView = false;
     }
 
     private Observable<Currency> getSourceCurrency() {
@@ -121,9 +138,12 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                 .map(new Func1<CurrencyValueChangeEvent, BigDecimal>() {
                     @Override
                     public BigDecimal call(final CurrencyValueChangeEvent e) {
-                        return e.value;
+
+                        return TextUtils.isEmpty(e.value) ?
+                                BigDecimal.ONE :
+                                new BigDecimal(e.value);
                     }
-                });
+                }).startWith(BigDecimal.ONE);
     }
 
     private Observable<? extends Collection<ConvertedCurrency>>
@@ -133,7 +153,7 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                 .flatMap(convertCurrencyFunc());
     }
 
-    private final Func1<Collection<Currency>, Observable<? extends Collection<
+    private Func1<Collection<Currency>, Observable<? extends Collection<
             ConvertedCurrency>>>
     convertCurrencyFunc() {
         return new Func1<Collection<Currency>, Observable<?
@@ -144,18 +164,20 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                     (final Collection<Currency> targetCurrencies) {
 
                 return getSourceCurrency()
-                    .flatMap(new Func1<Currency, Observable<? extends
-                            Collection<ConvertedCurrency>>>() {
+                        .flatMap(new Func1<Currency, Observable<? extends
+                                Collection<ConvertedCurrency>>>() {
 
-                        @Override
-                        public Observable<? extends Collection <ConvertedCurrency>>
-                        call(final Currency sourceCurrency) {
+                            @Override
+                            public Observable<? extends
+                                    Collection<ConvertedCurrency>>
+                            call(final Currency sourceCurrency) {
 
-                            return sourceCurrencyValue()
-                                .map(convertCurrencyCollection
-                                        (sourceCurrency, targetCurrencies));
-                        }
-                    });
+                                return sourceCurrencyValue()
+                                        .map(convertCurrencyCollection
+                                                (sourceCurrency,
+                                                        targetCurrencies));
+                            }
+                        });
             }
         };
     }
@@ -188,13 +210,25 @@ public class ConverterPresenterImpl implements ConverterPresenter {
         };
     }
 
-    @Override public Observable<? extends Collection<ConvertedCurrency>>
+    @NotNull @Override
+    public Observable<? extends Collection<ConvertedCurrency>>
     convertedCurrencies() {
         return getConvertedCurrencies();
     }
 
-    @Override public Observable<Currency> sourceCurrency() {
+    @NotNull @Override public Observable<Currency> sourceCurrency() {
         return getSourceCurrency();
+    }
+
+    @NotNull
+    @Override public ConverterPresenter attachToView(@NotNull final
+                                                     ConverterView view) {
+        attachView(checkNotNull(view));
+        return this;
+    }
+
+    boolean isAttached() {
+        return attachedToView;
     }
 
 }

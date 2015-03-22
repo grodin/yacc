@@ -29,12 +29,6 @@ import rx.Observable;
 @Module
 public class ConverterModule {
 
-    private final ConverterView view;
-
-    public ConverterModule(final ConverterView view) {
-        this.view = view;
-    }
-
     @ConverterScope
     @Provides
     ConverterPresenter providePresenter(final SourceCurrencyProvider sourceCurrencyProvider,
@@ -42,7 +36,7 @@ public class ConverterModule {
                                         Observable<? extends
                                                 Collection<Currency>>
                                                 currencies) {
-        return new ConverterPresenterImpl(view, sourceCurrencyProvider, currencies);
+        return new ConverterPresenterImpl(sourceCurrencyProvider, currencies);
     }
 
 }

@@ -18,21 +18,17 @@ package com.omricat.yacc.ui.converter.events;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
-
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CurrencyValueChangeEvent {
 
-    public final BigDecimal value;
+    public final String value;
 
-    private CurrencyValueChangeEvent(@NotNull final BigDecimal value) {
+    private CurrencyValueChangeEvent(@NotNull final String value) {
         this.value = value;
     }
 
-    public static CurrencyValueChangeEvent of(@NotNull final BigDecimal value) {
-        checkArgument(value.signum() >= 0, "value must be positive");
+    public static CurrencyValueChangeEvent of(@NotNull final String value) {
         return new CurrencyValueChangeEvent(checkNotNull(value));
     }
 }

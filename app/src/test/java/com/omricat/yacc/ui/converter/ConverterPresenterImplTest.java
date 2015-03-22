@@ -66,6 +66,48 @@ public class ConverterPresenterImplTest {
 
     }
 
+    @Test( expected = NullPointerException.class )
+    public void testAttachToView_NullView() throws Exception {
+        new ConverterPresenterImpl(sourceCurrencyProvider, currencies)
+                .attachToView(null);
+    }
+
+    @Test
+    public void testAttachToView() throws Exception {
+
+
+    }
+
+    @Test
+    public void testConvertedCurrencies_EmptyValueEvent() throws Exception {
+        when(converterView.chooseCurrencyEvents())
+                .thenReturn(Observable.just(ChooseCurrencyEvent.of(USD)));
+
+        when(converterView.valueChangeEvents())
+                .thenReturn(Observable.just(CurrencyValueChangeEvent.of("")));
+
+        when(sourceCurrencyProvider.getLatestSourceCurrency())
+                .thenReturn(Observable.just(GBP));
+
+        when(sourceCurrencyProvider.persist(any(Currency.class)))
+                .thenReturn(Observable.just(GBP));
+
+        ConvertedCurrency expected = ConvertedCurrency.convertFromTo(GBP,
+                USD, BigDecimal.ONE);
+
+        classUnderTest = new ConverterPresenterImpl(
+                sourceCurrencyProvider, currencies).attachToView(converterView);
+
+
+        Collection<ConvertedCurrency> ret = classUnderTest.convertedCurrencies()
+                .toBlocking().last();
+
+        assertThat(ret).isNotEmpty().hasSameSizeAs(currenciesSet);
+
+        assertThat(ret.iterator().next()).isEqualTo(expected);
+
+    }
+
     @Test
     public void testConvertedCurrencies() throws Exception {
 
@@ -73,8 +115,7 @@ public class ConverterPresenterImplTest {
                 .thenReturn(Observable.just(ChooseCurrencyEvent.of(USD)));
 
         when(converterView.valueChangeEvents())
-                .thenReturn(Observable.just(CurrencyValueChangeEvent.of
-                        (BigDecimal.ONE)));
+                .thenReturn(Observable.just(CurrencyValueChangeEvent.of("1")));
 
         when(sourceCurrencyProvider.getLatestSourceCurrency())
                 .thenReturn(Observable.just(USD));
@@ -82,8 +123,8 @@ public class ConverterPresenterImplTest {
         when(sourceCurrencyProvider.persist(any(Currency.class)))
                 .thenReturn(Observable.just(USD));
 
-        classUnderTest = new ConverterPresenterImpl(converterView,
-                sourceCurrencyProvider, currencies);
+        classUnderTest = new ConverterPresenterImpl(
+                sourceCurrencyProvider, currencies).attachToView(converterView);
 
 
         Collection<ConvertedCurrency> ret = classUnderTest.convertedCurrencies()
@@ -105,8 +146,8 @@ public class ConverterPresenterImplTest {
         SourceCurrencyProvider provider = new
                 SourceCurrencyProvider(testPersister, currencies);
 
-        classUnderTest = new ConverterPresenterImpl(converterView, provider,
-                currencies);
+        classUnderTest = new ConverterPresenterImpl(provider, currencies)
+                .attachToView(converterView);
 
         Currency ret = classUnderTest.sourceCurrency()
                 .first()

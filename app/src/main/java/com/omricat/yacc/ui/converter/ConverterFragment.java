@@ -37,7 +37,6 @@ import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
 import com.omricat.yacc.ui.rx.RxUtils;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -49,6 +48,7 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.events.OnTextChangeEvent;
 import rx.android.observables.ViewObservable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subjects.PublishSubject;
@@ -93,7 +93,6 @@ public class ConverterFragment extends Fragment implements ConverterView {
     private void inject(Context context) {
         Dagger_ConverterComponent.builder()
                 .yaccAppComponent(YaccApp.from(context).component())
-                .converterModule(new ConverterModule(this))
                 .build().inject(this);
     }
 
@@ -111,11 +110,6 @@ public class ConverterFragment extends Fragment implements ConverterView {
         adapter = new ConvertedCurrencyAdapter(Collections
                 .<ConvertedCurrency>emptySet());
 
-        currencies = RxUtils.bindFragmentOnIO(this,
-                presenter.convertedCurrencies());
-
-        sourceCurrency = RxUtils.bindFragmentOnIO(this,
-                presenter.sourceCurrency());
     }
 
 
@@ -149,10 +143,17 @@ public class ConverterFragment extends Fragment implements ConverterView {
                     @Override
                     public CurrencyValueChangeEvent call(final OnTextChangeEvent
                                                                  e) {
-                        return CurrencyValueChangeEvent.of(new BigDecimal(e.text
-                                .toString()));
+                        return CurrencyValueChangeEvent.of(e.text.toString());
                     }
-                });
+                }).subscribeOn(AndroidSchedulers.mainThread());
+
+        presenter.attachToView(this);
+
+        currencies = RxUtils.bindFragmentOnIO(this,
+                presenter.convertedCurrencies());
+
+        sourceCurrency = RxUtils.bindFragmentOnIO(this,
+                presenter.sourceCurrency());
 
     }
 

@@ -19,15 +19,22 @@ package com.omricat.yacc.ui.converter;
 import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 import rx.Observable;
 
 public interface ConverterPresenter {
 
+    @NotNull
     public Observable<? extends Collection<ConvertedCurrency>>
     convertedCurrencies();
 
+    @NotNull
     public Observable<Currency> sourceCurrency();
+
+    @NotNull public ConverterPresenter attachToView(@NotNull ConverterView
+                                                            view);
 
 }
