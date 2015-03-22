@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui;
+package com.omricat.yacc.ui.selecter;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;

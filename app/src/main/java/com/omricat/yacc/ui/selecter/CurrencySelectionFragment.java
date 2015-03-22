@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui;
+package com.omricat.yacc.ui.selecter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,20 +28,20 @@ import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.YaccApp;
+import com.omricat.yacc.common.rx.RxSet;
 import com.omricat.yacc.common.rx.RxSetOperation;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
-import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.model.SelectableCurrency;
-import com.omricat.yacc.domain.CurrencyCodeRxSet;
-import com.omricat.yacc.domain.CurrencyDataRequester;
-import com.omricat.yacc.domain.IsDataStalePredicate;
+import com.omricat.yacc.di.qualifiers.AllCurrencies;
 import com.omricat.yacc.domain.OpToCurrencyCode;
 import com.omricat.yacc.ui.rx.RxUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -52,7 +53,8 @@ import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
-public class CurrencySelectionFragment extends Fragment {
+public class CurrencySelectionFragment extends Fragment implements
+        SelecterView {
 
     // Debug Log tag
     private static final String TAG = CurrencySelectionFragment.class
@@ -61,10 +63,14 @@ public class CurrencySelectionFragment extends Fragment {
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
 
-    private CurrencyDataRequester currencyDataRequester;
-    private CurrencyCodeRxSet selectedKeySet;
 
-    private Observable<CurrencyDataset> allCurrencies;
+    @Inject @AllCurrencies
+    Observable<? extends Collection<Currency>> allCurrencies;
+
+    @Inject
+    RxSet<CurrencyCode> selectedKeySet;
+
+    private Observable<? extends Collection<Currency>> boundAllCurrencies;
     private Observable<? extends Collection<SelectableCurrency>>
             selectedCurrencies;
 
@@ -87,10 +93,14 @@ public class CurrencySelectionFragment extends Fragment {
 
     @Override public void onAttach(final Activity activity) {
         super.onAttach(activity);
-        currencyDataRequester = YaccApp.from(activity)
-                .getCurrencyDataRequester(IsDataStalePredicate.createDefault());
+        inject(activity);
+    }
 
-        selectedKeySet = YaccApp.from(activity).getCurrencyCodeRxSet();
+    private void inject(final Context context) {
+        Dagger_SelecterComponent.builder()
+                .yaccAppComponent(YaccApp.from(context).component())
+                .selecterModule(new SelecterModule(this))
+                .build().inject(this);
     }
 
     @Override
@@ -101,8 +111,8 @@ public class CurrencySelectionFragment extends Fragment {
         selectableCurrencyAdapter = new SelectableCurrencyAdapter
                 (Collections.<SelectableCurrency>emptyList());
 
-        allCurrencies = RxUtils.bindFragmentOnIO(this,
-                currencyDataRequester.request());
+        boundAllCurrencies = RxUtils.bindFragmentOnIO(this,
+                allCurrencies);
 
         selectedCurrencies = RxUtils.bindFragmentOnIO(this,
                 selectedKeySetObservable());
@@ -121,23 +131,24 @@ public class CurrencySelectionFragment extends Fragment {
                             Collection<SelectableCurrency>> call(final
                                                                  Set<CurrencyCode>
                                                                          selectedKeys) {
-                        return allCurrencies
+                        return boundAllCurrencies
                                 .flatMap(toSelectableCurrency(selectedKeys));
                     }
                 });
 
     }
 
-    private Func1<CurrencyDataset, Observable<? extends Collection<SelectableCurrency>>>
+    private Func1<Collection<Currency>, Observable<? extends
+            Collection<SelectableCurrency>>>
     toSelectableCurrency(final Set<CurrencyCode> selectedKeys) {
-        return new Func1<CurrencyDataset,
+        return new Func1<Collection<Currency>,
                 Observable<? extends Collection<SelectableCurrency>>>() {
 
             @Override
             public Observable<? extends
                     Collection<SelectableCurrency>> call
-                    (final CurrencyDataset currencyDataset) {
-                return currencyDataset.asObservable()
+                    (final Collection<Currency> currencies) {
+                return Observable.from(currencies)
                     .map(new Func1<Currency,
                             SelectableCurrency>() {
 
