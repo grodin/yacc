@@ -36,12 +36,13 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 import rx.Observable;
+import rx.subjects.PublishSubject;
 
 import static com.omricat.yacc.data.TestCurrencies.*;
 import static com.omricat.yacc.data.TestCurrencyCodes.USD_CODE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ConverterPresenterImplTest {
 
@@ -66,7 +67,7 @@ public class ConverterPresenterImplTest {
 
     }
 
-    @Test( expected = NullPointerException.class )
+    @Test(expected = NullPointerException.class)
     public void testAttachToView_NullView() throws Exception {
         new ConverterPresenterImpl(sourceCurrencyProvider, currencies)
                 .attachToView(null);
@@ -74,7 +75,81 @@ public class ConverterPresenterImplTest {
 
     @Test
     public void testAttachToView() throws Exception {
+        when(converterView.chooseCurrencyEvents())
+                .thenReturn(Observable.just(ChooseCurrencyEvent.of(USD)));
+        when(converterView.valueChangeEvents())
+                .thenReturn(Observable.just(CurrencyValueChangeEvent.of("1")));
 
+        TestPersister<CurrencyCode> testPersister = new TestPersister<>();
+
+        SourceCurrencyProvider provider = new
+                SourceCurrencyProvider(testPersister, currencies);
+
+        classUnderTest = new ConverterPresenterImpl(provider, currencies);
+
+        classUnderTest.sourceCurrency()
+                .toBlocking().first();
+
+        classUnderTest.convertedCurrencies()
+                .toBlocking().first();
+
+        verifyZeroInteractions(converterView);
+
+        //Attach Presenter to View
+        classUnderTest.attachToView(converterView);
+
+        classUnderTest.convertedCurrencies()
+                .toBlocking().first();
+
+        classUnderTest.sourceCurrency()
+                .toBlocking().first();
+
+        verify(converterView).chooseCurrencyEvents();
+        verify(converterView).valueChangeEvents();
+        verify(converterView).lifecycleEvents();
+    }
+
+    @Test
+    public void testDetachFromView_LifecycleOnDestroy() throws Exception {
+        when(converterView.chooseCurrencyEvents())
+                .thenReturn(Observable.just(ChooseCurrencyEvent.of(USD)));
+        when(converterView.valueChangeEvents())
+                .thenReturn(Observable.just(CurrencyValueChangeEvent.of("1")));
+
+        TestPersister<CurrencyCode> testPersister = new TestPersister<>();
+
+        SourceCurrencyProvider provider = new
+                SourceCurrencyProvider(testPersister, currencies);
+
+        PublishSubject<ViewLifecycleEvent> subject =
+                PublishSubject.create();
+
+        when(converterView.lifecycleEvents())
+                .thenReturn(subject);
+
+        classUnderTest = new ConverterPresenterImpl(provider, currencies)
+                .attachToView(converterView);
+
+        verify(converterView).lifecycleEvents();
+
+        classUnderTest.sourceCurrency()
+                .toBlocking().first();
+
+        classUnderTest.convertedCurrencies()
+                .toBlocking().first();
+
+        verify(converterView).chooseCurrencyEvents();
+        verify(converterView).valueChangeEvents();
+
+        subject.onNext(ViewLifecycleEvent.onDestroy());
+
+        classUnderTest.sourceCurrency()
+                .toBlocking().first();
+
+        classUnderTest.convertedCurrencies()
+                .toBlocking().first();
+
+        verifyNoMoreInteractions(converterView);
 
     }
 
