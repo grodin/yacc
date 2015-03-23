@@ -24,7 +24,7 @@ import android.view.MenuItem;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.ui.converter.ConverterFragment;
-import com.omricat.yacc.ui.selecter.CurrencySelectionFragment;
+import com.omricat.yacc.ui.selector.CurrencySelectionFragment;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.selecter;
+package com.omricat.yacc.ui.selector;
 
 import com.omricat.yacc.data.model.CurrencyCode;
 
@@ -24,16 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class CurrencySelectEvent {
 
-    private final CurrencyCode code;
-
-    private CurrencySelectEvent(final CurrencyCode code) {
-        this.code = code;
-    }
-
-    @NotNull
-    public final CurrencyCode code() {
-        return code;
-    }
+    private CurrencySelectEvent() { }
 
     public interface Matcher<R> {
         public R matchSelectEvent(SelectEvent event);
@@ -42,7 +33,7 @@ public abstract class CurrencySelectEvent {
 
     }
 
-    abstract <R> R accept(@NotNull final Matcher<R> matcher);
+    abstract <R> R match(@NotNull final Matcher<R> matcher);
 
     /**
      * Select Event
@@ -51,22 +42,26 @@ public abstract class CurrencySelectEvent {
 
     @NotNull
     public static CurrencySelectEvent selectEvent(@NotNull final
-                                                      CurrencyCode code) {
+                                                  CurrencyCode code) {
         return new SelectEvent(checkNotNull(code));
     }
 
     public static final class SelectEvent extends CurrencySelectEvent {
 
 
-        private SelectEvent(CurrencyCode code) {
-            super(code);
-        }
+        private final CurrencyCode code;
 
-        @Override <R> R accept(@NotNull final Matcher<R> matcher) {
+        private SelectEvent(CurrencyCode code) { this.code = code; }
+
+        @Override <R> R match(@NotNull final Matcher<R> matcher) {
             return matcher.matchSelectEvent(this);
         }
 
 
+        @NotNull
+        public final CurrencyCode code() {
+            return code;
+        }
     }
 
     /**
@@ -75,19 +70,26 @@ public abstract class CurrencySelectEvent {
 
     @NotNull
     public static CurrencySelectEvent unselectEvent(@NotNull final
-                                                        CurrencyCode code) {
+                                                    CurrencyCode code) {
         return new UnselectEvent(checkNotNull(code));
     }
 
     public static final class UnselectEvent extends
             CurrencySelectEvent {
 
+        private final CurrencyCode code;
+
         private UnselectEvent(final CurrencyCode code) {
-            super(code);
+            this.code = code;
         }
 
-        @Override <R> R accept(@NotNull final Matcher<R> matcher) {
+        @Override <R> R match(@NotNull final Matcher<R> matcher) {
             return matcher.matchUnselectEvent(this);
+        }
+
+        @NotNull
+        public final CurrencyCode code() {
+            return code;
         }
     }
 }

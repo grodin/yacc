@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.selecter;
+package com.omricat.yacc.ui.selector;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,18 +29,16 @@ import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.YaccApp;
-import com.omricat.yacc.common.rx.RxSet;
 import com.omricat.yacc.common.rx.RxSetOperation;
-import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.SelectableCurrency;
-import com.omricat.yacc.di.qualifiers.AllCurrencies;
-import com.omricat.yacc.domain.OpToCurrencyCode;
+import com.omricat.yacc.ui.events.ViewLifecycleEvent;
 import com.omricat.yacc.ui.rx.RxUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -48,13 +47,13 @@ import butterknife.InjectView;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.subjects.BehaviorSubject;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
 public class CurrencySelectionFragment extends Fragment implements
-        SelecterView {
+        SelectorView {
 
     // Debug Log tag
     private static final String TAG = CurrencySelectionFragment.class
@@ -63,16 +62,18 @@ public class CurrencySelectionFragment extends Fragment implements
     @InjectView( R.id.cardRecyclerView )
     RecyclerView mCardRecyclerView;
 
-
-    @Inject @AllCurrencies
-    Observable<? extends Collection<Currency>> allCurrencies;
-
     @Inject
-    RxSet<CurrencyCode> selectedKeySet;
+    SelectorPresenter presenter;
 
-    private Observable<? extends Collection<Currency>> boundAllCurrencies;
+    // From presenter
+
     private Observable<? extends Collection<SelectableCurrency>>
             selectedCurrencies;
+
+    // To presenter
+
+    private final PublishSubject<ViewLifecycleEvent> lifecycleEvents =
+            PublishSubject.create();
 
     private final BehaviorSubject<RxSetOperation<CurrencyCode>> getSubject =
             BehaviorSubject.create();
@@ -87,19 +88,14 @@ public class CurrencySelectionFragment extends Fragment implements
         return new CurrencySelectionFragment();
     }
 
-    public CurrencySelectionFragment() {
-        setRetainInstance(true);
-    }
-
     @Override public void onAttach(final Activity activity) {
         super.onAttach(activity);
         inject(activity);
     }
 
     private void inject(final Context context) {
-        Dagger_SelecterComponent.builder()
+        Dagger_SelectorComponent.builder()
                 .yaccAppComponent(YaccApp.from(context).component())
-                .selecterModule(new SelecterModule(this))
                 .build().inject(this);
     }
 
@@ -107,61 +103,8 @@ public class CurrencySelectionFragment extends Fragment implements
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         selectableCurrencyAdapter = new SelectableCurrencyAdapter
                 (Collections.<SelectableCurrency>emptyList());
-
-        boundAllCurrencies = RxUtils.bindFragmentOnIO(this,
-                allCurrencies);
-
-        selectedCurrencies = RxUtils.bindFragmentOnIO(this,
-                selectedKeySetObservable());
-    }
-
-    private Observable<? extends Collection<SelectableCurrency>>
-    selectedKeySetObservable() {
-        return Observable.merge(selectableCurrencyAdapter.selectionChanges(),
-                getSubject)
-                .flatMap(new OpToCurrencyCode(selectedKeySet))
-                .flatMap(new Func1<Set<CurrencyCode>,
-                        Observable<? extends Collection<SelectableCurrency>>>() {
-
-                    @Override
-                    public Observable<? extends
-                            Collection<SelectableCurrency>> call(final
-                                                                 Set<CurrencyCode>
-                                                                         selectedKeys) {
-                        return boundAllCurrencies
-                                .flatMap(toSelectableCurrency(selectedKeys));
-                    }
-                });
-
-    }
-
-    private Func1<Collection<Currency>, Observable<? extends
-            Collection<SelectableCurrency>>>
-    toSelectableCurrency(final Set<CurrencyCode> selectedKeys) {
-        return new Func1<Collection<Currency>,
-                Observable<? extends Collection<SelectableCurrency>>>() {
-
-            @Override
-            public Observable<? extends
-                    Collection<SelectableCurrency>> call
-                    (final Collection<Currency> currencies) {
-                return Observable.from(currencies)
-                    .map(new Func1<Currency,
-                            SelectableCurrency>() {
-
-
-                        @Override
-                        public SelectableCurrency
-                        call(final Currency currency) {
-                            return SelectableCurrency.select(currency,
-                                    selectedKeys.contains(currency.getCode()));
-                        }
-                    }).toList();
-            }
-        };
     }
 
     @Override
@@ -170,14 +113,26 @@ public class CurrencySelectionFragment extends Fragment implements
         View rootView = inflater.inflate(R.layout.fragment_currencies_selection,
                 container, false);
         setRetainInstance(true);
-        ButterKnife.inject(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(final View view, @Nullable final Bundle
+            savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ButterKnife.inject(this, view);
 
         mCardRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mCardRecyclerView.setLayoutManager(llm);
         mCardRecyclerView.setAdapter(selectableCurrencyAdapter);
-        return rootView;
+
+        presenter.attachToView(this);
+
+        selectedCurrencies = RxUtils.bindFragmentOnIO(this,
+                presenter.selectableCurrencies());
     }
 
     @Override
@@ -205,9 +160,21 @@ public class CurrencySelectionFragment extends Fragment implements
 
     @Override
     public void onDestroyView() {
+
+        lifecycleEvents.onNext(ViewLifecycleEvent.onDestroy());
         subscription.unsubscribe();
         ButterKnife.reset(this);
         super.onDestroyView();
     }
 
+    @NotNull @Override
+    public Observable<? extends ViewLifecycleEvent> lifeCycleEvents() {
+        return lifecycleEvents.asObservable();
+    }
+
+    @NotNull @Override
+    public Observable<? extends CurrencySelectEvent>
+    selectionChangeEvents() {
+        return selectableCurrencyAdapter.selectionChanges();
+    }
 }

@@ -14,32 +14,17 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.ui.selector;
 
-import android.app.Application;
-import android.content.Context;
+import com.omricat.yacc.YaccAppComponent;
 
-import org.jetbrains.annotations.NotNull;
+import dagger.Component;
 
-public class YaccApp extends Application {
-
-    private YaccAppComponent component;
-
-    @Override public void onCreate() {
-        super.onCreate();
-
-        component = YaccAppComponent.Initializer.init(this);
-        component.inject(this);
-    }
-
-    @NotNull
-    public YaccAppComponent component() {
-        return component;
-    }
-
-    @NotNull
-    public static YaccApp from(Context context) {
-        return (YaccApp) context.getApplicationContext();
-    }
-
+@SelectorScope
+@Component(
+        dependencies = {YaccAppComponent.class},
+        modules = {SelectorModule.class}
+)
+public interface SelectorComponent {
+    void inject(CurrencySelectionFragment currencySelectionFragment);
 }

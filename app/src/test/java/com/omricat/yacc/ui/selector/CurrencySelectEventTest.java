@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.selecter;
+package com.omricat.yacc.ui.selector;
 
 import org.junit.Test;
 
 import static com.omricat.yacc.data.TestCurrencyCodes.USD_CODE;
-import static com.omricat.yacc.ui.selecter.CurrencySelectEvent.*;
+import static com.omricat.yacc.ui.selector.CurrencySelectEvent.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CurrencySelectEventTest {
@@ -48,7 +48,7 @@ public class CurrencySelectEventTest {
     public void testSelectEvent() throws Exception {
 
         String ret = CurrencySelectEvent.selectEvent(USD_CODE)
-                .accept(matcher);
+                .match(matcher);
 
         assertThat(ret).isEqualTo(SELECT_EVENT);
     }
@@ -61,7 +61,7 @@ public class CurrencySelectEventTest {
     @Test
     public void testUnselectEvent() throws Exception {
 
-        String ret = CurrencySelectEvent.unselectEvent(USD_CODE).accept
+        String ret = CurrencySelectEvent.unselectEvent(USD_CODE).match
                 (matcher);
 
         assertThat(ret).isEqualTo(UNSELECT_EVENT);

@@ -14,32 +14,16 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.ui.selector;
 
-import android.app.Application;
-import android.content.Context;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import org.jetbrains.annotations.NotNull;
+import javax.inject.Scope;
 
-public class YaccApp extends Application {
-
-    private YaccAppComponent component;
-
-    @Override public void onCreate() {
-        super.onCreate();
-
-        component = YaccAppComponent.Initializer.init(this);
-        component.inject(this);
-    }
-
-    @NotNull
-    public YaccAppComponent component() {
-        return component;
-    }
-
-    @NotNull
-    public static YaccApp from(Context context) {
-        return (YaccApp) context.getApplicationContext();
-    }
-
+@Scope
+@Documented
+@Retention( RetentionPolicy.RUNTIME)
+public @interface SelectorScope {
 }

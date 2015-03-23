@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.selecter;
+package com.omricat.yacc.ui.selector;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +27,6 @@ import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
 import com.omricat.yacc.R;
-import com.omricat.yacc.common.rx.RxSetOperation;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.SelectableCurrency;
 
@@ -39,6 +38,8 @@ import rx.Observable;
 import rx.subjects.PublishSubject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.omricat.yacc.ui.selector.CurrencySelectEvent.selectEvent;
+import static com.omricat.yacc.ui.selector.CurrencySelectEvent.unselectEvent;
 
 
 /**
@@ -49,7 +50,7 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
         .ViewHolder> {
 
     private ImmutableList<SelectableCurrency> cachedCurrencyList;
-    private final PublishSubject<RxSetOperation<CurrencyCode>> publishSubject =
+    private final PublishSubject<CurrencySelectEvent> publishSubject =
             PublishSubject.create();
 
     public SelectableCurrencyAdapter(@NotNull final Iterable<SelectableCurrency>
@@ -70,7 +71,7 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
     }
 
     @NotNull
-    public Observable<RxSetOperation<CurrencyCode>> selectionChanges() {
+    public Observable<CurrencySelectEvent> selectionChanges() {
         return publishSubject.asObservable();
     }
 
@@ -92,9 +93,9 @@ public class SelectableCurrencyAdapter extends RecyclerView.Adapter<SelectableCu
         holder.vSelected.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(final View v) {
                 if (((Checkable) v).isChecked()) {
-                    publishSubject.onNext(RxSetOperation.add(code));
+                    publishSubject.onNext(selectEvent(code));
                 } else {
-                    publishSubject.onNext(RxSetOperation.remove(code));
+                    publishSubject.onNext(unselectEvent(code));
                 }
             }
         });

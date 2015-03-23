@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.ui.selector;
 
-import android.app.Application;
-import android.content.Context;
+
+import com.omricat.yacc.ui.events.ViewLifecycleEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-public class YaccApp extends Application {
+import rx.Observable;
 
-    private YaccAppComponent component;
+public interface SelectorView {
 
-    @Override public void onCreate() {
-        super.onCreate();
+    @NotNull Observable<? extends ViewLifecycleEvent> lifeCycleEvents();
 
-        component = YaccAppComponent.Initializer.init(this);
-        component.inject(this);
-    }
-
-    @NotNull
-    public YaccAppComponent component() {
-        return component;
-    }
-
-    @NotNull
-    public static YaccApp from(Context context) {
-        return (YaccApp) context.getApplicationContext();
-    }
-
+    @NotNull Observable<? extends CurrencySelectEvent>
+            selectionChangeEvents();
 }

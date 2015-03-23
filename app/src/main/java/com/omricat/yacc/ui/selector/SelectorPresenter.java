@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.ui.selector;
 
-import android.app.Application;
-import android.content.Context;
+import com.omricat.yacc.data.model.SelectableCurrency;
 
 import org.jetbrains.annotations.NotNull;
 
-public class YaccApp extends Application {
+import java.util.Collection;
 
-    private YaccAppComponent component;
+import rx.Observable;
 
-    @Override public void onCreate() {
-        super.onCreate();
-
-        component = YaccAppComponent.Initializer.init(this);
-        component.inject(this);
-    }
+/**
+ * Interface for the presenter for a SelecterView
+ */
+public interface SelectorPresenter {
 
     @NotNull
-    public YaccAppComponent component() {
-        return component;
-    }
+    public SelectorPresenter attachToView(@NotNull final SelectorView
+                                                      selectorView);
 
     @NotNull
-    public static YaccApp from(Context context) {
-        return (YaccApp) context.getApplicationContext();
-    }
-
+    public Observable<? extends Collection<SelectableCurrency>>
+    selectableCurrencies();
 }
