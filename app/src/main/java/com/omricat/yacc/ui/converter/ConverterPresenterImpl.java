@@ -64,9 +64,6 @@ public class ConverterPresenterImpl implements ConverterPresenter {
 
     private Subscription lifecycleSubscription;
 
-    // Attach status
-    private boolean attachedToView = false;
-
     public ConverterPresenterImpl(@NotNull final SourceCurrencyProvider
                                           sourceCurrencyProvider,
                                   @NotNull final Observable<? extends
@@ -105,14 +102,12 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                 }
         );
 
-        attachedToView = true;
     }
 
     private void detachView() {
         lifecycleSubscription.unsubscribe();
         chooseCurrencyEvents = Observable.empty();
         valueChangeEvents = Observable.empty();
-        attachedToView = false;
     }
 
     private Observable<Currency> getSourceCurrency() {
@@ -226,10 +221,6 @@ public class ConverterPresenterImpl implements ConverterPresenter {
                                                      ConverterView view) {
         attachView(checkNotNull(view));
         return this;
-    }
-
-    boolean isAttached() {
-        return attachedToView;
     }
 
 }

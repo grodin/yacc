@@ -34,7 +34,7 @@ public interface ConverterPresenter {
     @NotNull
     public Observable<Currency> sourceCurrency();
 
-    @NotNull public ConverterPresenter attachToView(@NotNull ConverterView
+    @NotNull public ConverterPresenter attachToView(@NotNull final ConverterView
                                                             view);
 
 }
