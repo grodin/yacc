@@ -24,8 +24,8 @@ import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.domain.SourceCurrencyProvider;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
+import com.omricat.yacc.ui.events.ViewLifecycleEvent;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class ConverterPresenterImplTest {
     @Before
     public void setUp() throws Exception {
         when(converterView.lifecycleEvents())
-                .thenReturn(Observable.<ConverterViewLifecycleEvent>empty());
+                .thenReturn(Observable.<ViewLifecycleEvent>empty());
 
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter.events;
+package com.omricat.yacc.ui.events;
 
 import android.content.Context;
 
@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConverterViewLifecycleEventTest {
+public class ViewLifecycleEventTest {
 
     private boolean onCreateCalled;
     private boolean onResumeCalled;
@@ -33,25 +33,25 @@ public class ConverterViewLifecycleEventTest {
 
     Context returnedContext;
 
-    private final ConverterViewLifecycleEvent.Matcher matcher = new
-            ConverterViewLifecycleEvent.Matcher() {
+    private final ViewLifecycleEvent.Matcher matcher = new
+            ViewLifecycleEvent.Matcher() {
                 @Override
                 public void matchOnResume(@NotNull final
-                                          ConverterViewLifecycleEvent
+                                          ViewLifecycleEvent
                                                   .OnResumeEvent e) {
                     onResumeCalled = true;
                 }
 
                 @Override
                 public void matchOnDetach(@NotNull final
-                                          ConverterViewLifecycleEvent
-                        .OnDetachEvent e) {
+                                          ViewLifecycleEvent
+                                                  .OnDetachEvent e) {
                     onDetachCalled = true;
                 }
 
                 @Override
                 public void matchOnAttach(@NotNull final
-                                                          ConverterViewLifecycleEvent.OnAttachEvent e) {
+                                          ViewLifecycleEvent.OnAttachEvent e) {
                     onCreateCalled = true;
                     returnedContext = e.context;
                 }
@@ -65,16 +65,15 @@ public class ConverterViewLifecycleEventTest {
         returnedContext = null;
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void testOnCreate_NullParam() throws Exception {
-        ConverterViewLifecycleEvent.onAttach(null);
+        ViewLifecycleEvent.onAttach(null);
     }
 
     @Test
     public void testOnCreate() throws Exception {
         Context mockContext = Mockito.mock(Context.class);
-        ConverterViewLifecycleEvent e = ConverterViewLifecycleEvent.onAttach
-                (mockContext);
+        ViewLifecycleEvent e = ViewLifecycleEvent.onAttach(mockContext);
 
         assertThat(e).isNotNull();
 
@@ -88,7 +87,7 @@ public class ConverterViewLifecycleEventTest {
 
     @Test
     public void testOnResume() throws Exception {
-        ConverterViewLifecycleEvent e = ConverterViewLifecycleEvent.onResume();
+        ViewLifecycleEvent e = ViewLifecycleEvent.onResume();
 
         assertThat(e).isNotNull();
 
@@ -101,7 +100,7 @@ public class ConverterViewLifecycleEventTest {
 
     @Test
     public void testOnDetach() throws Exception {
-        ConverterViewLifecycleEvent e = ConverterViewLifecycleEvent.onDestroy();
+        ViewLifecycleEvent e = ViewLifecycleEvent.onDestroy();
 
         assertThat(e).isNotNull();
 
@@ -114,6 +113,6 @@ public class ConverterViewLifecycleEventTest {
 
     @Test( expected = NullPointerException.class )
     public void testMatch_NullParam() throws Exception {
-        ConverterViewLifecycleEvent.onDestroy().match(null);
+        ViewLifecycleEvent.onDestroy().match(null);
     }
 }

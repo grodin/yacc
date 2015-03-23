@@ -16,8 +16,8 @@
 
 package com.omricat.yacc.ui.converter;
 
+import com.omricat.yacc.ui.events.ViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
 
 import rx.Observable;
@@ -28,5 +28,5 @@ public interface ConverterView {
 
     Observable<CurrencyValueChangeEvent> valueChangeEvents();
 
-    Observable<ConverterViewLifecycleEvent> lifecycleEvents();
+    Observable<ViewLifecycleEvent> lifecycleEvents();
 }

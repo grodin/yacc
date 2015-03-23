@@ -24,8 +24,8 @@ import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.domain.SourceCurrencyProvider;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
+import com.omricat.yacc.ui.events.ViewLifecycleEvent;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +38,9 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.omricat.yacc.ui.converter.events
-        .ConverterViewLifecycleEvent.*;
+import static com.omricat.yacc.ui.events.ViewLifecycleEvent.*;
+import static com.omricat.yacc.ui.events.ViewLifecycleEvent.OnAttachEvent;
+import static com.omricat.yacc.ui.events.ViewLifecycleEvent.OnResumeEvent;
 
 public class ConverterPresenterImpl implements ConverterPresenter {
 
@@ -74,8 +75,8 @@ public class ConverterPresenterImpl implements ConverterPresenter {
         this.currencies = checkNotNull(currencies);
     }
 
-    private final ConverterViewLifecycleEvent.Matcher lifecycleEventMatcher =
-            new ConverterViewLifecycleEvent.Matcher() {
+    private final Matcher lifecycleEventMatcher =
+            new Matcher() {
                 @Override
                 public void matchOnAttach(@NotNull final OnAttachEvent e) {
                 }
@@ -96,9 +97,9 @@ public class ConverterPresenterImpl implements ConverterPresenter {
         valueChangeEvents = v.valueChangeEvents();
 
         lifecycleSubscription = v.lifecycleEvents().subscribe(
-                new Action1<ConverterViewLifecycleEvent>() {
+                new Action1<ViewLifecycleEvent>() {
                     @Override
-                    public void call(final ConverterViewLifecycleEvent event) {
+                    public void call(final ViewLifecycleEvent event) {
                         event.match(lifecycleEventMatcher);
                     }
                 }

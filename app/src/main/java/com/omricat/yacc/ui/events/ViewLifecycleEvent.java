@@ -14,28 +14,46 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter.events;
+package com.omricat.yacc.ui.events;
 
 import android.content.Context;
-
-import com.omricat.yacc.ui.converter.ConverterView;
 
 import org.jetbrains.annotations.NotNull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+
 /**
- * This class represents the events which in turn represent the various
- * lifecycle events that are relevant for an instance of {@link ConverterView}.
- * <p/>
+ * * This class represents the events which in turn represent the various
+ * lifecycle events that are relevant for views in the sense of MVP (i.e.
+ * Fragments or Activities primarily)
+ * <p>
  * The class furthermore uses a Java simulation of a sum type to represent the
  * different events. Therefore, this class is <emph>closed</emph> for extension
  * apart from those subclasses declared directly as nested classes of this
  * class.
- */
-public abstract class ConverterViewLifecycleEvent {
 
-    private ConverterViewLifecycleEvent() {
+ */
+public abstract class ViewLifecycleEvent {
+
+    private ViewLifecycleEvent() {
+        // no instances other than the subclasses declared below
+    }
+
+    @NotNull
+    public static ViewLifecycleEvent onAttach(@NotNull final Context
+                                                                   context) {
+        return new OnAttachEvent(checkNotNull(context));
+    }
+
+    @NotNull
+    public static ViewLifecycleEvent onResume() {
+        return new OnResumeEvent();
+    }
+
+    @NotNull
+    public static ViewLifecycleEvent onDestroy() {
+        return new OnDetachEvent();
     }
 
     abstract void accept(Matcher matcher);
@@ -46,7 +64,7 @@ public abstract class ConverterViewLifecycleEvent {
 
     public interface Matcher {
 
-        public void matchOnAttach(@NotNull OnAttachEvent e);
+        public void matchOnAttach(@NotNull ViewLifecycleEvent.OnAttachEvent e);
 
         public void matchOnResume(@NotNull OnResumeEvent e);
 
@@ -58,7 +76,7 @@ public abstract class ConverterViewLifecycleEvent {
      * OnCreateEvent
      */
     public static final class OnAttachEvent extends
-            ConverterViewLifecycleEvent {
+            ViewLifecycleEvent {
 
         public final Context context;
 
@@ -72,17 +90,11 @@ public abstract class ConverterViewLifecycleEvent {
 
     }
 
-    @NotNull
-    public static ConverterViewLifecycleEvent onAttach(@NotNull final Context
-                                                                   context) {
-        return new OnAttachEvent(checkNotNull(context));
-    }
-
     /**
      * OnResumeEvent
      */
     public static final class OnResumeEvent extends
-            ConverterViewLifecycleEvent {
+            ViewLifecycleEvent {
 
         private OnResumeEvent() {
         }
@@ -93,16 +105,11 @@ public abstract class ConverterViewLifecycleEvent {
 
     }
 
-    @NotNull
-    public static ConverterViewLifecycleEvent onResume() {
-        return new OnResumeEvent();
-    }
-
     /**
      * OnDetachEvent
      */
     public static final class OnDetachEvent extends
-            ConverterViewLifecycleEvent {
+            ViewLifecycleEvent {
 
         private OnDetachEvent() {
         }
@@ -111,10 +118,5 @@ public abstract class ConverterViewLifecycleEvent {
             matcher.matchOnDetach(this);
         }
 
-    }
-
-    @NotNull
-    public static ConverterViewLifecycleEvent onDestroy() {
-        return new OnDetachEvent();
     }
 }

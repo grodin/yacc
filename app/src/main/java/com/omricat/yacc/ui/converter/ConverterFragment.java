@@ -32,8 +32,8 @@ import com.omricat.yacc.R;
 import com.omricat.yacc.YaccApp;
 import com.omricat.yacc.data.model.ConvertedCurrency;
 import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.ui.events.ViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.ConverterViewLifecycleEvent;
 import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
 import com.omricat.yacc.ui.rx.RxUtils;
 
@@ -70,7 +70,7 @@ public class ConverterFragment extends Fragment implements ConverterView {
 
     private Observable<CurrencyValueChangeEvent> userValueObs;
 
-    private PublishSubject<ConverterViewLifecycleEvent> lifeCycleEvents =
+    private PublishSubject<ViewLifecycleEvent> lifeCycleEvents =
             PublishSubject.create();
 
     // Subscriptions
@@ -101,7 +101,7 @@ public class ConverterFragment extends Fragment implements ConverterView {
 
         inject(activity);
 
-        lifeCycleEvents.onNext(ConverterViewLifecycleEvent.onAttach(activity));
+        lifeCycleEvents.onNext(ViewLifecycleEvent.onAttach(activity));
     }
 
     @Override public void onCreate(final Bundle savedInstanceState) {
@@ -160,7 +160,7 @@ public class ConverterFragment extends Fragment implements ConverterView {
     @Override public void onResume() {
         super.onResume();
 
-        lifeCycleEvents.onNext(ConverterViewLifecycleEvent.onResume());
+        lifeCycleEvents.onNext(ViewLifecycleEvent.onResume());
 
         subscription = new CompositeSubscription(currencies.subscribe(
                 new Action1<Collection<ConvertedCurrency>>() {
@@ -185,7 +185,7 @@ public class ConverterFragment extends Fragment implements ConverterView {
     @Override
     public void onDestroyView() {
 
-        lifeCycleEvents.onNext(ConverterViewLifecycleEvent.onDestroy());
+        lifeCycleEvents.onNext(ViewLifecycleEvent.onDestroy());
 
         subscription.unsubscribe();
         ButterKnife.reset(this);
@@ -203,7 +203,7 @@ public class ConverterFragment extends Fragment implements ConverterView {
         return userValueObs;
     }
 
-    @Override public Observable<ConverterViewLifecycleEvent> lifecycleEvents() {
+    @Override public Observable<ViewLifecycleEvent> lifecycleEvents() {
         return lifeCycleEvents.asObservable();
     }
 }
