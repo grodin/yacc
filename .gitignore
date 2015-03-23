@@ -5,3 +5,4 @@ local.properties
 .DS_Store
 build/
 yacc-backend/WEB-INF/appengine-generated/*
+*.iml
