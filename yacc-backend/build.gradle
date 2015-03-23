@@ -22,7 +22,7 @@ dependencies {
 
     compile 'javax.servlet:servlet-api:2.5'
 
-    compile 'com.google.appengine.tools:appengine-gcs-client:0.4.3'
+    compile 'com.google.appengine.tools:appengine-gcs-client:0.4.4'
 
     // Intellij annotations (NotNull, Nullable)
     compile "${rootProject.ext.intellijAnnotations}"
