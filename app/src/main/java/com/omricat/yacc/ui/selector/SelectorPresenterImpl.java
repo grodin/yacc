@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscription;
@@ -43,7 +44,7 @@ public class SelectorPresenterImpl implements SelectorPresenter {
 
     private final RxSet<CurrencyCode> selectedKeySet;
 
-    // Observables from SelecterView instance
+    // Observables from SelectorView instance
 
     private Observable<? extends CurrencySelectEvent> selectEvents
             = Observable.empty();
@@ -86,7 +87,8 @@ public class SelectorPresenterImpl implements SelectorPresenter {
     }
 
     private void attachView(final SelectorView v) {
-        selectEvents = v.selectionChangeEvents();
+        selectEvents = v.selectionChangeEvents()
+                .debounce(300, TimeUnit.MILLISECONDS);
 
         lifecycleSubscription = v.lifeCycleEvents()
                 .subscribe(new Action1<ViewLifecycleEvent>() {
