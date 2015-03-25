@@ -25,8 +25,7 @@ import rx.Observable;
 
 public interface SelectorView {
 
-    @NotNull Observable<? extends ViewLifecycleEvent> lifeCycleEvents();
+    @NotNull Observable<ViewLifecycleEvent> lifeCycleEvents();
 
-    @NotNull Observable<? extends CurrencySelectEvent>
-            selectionChangeEvents();
+    @NotNull Observable<CurrencySelectEvent> selectionChangeEvents();
 }

@@ -168,12 +168,12 @@ public class CurrencySelectionFragment extends Fragment implements
     }
 
     @NotNull @Override
-    public Observable<? extends ViewLifecycleEvent> lifeCycleEvents() {
+    public Observable<ViewLifecycleEvent> lifeCycleEvents() {
         return lifecycleEvents.asObservable();
     }
 
     @NotNull @Override
-    public Observable<? extends CurrencySelectEvent>
+    public Observable<CurrencySelectEvent>
     selectionChangeEvents() {
         return selectableCurrencyAdapter.selectionChanges();
     }
