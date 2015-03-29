@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter;
+package com.omricat.yacc.ui;
 
-import com.omricat.yacc.ui.events.ViewLifecycleEvent;
-import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
+/**
+ * Presenter interface for main view
+ */
+public interface MainPresenter {
 
-import rx.Observable;
+    public void onPause();
 
-public interface ConverterView {
+    public void onResume();
 
-    Observable<ChooseCurrencyEvent> chooseCurrencyEvents();
-
-    Observable<CurrencyValueChangeEvent> valueChangeEvents();
-
-    Observable<ViewLifecycleEvent> lifecycleEvents();
-
-    Observable<ConverterMenuEvent> menuEvents();
+    public void onDispose();
 }

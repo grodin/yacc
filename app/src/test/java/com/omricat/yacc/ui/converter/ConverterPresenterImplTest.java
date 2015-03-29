@@ -64,13 +64,15 @@ public class ConverterPresenterImplTest {
     public void setUp() throws Exception {
         when(converterView.lifecycleEvents())
                 .thenReturn(Observable.<ViewLifecycleEvent>empty());
+        when(converterView.menuEvents())
+                .thenReturn(Observable.<ConverterMenuEvent>empty());
 
     }
 
     @Test(expected = NullPointerException.class)
     public void testAttachToView_NullView() throws Exception {
-        new ConverterPresenterImpl(sourceCurrencyProvider, currencies)
-                .attachToView(null);
+        new ConverterPresenterImpl(sourceCurrencyProvider, currencies, mainView)
+                .attachToView(null, null);
     }
 
     @Test
@@ -85,7 +87,8 @@ public class ConverterPresenterImplTest {
         SourceCurrencyProvider provider = new
                 SourceCurrencyProvider(testPersister, currencies);
 
-        classUnderTest = new ConverterPresenterImpl(provider, currencies);
+        classUnderTest = new ConverterPresenterImpl(provider, currencies,
+                mainView);
 
         classUnderTest.sourceCurrency()
                 .toBlocking().first();
@@ -96,7 +99,7 @@ public class ConverterPresenterImplTest {
         verifyZeroInteractions(converterView);
 
         //Attach Presenter to View
-        classUnderTest.attachToView(converterView);
+        classUnderTest.attachToView(converterView, null);
 
         classUnderTest.convertedCurrencies()
                 .toBlocking().first();
@@ -107,6 +110,7 @@ public class ConverterPresenterImplTest {
         verify(converterView).chooseCurrencyEvents();
         verify(converterView).valueChangeEvents();
         verify(converterView).lifecycleEvents();
+        verify(converterView).menuEvents();
     }
 
     @Test
@@ -127,8 +131,8 @@ public class ConverterPresenterImplTest {
         when(converterView.lifecycleEvents())
                 .thenReturn(subject);
 
-        classUnderTest = new ConverterPresenterImpl(provider, currencies)
-                .attachToView(converterView);
+        classUnderTest = new ConverterPresenterImpl(provider, currencies, mainView)
+                .attachToView(converterView, null);
 
         verify(converterView).lifecycleEvents();
 
@@ -140,6 +144,7 @@ public class ConverterPresenterImplTest {
 
         verify(converterView).chooseCurrencyEvents();
         verify(converterView).valueChangeEvents();
+        verify(converterView).menuEvents();
 
         subject.onNext(ViewLifecycleEvent.onDestroy());
 
@@ -171,7 +176,7 @@ public class ConverterPresenterImplTest {
                 USD, BigDecimal.ONE);
 
         classUnderTest = new ConverterPresenterImpl(
-                sourceCurrencyProvider, currencies).attachToView(converterView);
+                sourceCurrencyProvider, currencies, mainView).attachToView(converterView, null);
 
 
         Collection<ConvertedCurrency> ret = classUnderTest.convertedCurrencies()
@@ -199,7 +204,7 @@ public class ConverterPresenterImplTest {
                 .thenReturn(Observable.just(USD));
 
         classUnderTest = new ConverterPresenterImpl(
-                sourceCurrencyProvider, currencies).attachToView(converterView);
+                sourceCurrencyProvider, currencies, mainView).attachToView(converterView, null);
 
 
         Collection<ConvertedCurrency> ret = classUnderTest.convertedCurrencies()
@@ -221,8 +226,8 @@ public class ConverterPresenterImplTest {
         SourceCurrencyProvider provider = new
                 SourceCurrencyProvider(testPersister, currencies);
 
-        classUnderTest = new ConverterPresenterImpl(provider, currencies)
-                .attachToView(converterView);
+        classUnderTest = new ConverterPresenterImpl(provider, currencies, mainView)
+                .attachToView(converterView, null);
 
         Currency ret = classUnderTest.sourceCurrency()
                 .first()

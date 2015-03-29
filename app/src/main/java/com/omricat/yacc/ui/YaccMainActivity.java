@@ -26,17 +26,25 @@ import com.omricat.yacc.R;
 import com.omricat.yacc.ui.converter.ConverterFragment;
 import com.omricat.yacc.ui.selector.CurrencySelectionFragment;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class YaccMainActivity extends YaccActivity {
+public class YaccMainActivity extends YaccActivity implements MainView {
 
     public static final String MAIN_CURRENCY_FRAGMENT = "MainCurrencyFragment";
     public static final String CURRENCY_SELECTION_FRAGMENT =
             "CurrencySelectionFragment";
+
+    private MainViewComponent component;
+
     @InjectView(R.id.appbar)
     Toolbar toolbar;
+
+    @Inject
+    MainPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +59,41 @@ public class YaccMainActivity extends YaccActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.container,
                     new ConverterFragment(), MAIN_CURRENCY_FRAGMENT).commit();
         }
+
+        component = MainViewComponent.Initializer.init(this);
+        component.inject(this);
     }
 
+    @Override protected void onResume() {
+        super.onResume();
+        if (presenter != null) {
+            presenter.onResume();
+        }
+    }
+
+    @Override protected void onPause() {
+        if (presenter != null) {
+            presenter.onPause();
+        }
+        super.onPause();
+    }
+
+    @Override protected void onDestroy() {
+        if (presenter != null) {
+            presenter.onDispose();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu_yacc_activity, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_edit:
-                return actionEdit();
             case R.id.action_settings:
                 return actionSettings();
             default:
@@ -78,7 +107,8 @@ public class YaccMainActivity extends YaccActivity {
         return true;
     }
 
-    private boolean actionEdit() {
+    @Override
+    public void showSelectorView() {
         Fragment editFragment = getSupportFragmentManager()
                 .findFragmentByTag(CURRENCY_SELECTION_FRAGMENT);
         if (editFragment == null) {
@@ -89,7 +119,10 @@ public class YaccMainActivity extends YaccActivity {
                         CURRENCY_SELECTION_FRAGMENT)
                 .addToBackStack(null)
                 .commit();
-        return true;
+    }
+
+    @Override public MainViewComponent component() {
+        return component;
     }
 
 }

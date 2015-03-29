@@ -33,14 +33,12 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 import rx.Observable;
-import rx.Subscription;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subscriptions.CompositeSubscription;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.omricat.yacc.ui.events.ViewLifecycleEvent.*;
-import static com.omricat.yacc.ui.events.ViewLifecycleEvent.OnAttachEvent;
-import static com.omricat.yacc.ui.events.ViewLifecycleEvent.OnResumeEvent;
 
 public class ConverterPresenterImpl implements ConverterPresenter {
 
@@ -60,9 +58,12 @@ public class ConverterPresenterImpl implements ConverterPresenter {
     private Observable<CurrencyValueChangeEvent> valueChangeEvents =
             Observable.empty();
 
+    private Observable<ConverterMenuEvent> menuEvents =
+            Observable.empty();
+
     // Subscriptions
 
-    private Subscription lifecycleSubscription;
+    private CompositeSubscription viewSubscription;
 
     public ConverterPresenterImpl(@NotNull final SourceCurrencyProvider
                                           sourceCurrencyProvider,
@@ -92,22 +93,24 @@ public class ConverterPresenterImpl implements ConverterPresenter {
         final ConverterView v = checkNotNull(view);
         chooseCurrencyEvents = v.chooseCurrencyEvents();
         valueChangeEvents = v.valueChangeEvents();
+        menuEvents = v.menuEvents();
 
-        lifecycleSubscription = v.lifecycleEvents().subscribe(
-                new Action1<ViewLifecycleEvent>() {
-                    @Override
-                    public void call(final ViewLifecycleEvent event) {
-                        event.match(lifecycleEventMatcher);
-                    }
-                }
-        );
-
+        viewSubscription =
+                new CompositeSubscription(v.lifecycleEvents().subscribe(
+                        new Action1<ViewLifecycleEvent>() {
+                            @Override
+                            public void call(final ViewLifecycleEvent event) {
+                                event.match(lifecycleEventMatcher);
+                            }
+                        }
+                ));
     }
 
     private void detachView() {
-        lifecycleSubscription.unsubscribe();
+        viewSubscription.unsubscribe();
         chooseCurrencyEvents = Observable.empty();
         valueChangeEvents = Observable.empty();
+        menuEvents = Observable.empty();
     }
 
     private Observable<Currency> getSourceCurrency() {
@@ -218,9 +221,13 @@ public class ConverterPresenterImpl implements ConverterPresenter {
 
     @NotNull
     @Override public ConverterPresenter attachToView(@NotNull final
-                                                     ConverterView view) {
+                                                         ConverterView view) {
         attachView(checkNotNull(view));
         return this;
+    }
+
+    @NotNull @Override public Observable<ConverterMenuEvent> menuEvents() {
+        return menuEvents;
     }
 
 }

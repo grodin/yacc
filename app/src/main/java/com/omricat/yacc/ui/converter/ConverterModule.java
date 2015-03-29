@@ -22,6 +22,8 @@ import com.omricat.yacc.domain.SourceCurrencyProvider;
 
 import java.util.Collection;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import rx.Observable;
@@ -29,7 +31,7 @@ import rx.Observable;
 @Module
 public class ConverterModule {
 
-    @ConverterScope
+    @Singleton
     @Provides
     ConverterPresenter providePresenter(final SourceCurrencyProvider sourceCurrencyProvider,
                                         @SelectedCurrencies final

@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.ui;
 
-import com.omricat.yacc.di.scopes.AppScope;
-import com.omricat.yacc.ui.converter.ConverterModule;
-
-import com.omricat.yacc.di.scopes.AppScope;
+import com.omricat.yacc.YaccApp;
+import com.omricat.yacc.YaccAppComponent;
+import com.omricat.yacc.di.scopes.MainViewScope;
+import com.omricat.yacc.ui.converter.ConverterPresenter;
 
 import dagger.Component;
 
-@AppScope
+@MainViewScope
 @Component(
-        dependencies = {},
-        modules = {YaccAppModule.class,
-                ConverterModule.class,
-                ReleasePersistenceModule.class,
-                ReleaseNetworkModule.class,
-                ReleaseDomainModule.class}
+        dependencies = {YaccAppComponent.class},
+        modules = {MainViewModule.class}
 )
-public interface YaccAppComponent extends YaccAppGraph {
+public interface MainViewComponent {
+
+    void inject(YaccMainActivity activity);
+
+    public ConverterPresenter converterPresenter();
 
     final static class Initializer {
-        static YaccAppComponent init(YaccApp app) {
-            return Dagger_YaccAppComponent.builder()
-                    .yaccAppModule(new YaccAppModule(app))
+        static MainViewComponent init(YaccMainActivity mainView) {
+            return Dagger_MainViewComponent.builder()
+                    .mainViewModule(new MainViewModule(mainView))
+                    .yaccAppComponent(YaccApp.from(mainView).component())
                     .build();
         }
-    }}
+    }
 
-)
+}

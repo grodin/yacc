@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter;
+package com.omricat.yacc.ui;
 
-import com.omricat.yacc.ui.events.ViewLifecycleEvent;
-import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
+import android.app.Activity;
 
-import rx.Observable;
+/**
+ * Interface to abstract the communication needed with the main view for the
+ * app.
+ */
+public interface MainView {
 
-public interface ConverterView {
+    public void showSelectorView();
 
-    Observable<ChooseCurrencyEvent> chooseCurrencyEvents();
+    public static class Instance {
 
-    Observable<CurrencyValueChangeEvent> valueChangeEvents();
+        public static MainView from(Activity activity) {
+            return (MainView) activity;
+        }
+    }
 
-    Observable<ViewLifecycleEvent> lifecycleEvents();
+    public MainViewComponent component();
 
-    Observable<ConverterMenuEvent> menuEvents();
 }

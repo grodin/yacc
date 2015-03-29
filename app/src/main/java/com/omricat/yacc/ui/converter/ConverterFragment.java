@@ -24,6 +24,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -73,6 +76,9 @@ public class ConverterFragment extends Fragment implements ConverterView {
     private PublishSubject<ViewLifecycleEvent> lifeCycleEvents =
             PublishSubject.create();
 
+    private PublishSubject<ConverterMenuEvent> menuEvents =
+            PublishSubject.create();
+
     // Subscriptions
 
     private Subscription subscription = Subscriptions.empty();
@@ -100,8 +106,6 @@ public class ConverterFragment extends Fragment implements ConverterView {
         super.onAttach(activity);
 
         inject(activity);
-
-        lifeCycleEvents.onNext(ViewLifecycleEvent.onAttach(activity));
     }
 
     @Override public void onCreate(final Bundle savedInstanceState) {
@@ -110,6 +114,7 @@ public class ConverterFragment extends Fragment implements ConverterView {
         adapter = new ConvertedCurrencyAdapter(Collections
                 .<ConvertedCurrency>emptySet());
 
+        setHasOptionsMenu(true);
     }
 
 
@@ -155,6 +160,26 @@ public class ConverterFragment extends Fragment implements ConverterView {
         sourceCurrency = RxUtils.bindFragmentOnIO(this,
                 presenter.sourceCurrency());
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_converter_fragment, menu);
+    }
+
+    @Override public boolean onOptionsItemSelected(final MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_edit:
+                return actionEdit();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private boolean actionEdit() {
+        menuEvents.onNext(ConverterMenuEvent.editEvent());
+        return true;
     }
 
     @Override public void onResume() {
@@ -205,5 +230,9 @@ public class ConverterFragment extends Fragment implements ConverterView {
 
     @Override public Observable<ViewLifecycleEvent> lifecycleEvents() {
         return lifeCycleEvents.asObservable();
+    }
+
+    @Override public Observable<ConverterMenuEvent> menuEvents() {
+        return menuEvents.asObservable();
     }
 }

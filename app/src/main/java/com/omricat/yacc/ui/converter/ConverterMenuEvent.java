@@ -16,19 +16,24 @@
 
 package com.omricat.yacc.ui.converter;
 
-import com.omricat.yacc.ui.events.ViewLifecycleEvent;
-import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
+public abstract class ConverterMenuEvent {
 
-import rx.Observable;
+    private ConverterMenuEvent() {}
 
-public interface ConverterView {
+    public interface Matcher<R> {
+        public R matchEditEvent();
+    }
 
-    Observable<ChooseCurrencyEvent> chooseCurrencyEvents();
+    public abstract <R> R performMatch(Matcher<R> matcher);
 
-    Observable<CurrencyValueChangeEvent> valueChangeEvents();
+    public static ConverterMenuEvent editEvent() {
+        return new EditEvent();
+    }
 
-    Observable<ViewLifecycleEvent> lifecycleEvents();
+    public static class EditEvent extends ConverterMenuEvent {
 
-    Observable<ConverterMenuEvent> menuEvents();
+        public @Override <R> R performMatch(final Matcher<R> matcher) {
+            return matcher.matchEditEvent();
+        }
+    }
 }

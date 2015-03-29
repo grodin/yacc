@@ -23,7 +23,7 @@ import dagger.Component;
 @ConverterScope
 @Component(
     dependencies = {YaccAppComponent.class},
-    modules = {ConverterModule.class}
+    modules = {}
 )
 public interface ConverterComponent {
     void inject(ConverterFragment converterFragment);

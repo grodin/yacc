@@ -37,4 +37,6 @@ public interface ConverterPresenter {
     @NotNull public ConverterPresenter attachToView(@NotNull final ConverterView
                                                             view);
 
+    @NotNull
+    public Observable<ConverterMenuEvent> menuEvents();
 }

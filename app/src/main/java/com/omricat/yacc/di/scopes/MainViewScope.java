@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui.converter;
+package com.omricat.yacc.di.scopes;
 
-import com.omricat.yacc.ui.events.ViewLifecycleEvent;
-import com.omricat.yacc.ui.converter.events.ChooseCurrencyEvent;
-import com.omricat.yacc.ui.converter.events.CurrencyValueChangeEvent;
+import javax.inject.Scope;
 
-import rx.Observable;
-
-public interface ConverterView {
-
-    Observable<ChooseCurrencyEvent> chooseCurrencyEvents();
-
-    Observable<CurrencyValueChangeEvent> valueChangeEvents();
-
-    Observable<ViewLifecycleEvent> lifecycleEvents();
-
-    Observable<ConverterMenuEvent> menuEvents();
+@Scope
+public @interface MainViewScope {
 }
