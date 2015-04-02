@@ -14,11 +14,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<merge
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".YaccMainActivity"
-    >
+
+<org.lucasr.dspec.DesignSpecFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dspec"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:designSpec="@raw/main_activity_dspec">
 
     <include
         layout="@layout/main_content"/>
-</merge>
+
+</org.lucasr.dspec.DesignSpecFrameLayout>
