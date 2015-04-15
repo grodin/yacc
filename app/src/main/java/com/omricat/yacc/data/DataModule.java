@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.data;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.omricat.yacc.YaccApp;
 
 import javax.inject.Singleton;
 
@@ -22,17 +27,10 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class YaccAppModule {
+public class DataModule {
 
-    private final YaccApp app;
-
-
-    public YaccAppModule(final YaccApp app) {
-        this.app = app;
-    }
-
-    @Provides @Singleton
-    YaccApp provideApplication() {
-        return app;
+    @Singleton @Provides
+    public SharedPreferences providePreferences(final YaccApp app) {
+        return app.getSharedPreferences("yacc", Context.MODE_PRIVATE);
     }
 }

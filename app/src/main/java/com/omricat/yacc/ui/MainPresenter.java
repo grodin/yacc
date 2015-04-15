@@ -16,14 +16,72 @@
 
 package com.omricat.yacc.ui;
 
-/**
- * Presenter interface for main view
- */
-public interface MainPresenter {
+import com.omricat.yacc.ui.converter.ConverterMenuEvent;
+import com.omricat.yacc.ui.converter.ConverterPresenter;
 
-    public void onPause();
+import org.jetbrains.annotations.NotNull;
 
-    public void onResume();
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
-    public void onDispose();
+import static com.google.common.base.Preconditions.checkNotNull;
+
+public class MainPresenter {
+
+    private final MainView view;
+
+    private final ConverterPresenter converterPresenter;
+
+    private boolean paused;
+
+    private Subscription subscription;
+
+    private ConverterMenuEvent.Matcher<Void> matcher =
+            new ConverterMenuEvent.Matcher<Void>() {
+                @Override public Void matchEditEvent() {
+                    if (!paused) {
+                        view.showSelectorView();
+                    }
+                    return null;
+                }
+            };
+
+    public MainPresenter(@NotNull final ConverterPresenter
+                                 converterPresenter,
+                         @NotNull final MainView view) {
+
+        this.view = checkNotNull(view);
+        this.converterPresenter = checkNotNull(converterPresenter);
+        paused = false;
+    }
+
+    private Observable<ConverterMenuEvent> menuEvents() {
+        return converterPresenter.menuEvents()
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+    public void onResume() {
+        paused = false;
+        subscription = menuEvents().subscribe(
+                new Action1<ConverterMenuEvent>() {
+
+                    @Override
+                    public void call(final ConverterMenuEvent event) {
+                        event.performMatch(matcher);
+                    }
+                });
+    }
+
+    public void onPause() {
+        paused = true;
+        subscription.unsubscribe();
+    }
+
+
+    public void onDispose() {
+        subscription.unsubscribe();
+    }
 }

@@ -16,9 +16,12 @@
 
 package com.omricat.yacc;
 
+import com.omricat.yacc.data.DataModule;
+import com.omricat.yacc.data.DebugDataModule;
 import com.omricat.yacc.data.DebugNetworkModule;
 import com.omricat.yacc.data.DebugPersistenceModule;
 import com.omricat.yacc.domain.DebugDomainModule;
+import com.omricat.yacc.ui.DebugUiModule;
 import com.omricat.yacc.ui.converter.ConverterModule;
 
 import javax.inject.Singleton;
@@ -30,9 +33,13 @@ import dagger.Component;
         dependencies = {},
         modules = {YaccAppModule.class,
                 ConverterModule.class,
+                DataModule.class,
+                DebugDataModule.class,
                 DebugPersistenceModule.class,
                 DebugNetworkModule.class,
-                DebugDomainModule.class}
+                DebugDomainModule.class,
+                DebugUiModule.class
+        }
 )
 public interface YaccAppComponent extends YaccAppGraph {
 
@@ -42,6 +49,8 @@ public interface YaccAppComponent extends YaccAppGraph {
                     .yaccAppModule(new YaccAppModule(app))
                     .build();
         }
+
+        private Initializer() { /* No instances */ }
     }
 
 

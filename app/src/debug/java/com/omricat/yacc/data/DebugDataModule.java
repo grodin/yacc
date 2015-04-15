@@ -16,7 +16,17 @@
 
 package com.omricat.yacc.data;
 
+import android.content.SharedPreferences;
+
+import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
+import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
+import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
+import com.omricat.yacc.data.preferences.BooleanPreference;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
+import dagger.Provides;
 
 
 @Module(
@@ -24,5 +34,26 @@ import dagger.Module;
 )
 public final class DebugDataModule {
 
+    private static final boolean DEFAULT_DSPEC_GRID_VISIBLE = false;
+    private static final boolean DEFAULT_DSPEC_KEYLINES_VISIBLE = false;
+    public static final boolean DEFAULT_DSPEC_SPACINGS_VISIBLE = false;
+
+    @Singleton @Provides @DspecGridVisible
+    BooleanPreference provideDspecGridVisible(SharedPreferences prefs) {
+        return new BooleanPreference(prefs, "dspec-grid-visible",
+                DEFAULT_DSPEC_GRID_VISIBLE);
+    }
+
+    @Singleton @Provides @DspecKeylinesVisible
+    BooleanPreference provideDspecKeylinesVisible(SharedPreferences prefs) {
+        return new BooleanPreference(prefs, "dspec-keylines-visible",
+                DEFAULT_DSPEC_KEYLINES_VISIBLE);
+    }
+
+    @Singleton @Provides @DspecSpacingsVisible
+    BooleanPreference provideDspecSpacingsVisible(SharedPreferences prefs) {
+        return new BooleanPreference(prefs, "dspec-spacings-visible",
+                DEFAULT_DSPEC_SPACINGS_VISIBLE);
+    }
 
 }

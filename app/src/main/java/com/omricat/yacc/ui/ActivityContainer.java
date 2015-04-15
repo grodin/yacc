@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.ui;
 
-import javax.inject.Singleton;
+import android.app.Activity;
+import android.view.ViewGroup;
 
-import dagger.Module;
-import dagger.Provides;
+import butterknife.ButterKnife;
 
-@Module
-public class YaccAppModule {
+/**
+ * Abstracts getting the base container ViewGroup for an Activity,
+ * which the Activity should inflate it's Views into.
+ */
+public interface ActivityContainer {
 
-    private final YaccApp app;
+    ViewGroup get(Activity activity);
 
+    public final static ActivityContainer DEFAULT = new ActivityContainer() {
 
-    public YaccAppModule(final YaccApp app) {
-        this.app = app;
-    }
+        @Override public ViewGroup get(final Activity activity) {
+            return ButterKnife.findById(activity, android.R.id.content);
+        }
+    };
 
-    @Provides @Singleton
-    YaccApp provideApplication() {
-        return app;
-    }
 }

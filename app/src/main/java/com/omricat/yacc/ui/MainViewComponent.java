@@ -19,7 +19,6 @@ package com.omricat.yacc.ui;
 import com.omricat.yacc.YaccApp;
 import com.omricat.yacc.YaccAppComponent;
 import com.omricat.yacc.di.scopes.MainViewScope;
-import com.omricat.yacc.ui.converter.ConverterPresenter;
 
 import dagger.Component;
 
@@ -32,8 +31,6 @@ public interface MainViewComponent {
 
     void inject(YaccMainActivity activity);
 
-    public ConverterPresenter converterPresenter();
-
     final static class Initializer {
         static MainViewComponent init(YaccMainActivity mainView) {
             return Dagger_MainViewComponent.builder()
@@ -41,6 +38,8 @@ public interface MainViewComponent {
                     .yaccAppComponent(YaccApp.from(mainView).component())
                     .build();
         }
+
+        private Initializer() {/* No instances */}
     }
 
 }

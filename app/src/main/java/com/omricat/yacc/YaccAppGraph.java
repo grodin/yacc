@@ -22,6 +22,7 @@ import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.di.qualifiers.AllCurrencies;
 import com.omricat.yacc.di.qualifiers.SelectedCurrencies;
 import com.omricat.yacc.domain.SourceCurrencyProvider;
+import com.omricat.yacc.ui.ActivityContainer;
 import com.omricat.yacc.ui.converter.ConverterPresenter;
 
 import java.util.Collection;
@@ -30,6 +31,10 @@ import rx.Observable;
 
 public interface YaccAppGraph {
     void inject(YaccApp app);
+
+    YaccApp app();
+
+    ActivityContainer activityContainer();
 
     SourceCurrencyProvider sourceCurrency();
 

@@ -35,7 +35,7 @@ public class MainViewModule{
     @Provides MainPresenter provideMainPresenter(final
                                                      ConverterPresenter
                                                              converterPresenter) {
-        return new MainPresenterImpl(converterPresenter, mainView);
+        return new MainPresenter(converterPresenter, mainView);
     }
 
 }

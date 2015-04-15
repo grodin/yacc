@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.omricat.yacc.R;
 import com.omricat.yacc.ui.converter.ConverterFragment;
@@ -46,10 +47,19 @@ public class YaccMainActivity extends YaccActivity implements MainView {
     @Inject
     MainPresenter presenter;
 
+    @Inject
+    ActivityContainer activityContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_currencies);
+
+        component = MainViewComponent.Initializer.init(this);
+        component.inject(this);
+
+        final ViewGroup container = activityContainer.get(this);
+
+        getLayoutInflater().inflate(R.layout.activity_main, container);
 
         ButterKnife.inject(this);
 
@@ -60,8 +70,6 @@ public class YaccMainActivity extends YaccActivity implements MainView {
                     new ConverterFragment(), MAIN_CURRENCY_FRAGMENT).commit();
         }
 
-        component = MainViewComponent.Initializer.init(this);
-        component.inject(this);
     }
 
     @Override protected void onResume() {
@@ -121,9 +129,4 @@ public class YaccMainActivity extends YaccActivity implements MainView {
                 .addToBackStack(null)
                 .commit();
     }
-
-    @Override public MainViewComponent component() {
-        return component;
-    }
-
 }

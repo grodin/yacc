@@ -16,8 +16,6 @@
 
 package com.omricat.yacc.ui;
 
-import android.app.Activity;
-
 /**
  * Interface to abstract the communication needed with the main view for the
  * app.
@@ -25,14 +23,5 @@ import android.app.Activity;
 public interface MainView {
 
     public void showSelectorView();
-
-    public static class Instance {
-
-        public static MainView from(Activity activity) {
-            return (MainView) activity;
-        }
-    }
-
-    public MainViewComponent component();
 
 }

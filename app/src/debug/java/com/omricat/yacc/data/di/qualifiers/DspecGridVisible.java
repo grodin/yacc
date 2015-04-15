@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc;
+package com.omricat.yacc.data.di.qualifiers;
 
-import javax.inject.Singleton;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import dagger.Module;
-import dagger.Provides;
+import javax.inject.Qualifier;
 
-@Module
-public class YaccAppModule {
-
-    private final YaccApp app;
-
-
-    public YaccAppModule(final YaccApp app) {
-        this.app = app;
-    }
-
-    @Provides @Singleton
-    YaccApp provideApplication() {
-        return app;
-    }
+@Qualifier
+@Retention( RetentionPolicy.RUNTIME )
+public @interface DspecGridVisible {
 }
