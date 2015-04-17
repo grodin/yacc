@@ -32,7 +32,7 @@ dependencies {
     // TODO: remove release dependency on debug project
     releaseCompile project(':debug')
 
-    def supportVersion = '21.0.3'
+    def supportVersion = '22.0.0'
 
     compile "com.android.support:support-v4:$supportVersion"
     compile "com.android.support:appcompat-v7:$supportVersion"
