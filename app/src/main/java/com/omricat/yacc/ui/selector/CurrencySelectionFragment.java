@@ -94,7 +94,7 @@ public class CurrencySelectionFragment extends Fragment implements
     }
 
     private void inject(final Context context) {
-        Dagger_SelectorComponent.builder()
+        DaggerSelectorComponent.builder()
                 .yaccAppComponent(YaccApp.from(context).component())
                 .build().inject(this);
     }

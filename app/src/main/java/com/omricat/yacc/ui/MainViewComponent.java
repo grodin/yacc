@@ -33,7 +33,7 @@ public interface MainViewComponent {
 
     final static class Initializer {
         static MainViewComponent init(YaccMainActivity mainView) {
-            return Dagger_MainViewComponent.builder()
+            return DaggerMainViewComponent.builder()
                     .mainViewModule(new MainViewModule(mainView))
                     .yaccAppComponent(YaccApp.from(mainView).component())
                     .build();

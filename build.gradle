@@ -50,7 +50,7 @@ ext {
 
     jackson = 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
 
-    daggerVersion = '2.0-SNAPSHOT'
+    daggerVersion = '2.0'
 
     dagger = "com.google.dagger:dagger:$daggerVersion"
     daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
@@ -67,18 +67,8 @@ subprojects {
 
     repositories {
         jcenter()
-        maven { url "file://${rootProject.projectDir}/libs"}
-
     }
 
-//    apply plugin: 'idea'
-//    idea {
-//
-//        module {
-//            downloadJavadoc = true
-//            downloadSources = true
-//        }
-//    }
 }
 
 apply plugin: 'idea'

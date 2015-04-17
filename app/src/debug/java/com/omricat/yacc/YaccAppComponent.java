@@ -45,7 +45,7 @@ public interface YaccAppComponent extends YaccAppGraph {
 
     final static class Initializer {
         static YaccAppComponent init(YaccApp app) {
-            return Dagger_YaccAppComponent.builder()
+            return DaggerYaccAppComponent.builder()
                     .yaccAppModule(new YaccAppModule(app))
                     .build();
         }

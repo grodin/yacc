@@ -97,7 +97,7 @@ public class ConverterFragment extends Fragment implements ConverterView {
      * This method is used to inject the presenter.
      */
     private void inject(Context context) {
-        Dagger_ConverterComponent.builder()
+        DaggerConverterComponent.builder()
                 .yaccAppComponent(YaccApp.from(context).component())
                 .build().inject(this);
     }
