@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data;
+package com.omricat.yacc.data.di.qualifiers;
 
-import com.omricat.yacc.data.api.CurrenciesService;
-import com.omricat.yacc.debug.DebugCurrenciesService;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import javax.inject.Singleton;
+import javax.inject.Qualifier;
 
-import dagger.Module;
-import dagger.Provides;
-
-@Module
-public class ReleaseNetworkModule implements VariantNetworkModule {
-
-    @Overide @Singleton @Provides
-    CurrenciesService provideCurrenciesService() {
-        return new DebugCurrenciesService();
-    }
+@Qualifier
+@Retention( RetentionPolicy.RUNTIME)
+public @interface IsMockMode {
 }

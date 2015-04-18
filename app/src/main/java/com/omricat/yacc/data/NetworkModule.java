@@ -16,12 +16,24 @@
 
 package com.omricat.yacc.data;
 
-import com.omricat.yacc.data.api.CurrenciesService;
+import javax.inject.Singleton;
 
-/**
- * Common Interface to be implemented by both debug and release network modules
- */
-public interface NetworkModule {
+import dagger.Module;
+import dagger.Provides;
+import retrofit.Endpoint;
+import retrofit.RestAdapter;
 
-    CurrenciesService provideCurrenciesService();
+@Module
+public class NetworkModule {
+
+    public static final String PRODUCTION_ENDPOINT_URI =
+            "https://yacc-backend.appspot.com/latest";
+
+    @Provides @Singleton RestAdapter provideRestAdapter(Endpoint endpoint) {
+        return new RestAdapter.Builder()
+                .setEndpoint(endpoint)
+                .build();
+    }
+
+
 }

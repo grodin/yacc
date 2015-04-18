@@ -18,19 +18,25 @@ package com.omricat.yacc.data;
 
 import android.content.SharedPreferences;
 
+import com.omricat.yacc.data.di.qualifiers.ApiEndpoint;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
+import com.omricat.yacc.data.di.qualifiers.IsMockMode;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import info.metadude.android.typedpreferences.BooleanPreference;
-
+import info.metadude.android.typedpreferences.StringPreference;
 
 @Module(
-        includes = {DebugNetworkModule.class, DebugDataModule.class}
+        includes = {
+                DataModule.class,
+                DebugNetworkModule.class,
+                DebugPersistenceModule.class
+        }
 )
 public final class DebugDataModule {
 
@@ -38,22 +44,38 @@ public final class DebugDataModule {
     private static final boolean DEFAULT_DSPEC_KEYLINES_VISIBLE = false;
     public static final boolean DEFAULT_DSPEC_SPACINGS_VISIBLE = false;
 
-    @Singleton @Provides @DspecGridVisible
+    @Provides @Singleton @DspecGridVisible
     BooleanPreference provideDspecGridVisible(SharedPreferences prefs) {
         return new BooleanPreference(prefs, "dspec-grid-visible",
                 DEFAULT_DSPEC_GRID_VISIBLE);
     }
 
-    @Singleton @Provides @DspecKeylinesVisible
+    @Provides @Singleton @DspecKeylinesVisible
     BooleanPreference provideDspecKeylinesVisible(SharedPreferences prefs) {
         return new BooleanPreference(prefs, "dspec-keylines-visible",
                 DEFAULT_DSPEC_KEYLINES_VISIBLE);
     }
 
-    @Singleton @Provides @DspecSpacingsVisible
+    @Provides @Singleton @DspecSpacingsVisible
     BooleanPreference provideDspecSpacingsVisible(SharedPreferences prefs) {
         return new BooleanPreference(prefs, "dspec-spacings-visible",
                 DEFAULT_DSPEC_SPACINGS_VISIBLE);
+    }
+
+    @Provides @Singleton
+    NetworkEndpoint provideNetworkEndpoint(@ApiEndpoint StringPreference
+                                                   endpoint) {
+        return NetworkEndpoint.from(endpoint.get());
+    }
+
+    @Provides @Singleton @ApiEndpoint
+    StringPreference provideNetworkEndpointPreference(SharedPreferences prefs) {
+        return new StringPreference(prefs, "api-endpoint", "mock://");
+    }
+
+    @Provides @Singleton @IsMockMode
+    boolean provideIsMockMode(@ApiEndpoint StringPreference endpoint) {
+        return NetworkEndpoint.isMockMode(endpoint.get());
     }
 
 }
