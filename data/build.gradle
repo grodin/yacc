@@ -28,7 +28,7 @@ dependencies {
     provided "${rootProject.ext.daggerCompiler}"
 
     testCompile "${rootProject.ext.junit}"
-    testCompile 'nl.jqno.equalsverifier:equalsverifier:1.5'
+    testCompile "${rootProject.ext.equalsVerifier}"
     testCompile "${rootProject.ext.assertJ}"
     testCompile "${rootProject.ext.mockito}"
 
