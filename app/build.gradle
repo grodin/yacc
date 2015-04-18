@@ -18,8 +18,6 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.jakewharton.hugo'
 apply plugin: 'de.mobilej.unmock'
 
-println "${rootProject.projectDir}"
-
 dependencies {
     compile project(':common')
     compile project(':data')
@@ -73,7 +71,6 @@ dependencies {
     testCompile "${rootProject.ext.mockito}"
 }
 
-
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -86,6 +83,7 @@ android {
         versionName "${rootProject.ext.versionMajor}"+
                 ".${rootProject.ext.versionMinor}." +
                 "${rootProject.ext.versionPatch}"
+
     }
 
     lintOptions {
@@ -95,8 +93,14 @@ android {
     buildTypes {
         debug {
 
+            applicationIdSuffix ".debug"
             versionNameSuffix "-${versionBuild}DEBUG"
 
+            buildConfigField "String", "BUILDINFO_COMMIT_ID",
+                    "\"${rootProject.ext.buildInfo.commitId}\""
+
+            buildConfigField "String", "BUILDINFO_BUILD_DATETIME",
+                    "\"${rootProject.ext.buildInfo.buildDateTime}\""
 
         }
 
@@ -118,6 +122,7 @@ android {
         incremental false
     }
 }
+
 
 unMock {
     // URI to download the android-all.jar from. e.g. https://oss.sonatype.org/content/groups/public/org/robolectric/android-all/
