@@ -16,9 +16,10 @@
 
 package com.omricat.yacc.ui;
 
-import com.omricat.yacc.data.preferences.BooleanPreference;
 
 import org.lucasr.dspec.DesignSpec;
+
+import info.metadude.android.typedpreferences.BooleanPreference;
 
 public class DspecWrapper {
 

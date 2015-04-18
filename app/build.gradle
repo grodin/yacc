@@ -61,6 +61,10 @@ dependencies {
     apt "${rootProject.ext.daggerCompiler}"
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
+    compile 'info.metadude.android:typed-preferences:2.0.0'
+
+    // Test dependencies
+
     testCompile project(':debug')
 
     testCompile "${rootProject.ext.junit}"

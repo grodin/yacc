@@ -21,12 +21,12 @@ import android.content.SharedPreferences;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
-import com.omricat.yacc.data.preferences.BooleanPreference;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import info.metadude.android.typedpreferences.BooleanPreference;
 
 
 @Module(

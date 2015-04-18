@@ -24,7 +24,6 @@ import com.omricat.yacc.R;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
-import com.omricat.yacc.data.preferences.BooleanPreference;
 
 import org.lucasr.dspec.DesignSpecFrameLayout;
 
@@ -33,6 +32,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnCheckedChanged;
+import info.metadude.android.typedpreferences.BooleanPreference;
 
 public class DebugActivityContainer implements ActivityContainer {
 

@@ -16,19 +16,48 @@
 
 package com.omricat.yacc.data;
 
+import android.content.SharedPreferences;
+
 import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.di.qualifiers.IsMockMode;
 import com.omricat.yacc.debug.DebugCurrenciesService;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit.Endpoint;
+import retrofit.MockRestAdapter;
+import retrofit.RestAdapter;
+import retrofit.android.AndroidMockValuePersistence;
 
-@Module
-public class DebugNetworkModule implements NetworkModule {
+@Module( includes = NetworkModule.class )
+public class DebugNetworkModule {
 
-    @Override @Singleton
-    @Provides public CurrenciesService provideCurrenciesService() {
-        return new DebugCurrenciesService();
+    @Provides @Singleton
+    Endpoint provideEndpoint(NetworkEndpoint endpoint) {
+        return endpoint.getEndpoint();
+    }
+
+    @Provides @Singleton
+    MockRestAdapter provideMockRestAdapter(RestAdapter restAdapter,
+                                           SharedPreferences preferences) {
+        MockRestAdapter mockRestAdapter = MockRestAdapter.from(restAdapter);
+        AndroidMockValuePersistence.install(mockRestAdapter, preferences);
+        return mockRestAdapter;
+    }
+
+
+    @Provides @Singleton
+    public CurrenciesService provideCurrenciesService
+            (RestAdapter restAdapter,
+             MockRestAdapter mockRestAdapter,
+             @IsMockMode boolean isMockMode) {
+        if (isMockMode) {
+            return mockRestAdapter.create(CurrenciesService.class,
+                    new DebugCurrenciesService());
+        } else {
+            return restAdapter.create(CurrenciesService.class);
+        }
     }
 }
