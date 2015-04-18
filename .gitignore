@@ -1,9 +1,7 @@
 .gradle
 local.properties
-.idea/workspace.xml
-.idea/libraries/
+.idea/
 .DS_Store
 build/
 yacc-backend/WEB-INF/appengine-generated/*
 *.iml
-.idea/dictionaries/
