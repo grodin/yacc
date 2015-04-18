@@ -26,6 +26,7 @@ dependencies {
     // Debug only dependencies
     debugCompile project(':debug')
     debugCompile 'org.lucasr.dspec:dspec:0.1.1'
+    debugCompile "${rootProject.ext.retrofitMock}"
 
     // TODO: remove release dependency on debug project
     releaseCompile project(':debug')
