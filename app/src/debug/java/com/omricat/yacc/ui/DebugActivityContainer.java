@@ -19,7 +19,9 @@ package com.omricat.yacc.ui;
 import android.app.Activity;
 import android.view.ViewGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 
+import com.omricat.yacc.BuildConfig;
 import com.omricat.yacc.R;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
@@ -50,6 +52,14 @@ public class DebugActivityContainer implements ActivityContainer {
     @InjectView( R.id.debug_dspec_show_spacings )
     Switch showDspecSpacingsView;
 
+    @InjectView( R.id.debug_info_version_code )
+    TextView infoVersionView;
+    @InjectView( R.id.debug_info_version_number )
+    TextView infoVersionNumberView;
+    @InjectView( R.id.debug_info_commit_id )
+    TextView infoCommitIdView;
+    @InjectView( R.id.debug_info_build_datetime )
+    TextView infoBuildDateTimeView;
 
     @Inject
     public DebugActivityContainer
@@ -69,13 +79,27 @@ public class DebugActivityContainer implements ActivityContainer {
 
         ButterKnife.inject(this, activity);
 
-        showDspecGridView.setChecked(dspecGridVisible.get());
-        showDspecKeylinesView.setChecked(dspecKeylinesVisible.get());
-        showDspecSpacingsView.setChecked(dspecSpacingsVisible.get());
+        setupUiSection();
 
-
+        setupBuildInfoSection();
 
         return dspec;
+    }
+
+    private void setupBuildInfoSection() {
+        infoVersionView.setText(BuildConfig.VERSION_NAME);
+        infoVersionNumberView.setText(String.valueOf(BuildConfig.VERSION_CODE));
+        infoCommitIdView.setText(BuildConfig.BUILDINFO_COMMIT_ID);
+        infoBuildDateTimeView.setText(BuildConfig.BUILDINFO_BUILD_DATETIME);
+    }
+
+    private void setupUiSection() {
+        showDspecGridView.setChecked(dspecGridVisible.get());
+        showDspecGrid(dspecGridVisible.get());
+        showDspecKeylinesView.setChecked(dspecKeylinesVisible.get());
+        showDspecKeylines(dspecKeylinesVisible.get());
+        showDspecSpacingsView.setChecked(dspecSpacingsVisible.get());
+        showDspecSpacings(dspecSpacingsVisible.get());
     }
 
     @OnCheckedChanged( R.id.debug_dspec_show_grid )

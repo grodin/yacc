@@ -17,52 +17,68 @@
 
 <merge xmlns:tools="http://schemas.android.com/tools"
        xmlns:android="http://schemas.android.com/apk/res/android"
+       tools:showIn="@layout/debug_drawer_content"
        tools:ignore="HardcodedText"
-       tools:showIn="@layout/debug_drawer_content">
-
+    >
     <!-- Header -->
     <TextView
         android:layout_gravity="start|end"
         android:layout_columnSpan="2"
-        android:text="UI"
+        android:text="BuildInfo"
         style="@style/Widget.DebugDrawer.Header"
         />
 
     <!-- Content -->
+
     <TextView
-        android:text="Grid"
+        android:text="Version code:"
         android:layout_gravity="start|end|center_vertical"
         style="@style/Widget.DebugDrawer.RowTitle"
         />
 
-    <Switch
-        android:id="@+id/debug_dspec_show_grid"
-        android:layout_gravity="start|center_vertical"
-        style="@style/Widget.DebugDrawer.RowWidget"
+    <TextView
+        android:id="@+id/debug_info_version_code"
+        android:layout_gravity="start|end|center_vertical"
+        android:layout_columnSpan="2"
+        style="@style/Widget.DebugDrawer.RowValue"
+
         />
 
     <TextView
-        android:text="Keylines"
+        android:text="Version number:"
         android:layout_gravity="start|end|center_vertical"
         style="@style/Widget.DebugDrawer.RowTitle"
         />
 
-    <Switch
-        android:id="@+id/debug_dspec_show_keylines"
-        android:layout_gravity="start|center_vertical"
-        style="@style/Widget.DebugDrawer.RowWidget"
+    <TextView
+        android:id="@+id/debug_info_version_number"
+        android:layout_gravity="start|end|center_vertical"
+        style="@style/Widget.DebugDrawer.RowValue"
         />
 
     <TextView
-        android:text="Spacings"
+        android:text="Built on:"
         android:layout_gravity="start|end|center_vertical"
         style="@style/Widget.DebugDrawer.RowTitle"
         />
 
-    <Switch
-        android:id="@+id/debug_dspec_show_spacings"
-        android:layout_gravity="start|center_vertical"
-        style="@style/Widget.DebugDrawer.RowWidget"
+    <TextView
+        android:id="@+id/debug_info_build_datetime"
+        android:layout_gravity="start|end|center_vertical"
+        android:layout_columnSpan="2"
+        style="@style/Widget.DebugDrawer.RowValue"
+        />
+
+    <TextView
+        android:text="SCM commit id:"
+        android:layout_gravity="start|end|center_vertical"
+        style="@style/Widget.DebugDrawer.RowTitle"
+        />
+
+    <TextView
+        android:id="@+id/debug_info_commit_id"
+        android:layout_gravity="start|end|center_vertical"
+        style="@style/Widget.DebugDrawer.RowValue"
         />
 
 
