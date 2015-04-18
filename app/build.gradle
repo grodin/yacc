@@ -79,7 +79,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode rootProject.ext.versionCode
-        versionName "${rootProject.ext.versionMajor}.${rootProject.ext.versionMinor}." +
+        versionName "${rootProject.ext.versionMajor}"+
+                ".${rootProject.ext.versionMinor}." +
                 "${rootProject.ext.versionPatch}"
     }
 
