@@ -18,7 +18,7 @@ package com.omricat.yacc.domain;
 
 import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.common.rx.RxSet;
-import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.network.CurrenciesService;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data;
+package com.omricat.yacc.data.network;
 
 import android.content.SharedPreferences;
 
-import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.NetworkModule;
 import com.omricat.yacc.data.di.qualifiers.IsMockMode;
-import com.omricat.yacc.debug.DebugCurrenciesService;
+import com.omricat.yacc.network.DebugCurrenciesService;
 
 import javax.inject.Singleton;
 

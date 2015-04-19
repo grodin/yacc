@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data.api;
+package com.omricat.yacc.data.network;
 
 import com.google.common.base.Preconditions;
 import com.omricat.yacc.data.model.CurrencyDataset;
@@ -25,7 +25,7 @@ import rx.Observable;
 
 
 /**
- * Immutable implementation of {@link com.omricat.yacc.data.api.CurrenciesService}
+ * Immutable implementation of {@link com.omricat.yacc.data.network.CurrenciesService}
  * which wraps an existing implementation to add functionality. Planned
  * functionality includes retry with exponential back-off.
  */
@@ -34,8 +34,8 @@ public class NetworkCurrenciesService implements CurrenciesService {
     private final CurrenciesService service;
 
     /**
-     * Wraps the passed in {@link com.omricat.yacc.data.api.CurrenciesService}
-     * @param service instance of {@link com.omricat.yacc.data.api.CurrenciesService}
+     * Wraps the passed in {@link com.omricat.yacc.data.network.CurrenciesService}
+     * @param service instance of {@link com.omricat.yacc.data.network.CurrenciesService}
      *                to be wrapped. Cannot be null.
      */
     public NetworkCurrenciesService(@NotNull CurrenciesService service) {

@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui;
+package com.omricat.yacc.ui.debug;
 
 import android.app.Activity;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.omricat.yacc.BuildConfig;
 import com.omricat.yacc.R;
+import com.omricat.yacc.data.di.qualifiers.ApiEndpoint;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
+import com.omricat.yacc.data.network.EnumAdapter;
+import com.omricat.yacc.data.network.NetworkEndpoint;
+import com.omricat.yacc.ui.ActivityContainer;
 
 import org.lucasr.dspec.DesignSpecFrameLayout;
 
@@ -35,16 +40,39 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnCheckedChanged;
 import info.metadude.android.typedpreferences.BooleanPreference;
+import info.metadude.android.typedpreferences.StringPreference;
 
 public class DebugActivityContainer implements ActivityContainer {
 
+    // Dspec related preferences
     private final BooleanPreference dspecGridVisible;
     private final BooleanPreference dspecKeylinesVisible;
     private final BooleanPreference dspecSpacingsVisible;
 
+    // Network/Mock mode related preferences
+    private final StringPreference networkEndpoint;
+
+    @Inject
+    public DebugActivityContainer
+            (@DspecGridVisible final BooleanPreference dspecGridVisible,
+             @DspecKeylinesVisible final BooleanPreference dspecKeylinesVisible,
+             @DspecSpacingsVisible final BooleanPreference
+                     dspecSpacingsVisible,
+             @ApiEndpoint final StringPreference networkEndpoint) {
+
+        this.dspecGridVisible = dspecGridVisible;
+        this.dspecKeylinesVisible = dspecKeylinesVisible;
+        this.dspecSpacingsVisible = dspecSpacingsVisible;
+        this.networkEndpoint = networkEndpoint;
+    }
+
+    // Dspec layout
     @InjectView( R.id.debug_content )
     DesignSpecFrameLayout dspec;
 
+    // Drawer widgets
+
+    // Dspec related widgets
     @InjectView( R.id.debug_dspec_show_grid )
     Switch showDspecGridView;
     @InjectView( R.id.debug_dspec_show_keylines )
@@ -52,6 +80,7 @@ public class DebugActivityContainer implements ActivityContainer {
     @InjectView( R.id.debug_dspec_show_spacings )
     Switch showDspecSpacingsView;
 
+    // Build info widgets
     @InjectView( R.id.debug_info_version_code )
     TextView infoVersionView;
     @InjectView( R.id.debug_info_version_number )
@@ -61,17 +90,10 @@ public class DebugActivityContainer implements ActivityContainer {
     @InjectView( R.id.debug_info_build_datetime )
     TextView infoBuildDateTimeView;
 
-    @Inject
-    public DebugActivityContainer
-            (@DspecGridVisible final BooleanPreference dspecGridVisible,
-             @DspecKeylinesVisible final BooleanPreference dspecKeylinesVisible,
-             @DspecSpacingsVisible final BooleanPreference
-                     dspecSpacingsVisible) {
+    // Network widgets
+    @InjectView( R.id.debug_network_endpoint )
+    Spinner endpointView;
 
-        this.dspecGridVisible = dspecGridVisible;
-        this.dspecKeylinesVisible = dspecKeylinesVisible;
-        this.dspecSpacingsVisible = dspecSpacingsVisible;
-    }
 
     @Override public ViewGroup get(final Activity activity) {
 
@@ -79,8 +101,15 @@ public class DebugActivityContainer implements ActivityContainer {
 
         ButterKnife.inject(this, activity);
 
-        setupUiSection();
+        final NetworkEndpoint currentEndpoint =
+                NetworkEndpoint.from(networkEndpoint.get());
+        final EnumAdapter<NetworkEndpoint> endpointAdapter =
+                new EnumAdapter<>(activity, EndpointViewHolder.class,
+                        NetworkEndpoint.class);
+        endpointView.setAdapter(endpointAdapter);
+        endpointView.setSelection(currentEndpoint.ordinal());
 
+        setupUiSection();
         setupBuildInfoSection();
 
         return dspec;

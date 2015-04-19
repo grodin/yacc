@@ -17,7 +17,7 @@
 package com.omricat.yacc.domain;
 
 import com.google.common.collect.Sets;
-import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.network.CurrenciesService;
 import com.omricat.yacc.data.model.Currency;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.Persister;

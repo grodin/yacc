@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Omricat Software
+ * Copyright 2014 Omricat Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.debug;
+package com.omricat.yacc.data.network;
 
-import org.junit.Test;
+import com.omricat.yacc.data.model.CurrencyDataset;
 
-public class DebugCurrenciesServiceTest {
+import retrofit.http.GET;
+import rx.Observable;
 
-    @Test
-    public void testConstructor() throws Exception {
-        new DebugCurrenciesService();
-    }
+/**
+ * Interface representing the currency data return by the backend.
+ *
+ * @author Joseph Cooper
+ */
+public interface CurrenciesService {
+
+    @GET("/test/currencies-test.json")
+    Observable<CurrencyDataset> getAllCurrencies();
+
 }

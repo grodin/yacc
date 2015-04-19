@@ -23,6 +23,8 @@ import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
 import com.omricat.yacc.data.di.qualifiers.IsMockMode;
+import com.omricat.yacc.data.network.DebugNetworkModule;
+import com.omricat.yacc.data.network.NetworkEndpoint;
 
 import javax.inject.Singleton;
 
@@ -62,8 +64,7 @@ public final class DebugDataModule {
                 DEFAULT_DSPEC_SPACINGS_VISIBLE);
     }
 
-    @Provides @Singleton
-    NetworkEndpoint provideNetworkEndpoint(@ApiEndpoint StringPreference
+    @Provides @Singleton NetworkEndpoint provideNetworkEndpoint(@ApiEndpoint StringPreference
                                                    endpoint) {
         return NetworkEndpoint.from(endpoint.get());
     }

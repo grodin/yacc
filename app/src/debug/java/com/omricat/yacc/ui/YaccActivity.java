@@ -19,7 +19,7 @@ package com.omricat.yacc.ui;
 import android.support.v7.app.ActionBarActivity;
 
 import com.omricat.yacc.BuildConfig;
-import com.omricat.yacc.debug.DebugUtils;
+import com.omricat.yacc.util.debug.DebugUtils;
 
 public class YaccActivity extends ActionBarActivity {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.debug;
+package com.omricat.yacc.util.debug;
 
 import android.app.Activity;
 import android.app.KeyguardManager;

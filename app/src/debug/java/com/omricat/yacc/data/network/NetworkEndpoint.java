@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data;
+package com.omricat.yacc.data.network;
+
+import com.omricat.yacc.data.NetworkModule;
 
 import retrofit.Endpoint;
 import retrofit.Endpoints;
 
 public enum NetworkEndpoint {
 
-    PRODUCTION("production", NetworkModule.PRODUCTION_ENDPOINT_URI),
-    MOCK_MODE("mock-mode", "mock://"),
-    CUSTOM("custom", null );
+    PRODUCTION("Production", NetworkModule.PRODUCTION_ENDPOINT_URI),
+    MOCK_MODE("Mock mode", "mock://");
+
     private final String name;
     private final String uri;
 
@@ -43,7 +45,7 @@ public enum NetworkEndpoint {
                 return value;
             }
         }
-        return CUSTOM;
+        return MOCK_MODE;
     }
 
     public static boolean isMockMode(String uri) {

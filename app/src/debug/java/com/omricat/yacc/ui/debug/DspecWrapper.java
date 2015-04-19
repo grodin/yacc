@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.ui;
+package com.omricat.yacc.ui.debug;
 
 
 import org.lucasr.dspec.DesignSpec;

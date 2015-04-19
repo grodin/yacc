@@ -16,8 +16,8 @@
 
 package com.omricat.yacc.data;
 
-import com.omricat.yacc.data.api.CurrenciesService;
-import com.omricat.yacc.debug.DebugCurrenciesService;
+import com.omricat.yacc.data.network.CurrenciesService;
+import com.omricat.yacc.network.DebugCurrenciesService;
 
 import javax.inject.Singleton;
 

@@ -18,7 +18,7 @@ package com.omricat.yacc.domain;
 
 import com.omricat.yacc.common.rx.EmptyFallbackTransformer;
 import com.omricat.yacc.common.rx.Predicate;
-import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.network.CurrenciesService;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.Persister;
 

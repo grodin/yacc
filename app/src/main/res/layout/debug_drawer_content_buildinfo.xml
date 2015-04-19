@@ -18,7 +18,7 @@
 <merge xmlns:tools="http://schemas.android.com/tools"
        xmlns:android="http://schemas.android.com/apk/res/android"
        tools:showIn="@layout/debug_drawer_content"
-       tools:ignore="HardcodedText"
+       tools:ignore="HardcodedText,RtlHardcoded"
     >
     <!-- Header -->
     <TextView
@@ -39,9 +39,7 @@
     <TextView
         android:id="@+id/debug_info_version_code"
         android:layout_gravity="start|end|center_vertical"
-        android:layout_columnSpan="2"
         style="@style/Widget.DebugDrawer.RowValue"
-
         />
 
     <TextView
@@ -65,7 +63,6 @@
     <TextView
         android:id="@+id/debug_info_build_datetime"
         android:layout_gravity="start|end|center_vertical"
-        android:layout_columnSpan="2"
         style="@style/Widget.DebugDrawer.RowValue"
         />
 

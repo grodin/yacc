@@ -16,29 +16,27 @@
 
 package com.omricat.yacc.ui;
 
+import com.omricat.yacc.data.di.qualifiers.ApiEndpoint;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
+import com.omricat.yacc.ui.debug.DebugActivityContainer;
 
 import dagger.Module;
 import dagger.Provides;
 import info.metadude.android.typedpreferences.BooleanPreference;
+import info.metadude.android.typedpreferences.StringPreference;
 
 @Module
 public class DebugUiModule {
 
-    @Provides
-    ActivityContainer provideActivityContainer(@DspecGridVisible final
-                                               BooleanPreference
-                                                       dspecGridVisible,
-                                               @DspecKeylinesVisible final
-                                               BooleanPreference
-                                                       dspecKeylinesVisible,
-                                               @DspecSpacingsVisible final
-                                               BooleanPreference
-                                                       dspecSpacingsVisible) {
+    @Provides ActivityContainer provideActivityContainer
+            (@DspecGridVisible final BooleanPreference dspecGridVisible,
+             @DspecKeylinesVisible final BooleanPreference dspecKeylinesVisible,
+             @DspecSpacingsVisible final BooleanPreference dspecSpacingsVisible,
+             @ApiEndpoint final StringPreference endpoint) {
         return new DebugActivityContainer(dspecGridVisible,
-                dspecKeylinesVisible, dspecSpacingsVisible);
+                dspecKeylinesVisible, dspecSpacingsVisible, endpoint);
     }
 
 }

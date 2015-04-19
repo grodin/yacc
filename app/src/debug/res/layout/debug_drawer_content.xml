@@ -65,9 +65,13 @@
             />
     </LinearLayout>
 
+    <!-- Network Settings -->
+    <include layout="@layout/debug_drawer_content_network"/>
+
     <!-- UI Settings -->
     <include layout="@layout/debug_drawer_content_ui"/>
 
     <!-- Build Info -->
     <include layout="@layout/debug_drawer_content_buildinfo"/>
+
 </GridLayout>

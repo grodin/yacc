@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.debug;
+package com.omricat.yacc.network;
 
 import com.google.common.collect.Sets;
 import com.omricat.yacc.data.TestCurrencies;
-import com.omricat.yacc.data.api.CurrenciesService;
+import com.omricat.yacc.data.network.CurrenciesService;
 import com.omricat.yacc.data.model.CurrencyDataset;
 
 import rx.Observable;
