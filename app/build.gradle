@@ -62,6 +62,8 @@ dependencies {
 
     compile 'info.metadude.android:typed-preferences:2.0.0'
 
+    compile 'uk.co.ribot:easyadapter:1.4.0@aar'
+
     // Test dependencies
 
     testCompile project(':debug')
