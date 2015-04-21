@@ -6,6 +6,21 @@
 ##
 ##############################################################################
 
+##############################################################################
+## !!! LOCAL MODIFICATION FOLLOWS !!!
+##############################################################################
+
+## If JAVA7_HOME env variable is set, use that as JAVA_HOME
+## This will make gradle use java 7, since Android is stupid
+
+if [ -n "$JAVA7_HOME" ]; then
+    JAVA_HOME="$JAVA7_HOME"
+fi
+
+##############################################################################
+## !!! LOCAL MODIFICATION ENDS !!!
+##############################################################################
+
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS=""
 
