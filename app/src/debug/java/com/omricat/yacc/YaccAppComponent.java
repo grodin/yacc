@@ -28,7 +28,8 @@ import dagger.Component;
 @Singleton
 @Component(
         dependencies = {},
-        modules = {YaccAppModule.class,
+        modules = {
+                YaccAppModule.class,
                 ConverterModule.class,
                 DebugDataModule.class,
                 DebugDomainModule.class,

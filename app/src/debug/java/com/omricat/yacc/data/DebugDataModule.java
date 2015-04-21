@@ -64,8 +64,8 @@ public final class DebugDataModule {
                 DEFAULT_DSPEC_SPACINGS_VISIBLE);
     }
 
-    @Provides @Singleton NetworkEndpoint provideNetworkEndpoint(@ApiEndpoint StringPreference
-                                                   endpoint) {
+    @Provides @Singleton
+    NetworkEndpoint provideNetworkEndpoint(@ApiEndpoint StringPreference endpoint) {
         return NetworkEndpoint.from(endpoint.get());
     }
 

@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package com.omricat.yacc.data;
+package com.omricat.yacc.ui;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
+import dagger.Provides;
 
-@Module(
-        includes = {
-                DataModule.class,
-                ReleaseNetworkModule.class,
-                ReleasePersistenceModule.class
-        }
-)
-public final class ReleaseDataModule {
+@Module
+public class ReleaseUiModule {
+
+    @Provides ActivityContainer provideActivityContainer() {
+        return ActivityContainer.DEFAULT;
+    }
+
+    @Provides @Singleton
+    ActivityHierarchyServer provideActivityHierarchyServer() {
+        return ActivityHierarchyServer.NONE;
+    }
 
 }

@@ -16,6 +16,7 @@
 
 package com.omricat.yacc.data;
 
+import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.InMemoryPersister;
@@ -42,7 +43,8 @@ public class DebugPersistenceModule implements PersistenceModule {
     }
 
     @Override @Singleton @Provides
-    public Persister<String, CurrencyDataset> provideCurrencyDatasetPersister() {
+    public Persister<String, CurrencyDataset>
+    provideCurrencyDatasetPersister(final Predicate<CurrencyDataset> predicate) {
         return new InMemoryPersister<>();
     }
 

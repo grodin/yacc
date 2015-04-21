@@ -16,6 +16,7 @@
 
 package com.omricat.yacc.data;
 
+import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
 import com.omricat.yacc.data.persistence.Persister;
@@ -33,5 +34,6 @@ public interface PersistenceModule {
     Persister<String, Set<CurrencyCode>> provideCurrencyCodeSetPersister();
 
 
-    Persister<String, CurrencyDataset> provideCurrencyDatasetPersister();
+    Persister<String, CurrencyDataset>
+    provideCurrencyDatasetPersister(final Predicate<CurrencyDataset> predicate);
 }

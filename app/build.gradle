@@ -22,52 +22,35 @@ dependencies {
     compile project(':common')
     compile project(':data')
     compile project(':domain')
-
     // Debug only dependencies
     debugCompile project(':debug')
     debugCompile 'org.lucasr.dspec:dspec:0.1.1'
     debugCompile "${rootProject.ext.retrofitMock}"
-
     // TODO: remove release dependency on debug project
     releaseCompile project(':debug')
-
     def supportVersion = '22.0.0'
-
     compile "com.android.support:support-v4:$supportVersion"
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:recyclerview-v7:$supportVersion"
     compile "com.android.support:cardview-v7:$supportVersion"
-
     // Intellij annotations (NotNull, Nullable)
     compile "${rootProject.ext.intellijAnnotations}"
-
     compile "${rootProject.ext.guava}"
-
     compile "${rootProject.ext.retrofit}"
     compile "${rootProject.ext.retrofitJackson}"
-
     compile "${rootProject.ext.jackson}"
-
     compile "${rootProject.ext.okhttpUrlConnection}"
     compile "${rootProject.ext.okhttp}"
-
     compile "${rootProject.ext.rxJava}"
     compile 'io.reactivex:rxandroid:0.23.0'
-
     compile 'com.jakewharton:butterknife:6.0.0'
-
     compile "${rootProject.ext.dagger}"
     apt "${rootProject.ext.daggerCompiler}"
     provided 'org.glassfish:javax.annotation:10.0-b28'
-
     compile 'info.metadude.android:typed-preferences:2.0.0'
-
     compile 'uk.co.ribot:easyadapter:1.4.0@aar'
-
     // Test dependencies
-
     testCompile project(':debug')
-
     testCompile "${rootProject.ext.junit}"
     testCompile "${rootProject.ext.equalsVerifier}"
     testCompile "${rootProject.ext.assertJ}"
@@ -75,48 +58,46 @@ dependencies {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file(project.property("app.signing") + ".keystore")
+            keyAlias "omricat"
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "com.omricat.yacc"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode rootProject.ext.versionCode
-        versionName "${rootProject.ext.versionMajor}"+
+        versionName "${rootProject.ext.versionMajor}" +
                 ".${rootProject.ext.versionMinor}." +
                 "${rootProject.ext.versionPatch}"
 
     }
-
     lintOptions {
         abortOnError false
     }
-
     buildTypes {
         debug {
-
             applicationIdSuffix ".debug"
             versionNameSuffix "-${versionBuild}DEBUG"
-
             buildConfigField "String", "BUILDINFO_COMMIT_ID",
                     "\"${rootProject.ext.buildInfo.commitId}\""
-
             buildConfigField "String", "BUILDINFO_BUILD_DATETIME",
                     "\"${rootProject.ext.buildInfo.buildDateTime}\""
-
         }
-
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
         sourceCompatibility rootProject.ext.sourceCompatibility
         targetCompatibility rootProject.ext.targetCompatibility
     }
-
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
@@ -141,3 +122,10 @@ unMock {
             "android.text.TextUtils"
     ]
 }
+
+// Get signing config details from
+if(project.hasProperty("app.signing")
+        && new File("${project.property('app.signing')}.gradle").exists()) {
+    apply from: "${project.property('app.signing')}.gradle";
+}
+

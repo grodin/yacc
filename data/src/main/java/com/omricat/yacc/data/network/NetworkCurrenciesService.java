@@ -16,12 +16,13 @@
 
 package com.omricat.yacc.data.network;
 
-import com.google.common.base.Preconditions;
 import com.omricat.yacc.data.model.CurrencyDataset;
 
 import org.jetbrains.annotations.NotNull;
 
 import rx.Observable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**
@@ -38,8 +39,13 @@ public class NetworkCurrenciesService implements CurrenciesService {
      * @param service instance of {@link com.omricat.yacc.data.network.CurrenciesService}
      *                to be wrapped. Cannot be null.
      */
-    public NetworkCurrenciesService(@NotNull CurrenciesService service) {
-        this.service = Preconditions.checkNotNull(service);
+    private NetworkCurrenciesService(@NotNull CurrenciesService service) {
+        this.service = service;
+    }
+
+    public static NetworkCurrenciesService using(@NotNull CurrenciesService
+                                                         service) {
+        return new NetworkCurrenciesService(checkNotNull(service));
     }
 
     @Override

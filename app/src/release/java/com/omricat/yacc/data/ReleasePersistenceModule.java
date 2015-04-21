@@ -16,30 +16,47 @@
 
 package com.omricat.yacc.data;
 
-import com.omricat.yacc.data.PersistenceModule;
-import com.omricat.yacc.data.model.Currency;
+import com.omricat.yacc.common.rx.Predicate;
 import com.omricat.yacc.data.model.CurrencyCode;
 import com.omricat.yacc.data.model.CurrencyDataset;
-import com.omricat.yacc.data.persistence.Persister;
+import com.omricat.yacc.data.persistence.FallbackPersister;
 import com.omricat.yacc.data.persistence.InMemoryPersister;
+import com.omricat.yacc.data.persistence.Persister;
 
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class ReleasePersistenceModule implements PersistenceModule {
 
-    Persister<String, Currency> provideCurrencyPersister() {
+    private <T> Persister<String,T> newDiskPersister() {
+        // TODO: replace InMemoryPersister with an actual disk persister
         return new InMemoryPersister<>();
     }
 
-    Persister<String, Set<CurrencyCode>> provideCurrencyCodeSetPersister() {
-        return new InMemoryPersister<>();
+    @Override @Provides @Singleton
+    public Persister<String, CurrencyCode> provideCurrencyPersister() {
+        return newDiskPersister();
     }
 
-    Persister<String, CurrencyDataset> provideCurrencyDatasetPersister() {
-        return new InMemoryPersister<>();
+    @Override @Provides @Singleton
+    public Persister<String, Set<CurrencyCode>>
+    provideCurrencyCodeSetPersister() {
+        return newDiskPersister();
+    }
+
+    @Override @Provides @Singleton
+    public Persister<String, CurrencyDataset>
+    provideCurrencyDatasetPersister(final Predicate<CurrencyDataset> predicate) {
+
+        final Persister<String, CurrencyDataset> diskPersister =
+                newDiskPersister();
+        return new FallbackPersister<>(new InMemoryPersister<CurrencyDataset>(),
+                diskPersister, predicate);
     }
 
 }

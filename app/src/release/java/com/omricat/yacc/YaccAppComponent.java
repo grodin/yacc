@@ -16,30 +16,38 @@
 
 package com.omricat.yacc;
 
+import com.omricat.yacc.data.ReleaseDataModule;
 import com.omricat.yacc.di.scopes.AppScope;
+import com.omricat.yacc.domain.ReleaseDomainModule;
+import com.omricat.yacc.ui.ReleaseUiModule;
 import com.omricat.yacc.ui.converter.ConverterModule;
 
-import com.omricat.yacc.di.scopes.AppScope;
+import javax.inject.Singleton;
 
 import dagger.Component;
 
-@AppScope
+@Singleton
 @Component(
         dependencies = {},
-        modules = {YaccAppModule.class,
+        modules = {
+                YaccAppModule.class,
                 ConverterModule.class,
-                ReleasePersistenceModule.class,
-                ReleaseNetworkModule.class,
-                ReleaseDomainModule.class}
+                ReleaseDataModule.class,
+                ReleaseDomainModule.class,
+                ReleaseUiModule.class
+        }
 )
 public interface YaccAppComponent extends YaccAppGraph {
 
     final static class Initializer {
         static YaccAppComponent init(YaccApp app) {
-            return Dagger_YaccAppComponent.builder()
+            return DaggerYaccAppComponent.builder()
                     .yaccAppModule(new YaccAppModule(app))
                     .build();
         }
-    }}
 
-)
+        private Initializer() { /* No instances */ }
+    }
+}
+
+

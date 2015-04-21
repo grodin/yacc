@@ -17,18 +17,28 @@
 package com.omricat.yacc.data;
 
 import com.omricat.yacc.data.network.CurrenciesService;
-import com.omricat.yacc.network.DebugCurrenciesService;
+import com.omricat.yacc.data.network.NetworkCurrenciesService;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit.Endpoint;
+import retrofit.Endpoints;
+import retrofit.RestAdapter;
 
-@Module
-public class ReleaseNetworkModule implements VariantNetworkModule {
+@Module(includes = {NetworkModule.class})
+public class ReleaseNetworkModule {
 
-    @Overide @Singleton @Provides
-    CurrenciesService provideCurrenciesService() {
-        return new DebugCurrenciesService();
+    @Provides Endpoint provideEndpoint() {
+        return Endpoints
+                .newFixedEndpoint(NetworkModule.PRODUCTION_ENDPOINT_URI);
+    }
+
+
+    @Singleton @Provides
+    CurrenciesService provideCurrenciesService(RestAdapter restAdapter) {
+        return NetworkCurrenciesService
+                .using(restAdapter.create(CurrenciesService.class));
     }
 }
