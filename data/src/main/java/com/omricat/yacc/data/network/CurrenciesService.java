@@ -28,7 +28,7 @@ import rx.Observable;
  */
 public interface CurrenciesService {
 
-    @GET("/test/currencies-test.json")
+    @GET("/latest")
     Observable<CurrencyDataset> getAllCurrencies();
 
 }

@@ -22,15 +22,17 @@ import dagger.Module;
 import dagger.Provides;
 import retrofit.Endpoint;
 import retrofit.RestAdapter;
+import retrofit.converter.JacksonConverter;
 
 @Module
 public class NetworkModule {
 
     public static final String PRODUCTION_ENDPOINT_URI =
-            "https://yacc-backend.appspot.com/latest";
+            "https://yacc-backend.appspot.com";
 
     @Provides @Singleton RestAdapter provideRestAdapter(Endpoint endpoint) {
         return new RestAdapter.Builder()
+                .setConverter(new JacksonConverter())
                 .setEndpoint(endpoint)
                 .build();
     }
