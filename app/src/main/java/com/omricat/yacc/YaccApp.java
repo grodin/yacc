@@ -19,9 +19,16 @@ package com.omricat.yacc;
 import android.app.Application;
 import android.content.Context;
 
+import com.omricat.yacc.ui.ActivityHierarchyServer;
+
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
+
 public class YaccApp extends Application {
+
+    @Inject
+    ActivityHierarchyServer activityHierarchyServer;
 
     private YaccAppComponent component;
 
@@ -30,6 +37,8 @@ public class YaccApp extends Application {
 
         component = YaccAppComponent.Initializer.init(this);
         component.inject(this);
+
+        registerActivityLifecycleCallbacks(activityHierarchyServer);
     }
 
     @NotNull

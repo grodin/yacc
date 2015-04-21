@@ -21,6 +21,9 @@ import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
 import com.omricat.yacc.ui.debug.DebugActivityContainer;
+import com.omricat.yacc.ui.debug.SocketActivityHierarchyServer;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -37,6 +40,11 @@ public class DebugUiModule {
              @ApiEndpoint final StringPreference endpoint) {
         return new DebugActivityContainer(dspecGridVisible,
                 dspecKeylinesVisible, dspecSpacingsVisible, endpoint);
+    }
+
+    @Provides @Singleton
+    ActivityHierarchyServer provideActivityHierarchyServer() {
+        return new SocketActivityHierarchyServer();
     }
 
 }

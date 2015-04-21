@@ -35,8 +35,6 @@ import com.omricat.yacc.ui.ActivityContainer;
 
 import org.lucasr.dspec.DesignSpecFrameLayout;
 
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnCheckedChanged;
@@ -53,7 +51,6 @@ public class DebugActivityContainer implements ActivityContainer {
     // Network/Mock mode related preferences
     private final StringPreference networkEndpoint;
 
-    @Inject
     public DebugActivityContainer
             (@DspecGridVisible final BooleanPreference dspecGridVisible,
              @DspecKeylinesVisible final BooleanPreference dspecKeylinesVisible,
