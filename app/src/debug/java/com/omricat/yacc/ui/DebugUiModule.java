@@ -16,6 +16,7 @@
 
 package com.omricat.yacc.ui;
 
+import com.omricat.yacc.YaccApp;
 import com.omricat.yacc.data.di.qualifiers.ApiEndpoint;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
@@ -37,9 +38,10 @@ public class DebugUiModule {
             (@DspecGridVisible final BooleanPreference dspecGridVisible,
              @DspecKeylinesVisible final BooleanPreference dspecKeylinesVisible,
              @DspecSpacingsVisible final BooleanPreference dspecSpacingsVisible,
-             @ApiEndpoint final StringPreference endpoint) {
+             @ApiEndpoint final StringPreference endpoint,
+             final YaccApp app) {
         return new DebugActivityContainer(dspecGridVisible,
-                dspecKeylinesVisible, dspecSpacingsVisible, endpoint);
+                dspecKeylinesVisible, dspecSpacingsVisible, endpoint, app);
     }
 
     @Provides @Singleton

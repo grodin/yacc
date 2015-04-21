@@ -18,13 +18,17 @@ package com.omricat.yacc.ui.debug;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.omricat.yacc.BuildConfig;
 import com.omricat.yacc.R;
+import com.omricat.yacc.YaccApp;
 import com.omricat.yacc.data.di.qualifiers.ApiEndpoint;
 import com.omricat.yacc.data.di.qualifiers.DspecGridVisible;
 import com.omricat.yacc.data.di.qualifiers.DspecKeylinesVisible;
@@ -32,6 +36,7 @@ import com.omricat.yacc.data.di.qualifiers.DspecSpacingsVisible;
 import com.omricat.yacc.data.network.EnumAdapter;
 import com.omricat.yacc.data.network.NetworkEndpoint;
 import com.omricat.yacc.ui.ActivityContainer;
+import com.omricat.yacc.ui.YaccMainActivity;
 
 import org.lucasr.dspec.DesignSpecFrameLayout;
 
@@ -40,6 +45,9 @@ import butterknife.InjectView;
 import butterknife.OnCheckedChanged;
 import info.metadude.android.typedpreferences.BooleanPreference;
 import info.metadude.android.typedpreferences.StringPreference;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class DebugActivityContainer implements ActivityContainer {
 
@@ -51,17 +59,22 @@ public class DebugActivityContainer implements ActivityContainer {
     // Network/Mock mode related preferences
     private final StringPreference networkEndpoint;
 
+    // Main App
+    private final YaccApp app;
+
     public DebugActivityContainer
             (@DspecGridVisible final BooleanPreference dspecGridVisible,
              @DspecKeylinesVisible final BooleanPreference dspecKeylinesVisible,
              @DspecSpacingsVisible final BooleanPreference
                      dspecSpacingsVisible,
-             @ApiEndpoint final StringPreference networkEndpoint) {
+             @ApiEndpoint final StringPreference networkEndpoint,
+             final YaccApp app) {
 
         this.dspecGridVisible = dspecGridVisible;
         this.dspecKeylinesVisible = dspecKeylinesVisible;
         this.dspecSpacingsVisible = dspecSpacingsVisible;
         this.networkEndpoint = networkEndpoint;
+        this.app = app;
     }
 
     // Dspec layout
@@ -114,6 +127,23 @@ public class DebugActivityContainer implements ActivityContainer {
                         NetworkEndpoint.class);
         endpointView.setAdapter(endpointAdapter);
         endpointView.setSelection(currentEndpoint.ordinal());
+        endpointView.setOnItemSelectedListener(new AdapterView
+                .OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(final AdapterView<?> parent,
+                                       final View view, final int position,
+                                       final long id) {
+                NetworkEndpoint endpoint = endpointAdapter.getItem(position);
+                if (endpoint != currentEndpoint) {
+                    setEndpointAndRelaunch(endpoint.getEndpoint().getUrl());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(final AdapterView<?> parent) {
+            }
+        });
     }
 
     private void setupBuildInfoSection() {
@@ -150,5 +180,14 @@ public class DebugActivityContainer implements ActivityContainer {
     DspecWrapper getDspec() {
         return new DspecWrapper(dspecGridVisible, dspecKeylinesVisible,
                 dspecSpacingsVisible, dspec.getDesignSpec());
+    }
+
+    private void setEndpointAndRelaunch(String endpoint) {
+        networkEndpoint.set(endpoint);
+
+        Intent newApp = new Intent(app, YaccMainActivity.class);
+        newApp.setFlags(FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK);
+        app.startActivity(newApp);
+        YaccApp.from(app).buildComponentAndInject();
     }
 }

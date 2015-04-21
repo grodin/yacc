@@ -35,10 +35,14 @@ public class YaccApp extends Application {
     @Override public void onCreate() {
         super.onCreate();
 
-        component = YaccAppComponent.Initializer.init(this);
-        component.inject(this);
+        buildComponentAndInject();
 
         registerActivityLifecycleCallbacks(activityHierarchyServer);
+    }
+
+    public void buildComponentAndInject() {
+        component = YaccAppComponent.Initializer.init(this);
+        component.inject(this);
     }
 
     @NotNull
