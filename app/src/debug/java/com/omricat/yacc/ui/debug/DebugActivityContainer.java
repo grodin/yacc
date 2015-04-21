@@ -17,6 +17,7 @@
 package com.omricat.yacc.ui.debug;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -101,18 +102,21 @@ public class DebugActivityContainer implements ActivityContainer {
 
         ButterKnife.inject(this, activity);
 
-        final NetworkEndpoint currentEndpoint =
-                NetworkEndpoint.from(networkEndpoint.get());
-        final EnumAdapter<NetworkEndpoint> endpointAdapter =
-                new EnumAdapter<>(activity, EndpointViewHolder.class,
-                        NetworkEndpoint.class);
-        endpointView.setAdapter(endpointAdapter);
-        endpointView.setSelection(currentEndpoint.ordinal());
-
+        setupNetworkSection(activity);
         setupUiSection();
         setupBuildInfoSection();
 
         return dspec;
+    }
+
+    private void setupNetworkSection(final Context context) {
+        final NetworkEndpoint currentEndpoint =
+                NetworkEndpoint.from(networkEndpoint.get());
+        final EnumAdapter<NetworkEndpoint> endpointAdapter =
+                new EnumAdapter<>(context, EndpointViewHolder.class,
+                        NetworkEndpoint.class);
+        endpointView.setAdapter(endpointAdapter);
+        endpointView.setSelection(currentEndpoint.ordinal());
     }
 
     private void setupBuildInfoSection() {
